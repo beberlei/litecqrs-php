@@ -119,7 +119,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class User extends BaseAggregateRoot
+class User extends AggregateRoot
 {
     private $id;
     private $email;
