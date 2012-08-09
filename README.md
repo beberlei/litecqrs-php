@@ -26,6 +26,24 @@ Command execution should be wrapped in a transaction for example. The event trig
 of that transaction. If the command transaction fails, then the events are all dropped. No event listeners
 will be triggered in this case.
 
+## Setup (Simple Case)
+
+```php
+<?php
+// 1. Setup the Library with InMemory Handlers
+$messageBus = new InMemoryEventMessageBus();
+$eventStore = new InMemoryEventStore($messageBus);
+$identityMap = new SimpleIdentityMap();
+$commandBus = new DirectCommandBus($eventStore, $identityMap);
+
+// 2. Register a command service and an event handler
+$userService = new UserService($identityMap);
+$commandBus->register('MyApp\ChangeEmailCommand', $userService);
+
+$someEventHandler = new MyEventHandler();
+$messageBus->register($someEventHandler);
+```
+
 ## Usage
 
 ### To implement a Use Case of your application
@@ -60,42 +78,39 @@ CQRSList IdentityMap.
 ### Command/Event Handler Proxies
 
 If you want to wrap the command/event handler in a transaction, you have to extend the ``CommandBus``
-and extend the ``CommandBus::proxyHandler()`` method, wrapping the service in magic ``__call``
-proxies. One such proxy for example might log all the executed commands:
+and pass a proxy factory closure/invokable object into the ```CommandBus```.
+
+If you want to log all commands:
 
 ```php
-class CommandLogger
+<?php
+use LiteCQRS\CommandHandler\CommandHandler;
+
+class CommandLogger implements CommandHandler
 {
-    private $service;
-    public function __construct($service)
+    private $next;
+
+    public function __construct(CommandHandler $next)
     {
-        $this->service = $service;
+        $this->next = $next;
     }
 
-    public function __call($method, $args)
+    public function handle(Command $command)
     {
-        syslog(LOG_INFO, "Executing: " . get_class($args[0]));
-        call_user_func_array(array($this->service, $method), $args);
+        syslog(LOG_INFO, "Executing: " . get_class($command));
+        $this->next->handle($command);
     }
 }
 ```
 
-## Setup (Simple Case)
+And register:
 
 ```php
 <?php
-// 1. Setup the Library with InMemory Handlers
-$messageBus = new InMemoryEventMessageBus();
-$eventStore = new InMemoryEventStore($messageBus);
-$identityMap = new SimpleIdentityMap();
-$commandBus = new DirectCommandBus($eventStore, $identityMap);
-
-// 2. Register a command service and an event handler
-$userService = new UserService($identityMap);
-$commandBus->register('MyApp\ChangeEmailCommand', $userService);
-
-$someEventHandler = new MyEventHandler();
-$messageBus->register($someEventHandler);
+$proxyFactory = function($handler) {
+    return new CommandLogger($handler);
+};
+$commandBus = new DirectCommandBus($eventStore, $identityMap, $proxyFactory);
 ```
 
 ## Example

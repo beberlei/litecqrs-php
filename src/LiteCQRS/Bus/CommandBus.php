@@ -19,11 +19,13 @@ abstract class CommandBus
 {
     private $eventStore;
     private $identityMap;
+    private $proxyFactoy;
 
-    public function __construct(EventStoreInterface $eventStore, IdentityMapInterface $identityMap = null)
+    public function __construct(EventStoreInterface $eventStore, IdentityMapInterface $identityMap = null, $proxyFactory = null)
     {
-        $this->eventStore  = $eventStore;
-        $this->identityMap = $identityMap;
+        $this->eventStore   = $eventStore;
+        $this->identityMap  = $identityMap;
+        $this->proxyFactory = $proxyFactory ?: function($service) { return $service; };
     }
 
     /**
@@ -72,7 +74,8 @@ abstract class CommandBus
 
     protected function proxyHandler($handler)
     {
-        return $handler;
+        $proxyFactory = $this->proxyFactory;
+        return $proxyFactory($handler);
     }
 }
 
