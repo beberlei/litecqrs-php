@@ -4,7 +4,7 @@ namespace LiteCQRS\CommandHandler;
 
 use LiteCQRS\Command;
 
-interface CommandHandler
+interface CommandHandlerInterface
 {
     public function handle(Command $command);
 }

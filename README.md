@@ -84,9 +84,9 @@ If you want to log all commands:
 
 ```php
 <?php
-use LiteCQRS\CommandHandler\CommandHandler;
+use LiteCQRS\CommandHandler\CommandHandlerInterface;
 
-class CommandLogger implements CommandHandler
+class CommandLogger implements CommandHandlerInterface
 {
     private $next;
 

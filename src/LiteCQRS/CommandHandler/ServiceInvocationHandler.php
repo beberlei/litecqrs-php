@@ -4,7 +4,7 @@ namespace LiteCQRS\CommandHandler;
 
 use LiteCQRS\Command;
 
-class ServiceInvocationHandler implements CommandHandler
+class ServiceInvocationHandler implements CommandHandlerInterface
 {
     private $service;
 
