@@ -7,7 +7,6 @@ use LiteCQRS\Command;
 abstract class CommandBus implements MessageBus
 {
     abstract protected function getService($commandType);
-    abstract protected function wrapHandlerChain($service, $method);
 
     public function handle($command)
     {
@@ -29,4 +28,10 @@ abstract class CommandBus implements MessageBus
         $parts = explode("\\", get_class($command));
         return str_replace("Command", "", lcfirst(end($parts)));
     }
+
+    protected function wrapHandlerChain($service, $method)
+    {
+        return $service;
+    }
+
 }
