@@ -5,6 +5,7 @@ use LiteCQRS\Bus\DirectCommandBus;
 use LiteCQRS\Bus\InMemoryEventMessageBus;
 use LiteCQRS\DomainObjectChanged;
 use LiteCQRS\EventStore\InMemoryEventStore;
+use LiteCQRS\EventStore\SimpleIdentityMap;
 
 class CQRSTest extends \PHPUnit_Framework_TestCase
 {
@@ -213,6 +214,17 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
         $events = $user->popAppliedEvents();
         $this->assertEquals(0, count($events));
+    }
+
+    public function testSimpleIdentityMapKeepsObjectUnique()
+    {
+        $ar = $this->getMock('LiteCQRS\AggregateRootInterface');
+
+        $im = new SimpleIdentityMap();
+        $im->add($ar);
+        $im->add($ar);
+
+        $this->assertEquals(array($ar), $im->all());
     }
 }
 
