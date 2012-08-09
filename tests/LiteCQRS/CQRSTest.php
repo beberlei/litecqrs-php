@@ -202,6 +202,18 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, count($newUser->getAppliedEvents()));
     }
+
+    public function testPopAppliedEventsOnlyOnce()
+    {
+        $user = new User();
+        $user->changeEmail("foo@bar.com");
+
+        $events = $user->popAppliedEvents();
+        $this->assertEquals(1, count($events));
+
+        $events = $user->popAppliedEvents();
+        $this->assertEquals(0, count($events));
+    }
 }
 
 class User extends AggregateRoot
