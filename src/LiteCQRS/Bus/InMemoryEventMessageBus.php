@@ -2,6 +2,8 @@
 namespace LiteCQRS\Bus;
 
 use LiteCQRS\DomainEvent;
+use LiteCQRS\EventHandler\ServiceInvocationHandler;
+
 use Exception;
 
 /**
@@ -20,16 +22,26 @@ use Exception;
 class InMemoryEventMessageBus implements EventMessageBus
 {
     private $handlers = array();
+    private $proxyFactory;
+
+    public function __construct($proxyFactory = null)
+    {
+        $this->proxyFactory = $proxyFactory ?: function($handler) { return $handler; };
+    }
 
     public function handle(DomainEvent $event)
     {
         $eventName  = $event->getEventName();
-        $handlers   = $this->getHandlers($eventName);
-        $methodName = "on" . $eventName;
+        $services   = $this->getHandlers($eventName);
 
-        foreach ($handlers as $handler) {
+        foreach ($services as $service) {
             try {
-                $handler->$methodName($event);
+                $handler      = new ServiceInvocationHandler($service);
+
+                $proxyFactory = $this->proxyFactory;
+                $handler      = $proxyFactory($handler);
+
+                $handler->handle($event);
             } catch(Exception $e) {
             }
         }

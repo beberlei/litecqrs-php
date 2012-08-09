@@ -113,6 +113,8 @@ $proxyFactory = function($handler) {
 $commandBus = new DirectCommandBus($eventStore, $identityMap, $proxyFactory);
 ```
 
+Same applies to events with the ``LiteCQRS\EventHandler\EventHandlerInterface``.
+
 ## Example
 
 See ``example/example1.php`` for a simple example.
