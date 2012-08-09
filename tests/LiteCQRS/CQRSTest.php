@@ -2,7 +2,9 @@
 namespace LiteCQRS;
 
 use LiteCQRS\Bus\DirectCommandBus;
+use LiteCQRS\Bus\InMemoryEventMessageBus;
 use LiteCQRS\DomainObjectChanged;
+use LiteCQRS\EventStore\InMemoryEventStore;
 
 class CQRSTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,6 +54,68 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException("RuntimeException", "No service registered for command type 'LiteCQRS\ChangeEmailCommand'");
         $direct->handle($command);
+    }
+
+    public function testHandleEventOnInMemoryEventMessageBus()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
+        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
+
+        $bus = new InMemoryEventMessageBus();
+        $bus->register($eventHandler);
+        $bus->handle($event);
+    }
+
+    public function testHandleEventOnInMemoryEventMessageBusThrowsExceptionIsSwallowed()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
+        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event))->will($this->throwException(new \Exception));
+
+        $bus = new InMemoryEventMessageBus();
+        $bus->register($eventHandler);
+        $bus->handle($event);
+    }
+
+    public function testCommitEventsInMemoryEventStoreDelegatesToMessageBus()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+
+        $bus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
+        $bus->expects($this->once())->method('handle')->with($this->equalTo($event));
+
+        $store = new InMemoryEventStore($bus);
+        $store->add($event);
+        $store->commit();
+    }
+
+    public function testCommitEventsOnlyTriggersEachEventOnce()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+
+        $bus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
+        $bus->expects($this->once())->method('handle')->with($this->equalTo($event));
+
+        $store = new InMemoryEventStore($bus);
+        $store->add($event);
+
+        $store->commit();
+        $store->commit();
+    }
+
+    public function testRollbackCommitEventsNotTriggers()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+
+        $bus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
+        $bus->expects($this->never())->method('handle');
+
+        $store = new InMemoryEventStore($bus);
+        $store->add($event);
+
+        $store->rollback();
+        $store->commit();
     }
 }
 

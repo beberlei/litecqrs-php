@@ -3,19 +3,16 @@ namespace LiteCQRS\Bus;
 
 use LiteCQRS\DomainEvent;
 
-abstract class EventMessageBus
+/**
+ * Event Message bus handles all events that were emitted by domain objects.
+ *
+ * The Event Message Bus finds all event handles that listen to a certain event,
+ * and then triggers these handlers one after another. Exceptions in event handlers
+ * should be swallowed. Intelligent Event Systems should know how to retry failing
+ * events until they are successful.
+ */
+interface EventMessageBus
 {
-    abstract protected function getHandlers($eventName);
-
-    public function handle(DomainEvent $event)
-    {
-        $eventName  = $event->getEventName();
-        $handlers   = $this->getHandlers($eventName);
-        $methodName = "on" . $eventName;
-
-        foreach ($handlers as $handler) {
-            $handler->$methodName($event);
-        }
-    }
+    public function handle(DomainEvent $event);
 }
 
