@@ -26,23 +26,31 @@ Command execution should be wrapped in a transaction for example. The event trig
 of that transaction. If the command transaction fails, then the events are all dropped. No event listeners
 will be triggered in this case.
 
-## Example
+## Usage
 
-You can stick yourself together a simple CQRS application by configuring a ``CommandBus` and an ``EventMessageBus``.
+To implement a Use Case of your application
+
+1. Create a command object that recieves all the necessary input values. Use public properties to simplify.
+2. Add a new command handler method on any of your services
+3. Register the command handler to handle the given command.
+4. Use the `DomainObjectChanged`` event to change the state of your domain objects.
+
+That is all there is for simple use-cases. If you use the ``DomainObjectChanged`` event instead of writing
+your own for every change you get away cheap.
+
+If your command triggers events that listeners check for, you should:
+
+1. Create a domain specific event class. Use public properties to simplify.
+2. Create a event handler(s) or add method(s) to existing event handler(s).
+
+While it seems "complicated" to create commands and events for every use-case. These objects are really
+dumb and only contain public properties. Using your IDE or editor functionality you can easily template
+them in no time.
+
+## Setup (Simple Case)
 
 ```php
 <?php
-
-namespace MyApp;
-
-use LiteCQRS\BaseAggregateRoot;
-use LiteCQRS\Bus\DirectCommandBus;
-use LiteCQRS\Bus\InMemoryEventMessageBus;
-use LiteCQRS\EventStore\SimpleIdentityMap;
-use LiteCQRS\EventStore\InMemoryEventStore;
-use LiteCQRS\Command;
-use LiteCQRS\DomainObjectChanged;
-
 // 1. Setup the Library with InMemory Handlers
 $messageBus = new InMemoryEventMessageBus();
 $eventStore = new InMemoryEventStore($messageBus);
@@ -50,50 +58,16 @@ $identityMap = new SimpleIdentityMap();
 $commandBus = new DirectCommandBus($eventStore, $identityMap);
 
 // 2. Register a command service and an event handler
-$userService = new UserService();
-$someEventHandler = new MyEventHandler();
+$userService = new UserService($identityMap);
 $commandBus->register('MyApp\ChangeEmailCommand', $userService);
+
+$someEventHandler = new MyEventHandler();
 $messageBus->register($someEventHandler);
-
-// 3. Invoke command!
-$commandBus->handle(new ChangeEmailCommand(1234, 'kontakt@beberlei.de'));
-
-// 4. Classes
-class UserService
-{
-    public function changeEmail(ChangeEmailCommand $command)
-    {
-        $user = $this->findUserById($command->id);
-        $user->changeEmail($command->email);
-    }
-}
-
-class User extends BaseAggregateRoot
-{
-    private $email;
-    public function changeEmail($email)
-    {
-        $this->apply(new DomainObjectChanged("ChangeEmail", array("email" => $email)));
-    }
-
-    protected function applyChangeEmail($event)
-    {
-        $this->email = $event->email;
-    }
-}
-
-class ChangeEmailCommand implements Command
-{
-    public $id;
-    public $email;
-
-    public function __construct($id, $email)
-    {
-        $this->id = $id;
-        $this->email = $email;
-    }
-}
 ```
+
+## Example
+
+See ``example/example1.php`` for a simple example.
 
 ## Extension Points
 
