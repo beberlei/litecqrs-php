@@ -1,16 +1,14 @@
 <?php
 namespace LiteCQRS\Bus;
 
-abstract class EventMessageBus implements MessageBus
+use LiteCQRS\DomainEvent;
+
+abstract class EventMessageBus
 {
     abstract protected function getHandlers($eventName);
 
-    public function handle($event)
+    public function handle(DomainEvent $event)
     {
-        if (!($event instanceof DomainEvent)) {
-            throw new \RuntimeException("No valid Domain Event given!");
-        }
-
         $eventName  = $event->getEventName();
         $handlers   = $this->getHandlers($eventName);
         $methodName = "on" . $eventName;
