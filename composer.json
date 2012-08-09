@@ -1,0 +1,8 @@
+{
+    "name": "beberlei/lite-cqrs",
+    "description": "Simple Command-Query-Responsibility-Segregation library.",
+    "license": "MIT",
+    "autoload": {
+        "psr-0": {"LiteCQRS": "src/"}
+    }
+}
