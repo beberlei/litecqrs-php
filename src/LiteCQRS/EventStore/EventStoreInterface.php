@@ -21,6 +21,7 @@ use LiteCQRS\DomainEvent;
 interface EventStoreInterface
 {
     public function add(DomainEvent $event);
+    public function beginTransaction();
     public function rollback();
     public function commit();
 }

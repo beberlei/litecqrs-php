@@ -33,15 +33,42 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $userService = $this->getMock('UserService', array('changeEmail'));
         $userService->expects($this->once())->method('changeEmail')->with($this->equalTo($command));
 
-        $direct = new DirectCommandBus();
+        $direct = new DirectCommandBus($this->getMock('LiteCQRS\EventStore\EventStoreInterface'));
         $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
 
         $direct->handle($command);
     }
 
+    public function testWhenSuccessfulCommandThenTriggersEventStoreCommit()
+    {
+        $eventStore = $this->getMock('LiteCQRS\EventStore\EventStoreInterface');
+        $eventStore->expects($this->once())->method('commit');
+
+        $userService = $this->getMock('UserService', array('changeEmail'));
+        $direct = new DirectCommandBus($eventStore);
+        $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
+
+        $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
+    }
+
+    public function testWhenFailingCommandThenTriggerEventStoreRollback()
+    {
+        $eventStore = $this->getMock('LiteCQRS\EventStore\EventStoreInterface');
+        $eventStore->expects($this->once())->method('rollback');
+
+        $userService = $this->getMock('UserService', array('changeEmail'));
+        $userService->expects($this->once())->method('changeEmail')->will($this->throwException(new \RuntimeException("DomainFail")));
+
+        $direct = new DirectCommandBus($eventStore);
+        $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
+
+        $this->setExpectedException('RuntimeException', 'DomainFail');
+        $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
+    }
+
     public function testDirectCommandBusInvalidService()
     {
-        $direct = new DirectCommandBus();
+        $direct = new DirectCommandBus($this->getMock('LiteCQRS\EventStore\EventStoreInterface'));
 
         $this->setExpectedException("RuntimeException", "No valid service given for command type 'ChangeEmailCommand'");
         $direct->register('ChangeEmailCommand', null);
@@ -50,7 +77,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
     public function testHandleUnregisteredCommand()
     {
         $command = new ChangeEmailCommand('kontakt@beberlei.de');
-        $direct = new DirectCommandBus();
+        $direct = new DirectCommandBus($this->getMock('LiteCQRS\EventStore\EventStoreInterface'));
 
         $this->setExpectedException("RuntimeException", "No service registered for command type 'LiteCQRS\ChangeEmailCommand'");
         $direct->handle($command);
@@ -102,6 +129,16 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
         $store->commit();
         $store->commit();
+    }
+
+    public function testBeginTransactionEventExistNotPossibleToHandleNestedTransaction()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+        $store = new InMemoryEventStore($this->getMock('LiteCQRS\Bus\EventMessageBus'));
+        $store->add($event);
+
+        $this->setExpectedException('RuntimeException');
+        $store->beginTransaction();
     }
 
     public function testRollbackCommitEventsNotTriggers()

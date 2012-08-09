@@ -25,6 +25,14 @@ class InMemoryEventStore implements EventStoreInterface
         $this->events[] = $event;
     }
 
+    public function beginTransaction()
+    {
+        if ($this->events) {
+            throw new \RuntimeException("There are still events on stack, cannot start new transaction. Commit first!");
+        }
+        $this->events = array();
+    }
+
     public function rollback()
     {
         $this->events = array();

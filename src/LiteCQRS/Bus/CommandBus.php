@@ -3,9 +3,25 @@
 namespace LiteCQRS\Bus;
 
 use LiteCQRS\Command;
+use LiteCQRS\EventStore\EventStoreInterface;
 
+/**
+ * Command Bus accepts commands and finds the appropriate
+ * handler to execute it.
+ *
+ * Execution of commands is wrapped into a UnitOfWork
+ * transaction of the event storage. Events are only
+ * published, if the command execution was succesful.
+ */
 abstract class CommandBus
 {
+    private $eventStore;
+
+    public function __construct(EventStoreInterface $eventStore)
+    {
+        $this->eventStore = $eventStore;
+    }
+
     abstract protected function getService($commandType);
 
     public function handle(Command $command)
@@ -16,7 +32,17 @@ abstract class CommandBus
 
         $service = $this->wrapHandlerChain($service, $method);
 
-        $service->$method($command);
+        $this->eventStore->beginTransaction(); // clear exisiting events
+
+        try {
+            $service->$method($command);
+            $this->eventStore->commit();
+
+        } catch(\Exception $e) {
+            $this->eventStore->rollback();
+
+            throw $e;
+        }
     }
 
     public function getHandlerMethodName($command)
