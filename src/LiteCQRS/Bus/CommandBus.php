@@ -64,7 +64,7 @@ abstract class CommandBus
         }
 
         foreach ($this->identityMap->all() as $aggregateRoot) {
-            foreach ($aggregateRoot->getAppliedEvents() as $event) {
+            foreach ($aggregateRoot->popAppliedEvents() as $event) {
                 $this->eventStore->add($event);
             }
         }

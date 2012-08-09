@@ -87,7 +87,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
     {
         $event = new DomainObjectChanged("Foo", array());
         $root = $this->getMock('LiteCQRS\AggregateRootInterface');
-        $root->expects($this->once())->method('getAppliedEvents')->will($this->returnValue(array($event, $event)));
+        $root->expects($this->once())->method('popAppliedEvents')->will($this->returnValue(array($event, $event)));
 
         $eventStore = $this->getMock('LiteCQRS\EventStore\EventStoreInterface');
         $eventStore->expects($this->exactly(2))->method('add');
@@ -162,6 +162,20 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $store->beginTransaction();
     }
 
+    public function testWhenEventIsAddedTwiceToStoreItsOnlyRecordedOnce()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+
+        $bus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
+        $bus->expects($this->exactly(1))->method('handle');
+
+        $store = new InMemoryEventStore($bus);
+        $store->add($event);
+        $store->add($event);
+
+        $store->commit();
+    }
+
     public function testRollbackCommitEventsNotTriggers()
     {
         $event = new DomainObjectChanged("Foo", array());
@@ -174,6 +188,19 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
         $store->rollback();
         $store->commit();
+    }
+
+    public function testEventsFromHistoryAreNotInTheAppliedEventsList()
+    {
+        $user = new User();
+        $user->changeEmail("foo@bar.com");
+
+        $events = $user->getAppliedEvents();
+
+        $newUser = new User();
+        $newUser->loadFromHistory($events);
+
+        $this->assertEquals(0, count($newUser->getAppliedEvents()));
     }
 }
 

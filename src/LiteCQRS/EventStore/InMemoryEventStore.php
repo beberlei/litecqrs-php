@@ -13,15 +13,22 @@ use LiteCQRS\DomainEvent;
 class InMemoryEventStore implements EventStoreInterface
 {
     private $events          = array();
+    private $seenEvents;
     private $eventMessageBus;
 
     public function __construct(EventMessageBus $messageBus)
     {
         $this->eventMessageBus = $messageBus;
+        $this->seenEvents = new \SplObjectStorage();
     }
 
     public function add(DomainEvent $event)
     {
+        if ($this->seenEvents->contains($event)) {
+            return;
+        }
+
+        $this->seenEvents->attach($event);
         $this->events[] = $event;
     }
 

@@ -20,6 +20,13 @@ use LiteCQRS\DomainEvent;
  */
 interface EventStoreInterface
 {
+    /**
+     * Add Event
+     *
+     * Makes sure that events are not added multiple times. Events have identity
+     * and can only be executed once. Multiple registiration of the same event
+     * is ignored.
+     */
     public function add(DomainEvent $event);
     public function beginTransaction();
     public function rollback();

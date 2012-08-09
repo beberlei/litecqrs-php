@@ -11,7 +11,20 @@ abstract class AggregateRoot implements AggregateRootInterface
         return $this->appliedEvents;
     }
 
+    public function popAppliedEvents()
+    {
+        $events = $this->appliedEvents;
+        $this->appliedEvents = array();
+        return $events;
+    }
+
     protected function apply(DomainEvent $event)
+    {
+        $this->executeEvent($event);
+        $this->appliedEvents[] = $event;
+    }
+
+    private function executeEvent(DomainEvent $event)
     {
         $method = sprintf('apply%s', $event->getEventName());
 
@@ -20,19 +33,13 @@ abstract class AggregateRoot implements AggregateRootInterface
         }
 
         $this->$method($event);
-        $this->appliedEvents[] = $event;
     }
 
     public function loadFromHistory(array $events)
     {
         foreach ($events as $event) {
-            $this->apply($event);
+            $this->executeEvent($event);
         }
-    }
-
-    public function clearEvents()
-    {
-        $this->appliedEvents = array();
     }
 }
 
