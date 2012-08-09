@@ -28,7 +28,7 @@ will be triggered in this case.
 
 ## Usage
 
-To implement a Use Case of your application
+### To implement a Use Case of your application
 
 1. Create a command object that recieves all the necessary input values. Use public properties to simplify.
 2. Add a new command handler method on any of your services
@@ -46,6 +46,39 @@ If your command triggers events that listeners check for, you should:
 While it seems "complicated" to create commands and events for every use-case. These objects are really
 dumb and only contain public properties. Using your IDE or editor functionality you can easily template
 them in no time.
+
+### EventStore and IdentityMap
+
+You have to implement a mechanism to fill the ```IdentityMapInterface``` passed
+to the command bus. All aggregate root objects in this Identity Map will have their
+Events stored and published through the EventStore + EventMessageBus. All other events
+will be forgotten!
+
+Example: The Doctrine ORM Plugin has an EventListener that synchronizes objects into the
+CQRSList IdentityMap.
+
+### Command/Event Handler Proxies
+
+If you want to wrap the command/event handler in a transaction, you have to extend the ``CommandBus``
+and extend the ``CommandBus::proxyHandler()`` method, wrapping the service in magic ``__call``
+proxies. One such proxy for example might log all the executed commands:
+
+```php
+class CommandLogger
+{
+    private $service;
+    public function __construct($service)
+    {
+        $this->service = $service;
+    }
+
+    public function __call($method, $args)
+    {
+        syslog(LOG_INFO, "Executing: " . get_class($args[0]));
+        call_user_func_array(array($this->service, $method), $args);
+    }
+}
+```
 
 ## Setup (Simple Case)
 
