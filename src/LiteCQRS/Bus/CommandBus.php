@@ -3,6 +3,7 @@
 namespace LiteCQRS\Bus;
 
 use LiteCQRS\Command;
+use LiteCQRS\CommandHandler\ServiceInvocationHandler;
 use LiteCQRS\EventStore\EventStoreInterface;
 use LiteCQRS\EventStore\IdentityMapInterface;
 
@@ -38,14 +39,13 @@ abstract class CommandBus
     {
         $type    = get_class($command);
         $service = $this->getService($type);
-        $method  = $this->getHandlerMethodName($command);
-
-        $service = $this->proxyHandler($service, $method);
+        $handler = new ServiceInvocationHandler($service);
+        $handler = $this->proxyHandler($handler);
 
         $this->eventStore->beginTransaction(); // clear exisiting events
 
         try {
-            $service->$method($command);
+            $handler->handle($command);
 
             $this->passEventsToStore();
             $this->eventStore->commit();
@@ -70,15 +70,9 @@ abstract class CommandBus
         }
     }
 
-    public function getHandlerMethodName($command)
+    protected function proxyHandler($handler)
     {
-        $parts = explode("\\", get_class($command));
-        return str_replace("Command", "", lcfirst(end($parts)));
-    }
-
-    protected function proxyHandler($service, $method)
-    {
-        return $service;
+        return $handler;
     }
 }
 
