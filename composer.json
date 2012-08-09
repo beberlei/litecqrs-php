@@ -4,5 +4,8 @@
     "license": "MIT",
     "autoload": {
         "psr-0": {"LiteCQRS": "src/"}
+    },
+    "require-dev": {
+        "doctrine/common": ">=2.0,<2.5"
     }
 }

@@ -90,7 +90,7 @@ class CommandLogger implements CommandHandlerInterface
 {
     private $next;
 
-    public function __construct(CommandHandler $next)
+    public function __construct(CommandHandlerInterface $next)
     {
         $this->next = $next;
     }
@@ -123,3 +123,17 @@ See ``example/example1.php`` for a simple example.
 
 You should implement your own ``CommandBus`` or extend the existing to wire the whole process together
 exactly as you need it to work.
+
+## Plugins
+
+### Doctrine
+
+Doctrine Plugin ships with transactional wrappers.
+
+- LiteCQRS\Plugin\Doctrine\CommandHandler\DbalTransactionalHandler
+- LiteCQRS\Plugin\Doctrine\CommandHandler\OrmTransactionalHandler
+
+Also to synchronize the events to event storage you can use the IdentityMapListener:
+
+- LiteCQRS\Plugin\Doctrine\IdentityMapListener
+
