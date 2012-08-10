@@ -11,7 +11,7 @@ use JMS\SerializerBundle\Annotation\ExclusionPolicy;
  */
 abstract class AggregateRoot implements AggregateRootInterface
 {
-    private $appliedEvents;
+    private $appliedEvents = array();
 
     public function getAppliedEvents()
     {
