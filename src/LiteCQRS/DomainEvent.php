@@ -1,6 +1,8 @@
 <?php
 namespace LiteCQRS;
 
+use LiteCQRS\Bus\MessageInterface;
+
 /**
  * Domain Events happen during command execution/handling.
  *
@@ -18,7 +20,7 @@ namespace LiteCQRS;
  * You should hook this into your preferred persistence solution, for
  * example Doctrine, Propel or what you are going to use as primary storage.
  */
-interface DomainEvent
+interface DomainEvent extends MessageInterface
 {
     public function getEventName();
 }

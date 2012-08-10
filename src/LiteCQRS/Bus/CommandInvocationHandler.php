@@ -1,10 +1,10 @@
 <?php
 
-namespace LiteCQRS\CommandHandler;
+namespace LiteCQRS\Bus;
 
 use LiteCQRS\Command;
 
-class ServiceInvocationHandler implements CommandHandlerInterface
+class CommandInvocationHandler implements MessageHandlerInterface
 {
     private $service;
 
@@ -13,8 +13,12 @@ class ServiceInvocationHandler implements CommandHandlerInterface
         $this->service = $service;
     }
 
-    public function handle(Command $command)
+    public function handle(MessageInterface $command)
     {
+        if (!($command instanceof Command)) {
+            throw new \RuntimeException("No command given to CommandInvocationHandler.");
+        }
+
         $method  = $this->getHandlerMethodName($command);
 
         if (!method_exists($this->service, $method)) {
