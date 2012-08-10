@@ -2,7 +2,6 @@
 namespace LiteCQRS\Bus;
 
 use LiteCQRS\DomainEvent;
-use LiteCQRS\EventHandler\ServiceInvocationHandler;
 
 use Exception;
 
@@ -36,7 +35,7 @@ class InMemoryEventMessageBus implements EventMessageBus
 
         foreach ($services as $service) {
             try {
-                $handler      = new ServiceInvocationHandler($service);
+                $handler      = new EventInvocationHandler($service);
 
                 $proxyFactory = $this->proxyFactory;
                 $handler      = $proxyFactory($handler);
