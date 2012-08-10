@@ -4,6 +4,7 @@ namespace LiteCQRS\Plugin\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
 use LiteCQRS\AggregateRootInterface;
+use LiteCQRS\EventStore\IdentityMapInterface;
 
 class IdentityMapListener implements EventSubscriber
 {
