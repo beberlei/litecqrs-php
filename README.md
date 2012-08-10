@@ -84,18 +84,19 @@ If you want to log all commands:
 
 ```php
 <?php
-use LiteCQRS\CommandHandler\CommandHandlerInterface;
+use LiteCQRS\Bus\MessageHandlerInterface;
+use LiteCQRS\Bus\MessageInterface;
 
-class CommandLogger implements CommandHandlerInterface
+class CommandLogger implements MessageHandlerInterface
 {
     private $next;
 
-    public function __construct(CommandHandlerInterface $next)
+    public function __construct(MessageHandlerInterface $next)
     {
         $this->next = $next;
     }
 
-    public function handle(Command $command)
+    public function handle(MessageInterface $command)
     {
         syslog(LOG_INFO, "Executing: " . get_class($command));
         $this->next->handle($command);
@@ -113,7 +114,7 @@ $proxyFactory = function($handler) {
 $commandBus = new DirectCommandBus($eventStore, $identityMap, $proxyFactory);
 ```
 
-Same applies to events with the ``LiteCQRS\EventHandler\EventHandlerInterface``.
+The same is possible for the ``EventMessageBus``.
 
 ## Example
 
@@ -128,10 +129,10 @@ exactly as you need it to work.
 
 ### Doctrine
 
-Doctrine Plugin ships with transactional wrappers.
+Doctrine Plugin ships with transactional wrapper handlers for Commands and Events:
 
-- LiteCQRS\Plugin\Doctrine\CommandHandler\DbalTransactionalHandler
-- LiteCQRS\Plugin\Doctrine\CommandHandler\OrmTransactionalHandler
+- LiteCQRS\Plugin\Doctrine\MessageHandler\DbalTransactionalHandler
+- LiteCQRS\Plugin\Doctrine\MessageHandler\OrmTransactionalHandler
 
 Also to synchronize the events to event storage you can use the IdentityMapListener:
 
