@@ -6,9 +6,11 @@ abstract class DefaultDomainEvent implements DomainEvent
     public function __construct(array $data = array())
     {
         foreach ($data as $key => $value) {
-            if (property_exists($this->$key)) {
-                $this->$key = $value;
+            if (!property_exists($this->$key)) {
+                throw new \RuntimeException("Property " . $key . " is not a valid property on event " . $this->getEventName());
             }
+
+            $this->$key = $value;
         }
     }
 
