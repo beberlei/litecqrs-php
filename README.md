@@ -138,3 +138,11 @@ Also to synchronize the events to event storage you can use the IdentityMapListe
 
 - LiteCQRS\Plugin\Doctrine\IdentityMapListener
 
+### Symfony
+
+Inside symfony you can use LiteCQRS by registering services with ``litecqrs.command_handler``
+or the ``litecqrs.event_handler`` tag. These services are then autodiscovered for commands
+and events.
+
+Container Aware implementations of ``CommandBus`` and ``EventMessageBus`` implement lazy loading
+of all command- and event handlers for performance.

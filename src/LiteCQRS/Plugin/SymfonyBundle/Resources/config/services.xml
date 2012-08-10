@@ -30,6 +30,13 @@
             <argument type="service" id="litecqrs.identity_map" />
             <argument type="service" id="litecqrs.proxy_factory" on-invalid="null" />
         </service>
+
+        <!-- extract to proper plugin file and loading -->
+        <service id="litecqrs.plugin.doctrine.identity_map_listener" class="LiteCQRS\Plugin\Doctrine\IdentityMapListener">
+            <argument type="service" id="litecqrs.identity_map" />
+
+            <tag name="doctrine.event_subscriber" />
+        <service>
     </services>
 </container>
 
