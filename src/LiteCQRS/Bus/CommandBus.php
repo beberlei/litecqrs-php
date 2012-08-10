@@ -20,6 +20,8 @@ abstract class CommandBus
     private $identityMap;
     private $proxyFactoy;
 
+    private $commandStack = array();
+
     public function __construct(EventStoreInterface $eventStore, IdentityMapInterface $identityMap = null, $proxyFactory = null)
     {
         $this->eventStore   = $eventStore;
@@ -38,23 +40,33 @@ abstract class CommandBus
 
     public function handle(Command $command)
     {
-        $type    = get_class($command);
-        $service = $this->getService($type);
-        $handler = new CommandInvocationHandler($service);
-        $handler = $this->proxyHandler($handler);
+        $this->commandStack[] = $command;
 
-        $this->eventStore->beginTransaction(); // clear exisiting events
+        if (count($this->commandStack) > 1) {
+            return;
+        }
 
-        try {
-            $handler->handle($command);
+        while ($command = array_shift($this->commandStack)) {
+            $type    = get_class($command);
+            $service = $this->getService($type);
+            $handler = new CommandInvocationHandler($service);
+            $handler = $this->proxyHandler($handler);
 
-            $this->passEventsToStore();
-            $this->eventStore->commit();
+            $this->eventStore->beginTransaction(); // clear exisiting events
 
-        } catch(\Exception $e) {
-            $this->eventStore->rollback();
+            try {
+                $handler->handle($command);
 
-            throw $e;
+                $this->passEventsToStore();
+                $this->eventStore->commit();
+
+            } catch(\Exception $e) {
+                $this->eventStore->rollback();
+
+                // TODO: Exception stacking and throwing after command stack is
+                // empty.
+                throw $e;
+            }
         }
     }
 

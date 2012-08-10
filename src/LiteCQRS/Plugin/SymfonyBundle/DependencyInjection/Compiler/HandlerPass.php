@@ -11,19 +11,19 @@ class HandlerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $services = array();
-        foreach ($container->findTaggedServiceIds('cqrs_lite.command_handler') as $id => $attributes) {
+        foreach ($container->findTaggedServiceIds('lite_cqrs.command_handler') as $id => $attributes) {
             $definition = $container->findDefinition($id);
             $class = $definition->getClass();
 
             $reflClass = new \ReflectionClass($class);
             foreach ($reflClass->getMethods() as $method) {
-                if ($method->getNumbersOfParameters() != 1) {
+                if ($method->getNumberOfParameters() != 1) {
                     continue;
                 }
 
                 $commandParam = current($method->getParameters());
 
-                if (!$commandParam->getClass() || !in_array('LiteCQRS\Command', class_implements($command->getClass()->getName()))) {
+                if (!$commandParam->getClass() || !in_array('LiteCQRS\Command', class_implements($commandParam->getClass()->getName()))) {
                     continue;
                 }
 
@@ -36,13 +36,13 @@ class HandlerPass implements CompilerPassInterface
         $commandBus->addMethodCall('registerServices', array($services));
 
         $services = array();
-        foreach ($container->findTaggedServiceIds('cqrs_lite.event_handler') as $id => $attributes) {
+        foreach ($container->findTaggedServiceIds('lite_cqrs.event_handler') as $id => $attributes) {
             $definition = $container->findDefinition($id);
             $class = $definition->getClass();
 
             $reflClass = new \ReflectionClass($class);
             foreach ($reflClass->getMethods() as $method) {
-                if ($method->getNumbersOfParameters() != 1) {
+                if ($method->getNumberOfParameters() != 1) {
                     continue;
                 }
 
