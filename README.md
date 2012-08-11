@@ -2,31 +2,67 @@
 
 Small convention based CQRS library for PHP (loosly based on [LiteCQRS for C#](https://github.com/danielwertheim/LiteCQRS)).
 
-Conventions are:
+## Conventions
 
-* All public methods of a command handler class are mapped to Commands "Command Class Shortname" => "MethodName", for example "MyLib\DoSomethingCommand" => "doSomething($command)"
-* Domain Events are applied on Entities/Aggregate Roots "Event Class Shortname" => "applyEventClassShortname", for example "MyLib\SomethingDoneEvent => "applySomethingDone($event)"
-* Domain Events are applied to Event Handlers "Event Class Shortname" => "onEventClassShortname", for example "MyLib\SomethingDoneEvent" => "onSomethingDone($event)"
-* As long as your events don't have listeners, you can also use the ``DomainObjectChanged`` Event. You can dynamically set the event name on it and exchange it with a real event implementation when it becomes necessary.
+* All public methods of a command handler class are mapped to Commands "Command Class Shortname" => "MethodName"
+* Domain Events are applied on Entities/Aggregate Roots "Event Class Shortname" => "applyEventClassShortname"
+* Domain Events are applied to Event Handlers "Event Class Shortname" => "onEventClassShortname"
+* You can use the ``DomainObjectChanged`` Event to avoid creating lots of event classes. You can dynamically set the event name on it and exchange it with a real event implementation when it becomes necessary.
+* Otherwise you can extend the ``DefaultDomainEvent`` which has a constructor that maps its array input to properties and throws an exception if an unknown property is passed.
+* There is also a ``DefaultCommand`` with the same semantics as ``DefaultDomainEvent``
+
+Examples:
+
+* ``HelloWorld\GreetingCommand`` maps to the ``greeing($command)`` method when found on any registered handler.
+* ``HelloWorld\GreetedEvent`` is delegated to ``applyGreeted($event)`` when created on the aggregate root
+* ``HelloWorld\GreetedEvent`` is passed to all event handlers that have a method ``onGreeted($event)``.
+* ``new DomainObjectChanged("Greeted", array("foo" => "bar"))`` is mapped to the "Greeted" event.
+
+## Installation & Requirements
+
+The core library has no dependencies on other libraries. Plugins have dependencies on their specific libraries.
+
+Install with [Composer](http://getcomposer.org):
+
+    {
+        "require": {
+            "beberlei/lite-cqrs"
+        }
+    }
 
 ## Workflow
 
-CQRS is an event driven architecture:
+CQRS is an asynchroneous/event driven architecture:
 
-1. You push commands into a ``CommandBus``. Commands are simple objects created by you.
-2. The ``CommandBus`` checks for a handler that can execute your command. Every command has exactly one handler.
-3. The command handler changes state of the domain model. It does that creating events (that represent state change)
-   and passing them to the ``AggregateRootInterface::apply()`` method of your domain objects.
-4. When the command finishes, the command bus will check all objects in the identity map for events.
-5. All events found will be passed to the ``EventStoreInterface``.
-6. The EventStore can save these events to a persistent storage.
-7. After storing all events, event handlers are triggered that listen to the domain events (Pub-Sub).
+1. You push commands into a ``CommandBus``. Commands are simple objects
+   extending ``Command`` created by you.
+2. The ``CommandBus`` checks for a handler that can execute your command. Every
+   command has exactly one handler.
+3. The command handler changes state of the domain model. It does that by
+   creating events (that represent state change) and passing them to the
+   ``AggregateRootInterface::apply()`` method of your domain objects.
+4. When the command is completed, the command bus will check all objects in the
+   identity map for events.
+5. All found events will be passed to the ``EventStoreInterface#add()`` method.
+6. The EventStore can save all events to a persistent storage.
+7. After storing all events, the event store triggers event handlers that
+   listen to the domain events (Pub-Sub).
+8. Event Handlers can create new commands again using the ``CommandBus``.
 
-Command execution should be wrapped in a transaction for example. The event triggering is not part
-of that transaction. If the command transaction fails, then the events are all dropped. No event listeners
-will be triggered in this case.
+Command execution should be wrapped in a transaction for example. The event
+triggering is not part of that transaction. If the command transaction fails,
+then the events are all dropped. No event handlers will be triggered in this
+case.
 
-## Setup (Simple Case)
+In the case of InMemory CommandBus and EventMessageBus LiteCQRS makes sure that
+the execution of command and event handlers is never nested, but linearized.
+This prevents transactions affecting each other.
+
+## Example
+
+See ``example/example1.php`` for a simple example.
+
+## Setup (Simple InMemory Case, no persistence)
 
 ```php
 <?php
@@ -116,10 +152,6 @@ $commandBus = new DirectCommandBus($eventStore, $identityMap, $proxyFactory);
 
 The same is possible for the ``EventMessageBus``.
 
-## Example
-
-See ``example/example1.php`` for a simple example.
-
 ## Extension Points
 
 You should implement your own ``CommandBus`` or extend the existing to wire the whole process together
@@ -145,4 +177,4 @@ or the ``litecqrs.event_handler`` tag. These services are then autodiscovered fo
 and events.
 
 Container Aware implementations of ``CommandBus`` and ``EventMessageBus`` implement lazy loading
-of all command- and event handlers for performance.
+of all command- and event handlers for better performance.
