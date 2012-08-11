@@ -164,12 +164,12 @@ exactly as you need it to work.
 
 Doctrine Plugin ships with transactional wrapper handlers for Commands and Events:
 
-- LiteCQRS\Plugin\Doctrine\MessageHandler\DbalTransactionalHandler
-- LiteCQRS\Plugin\Doctrine\MessageHandler\OrmTransactionalHandler
+- ``LiteCQRS\Plugin\Doctrine\MessageHandler\DbalTransactionalHandler``
+- ``LiteCQRS\Plugin\Doctrine\MessageHandler\OrmTransactionalHandler``
 
 Also to synchronize the events to event storage you can use the IdentityMapListener:
 
-- LiteCQRS\Plugin\Doctrine\IdentityMapListener
+- ``LiteCQRS\Plugin\Doctrine\IdentityMapListener``
 
 ### Symfony
 
@@ -179,3 +179,15 @@ and events.
 
 Container Aware implementations of ``CommandBus`` and ``EventMessageBus`` implement lazy loading
 of all command- and event handlers for better performance.
+
+### Swiftmailer
+
+The Swiftmailer Plugin allows you to defer the sending of mails until after a command or event
+handler has actually finished successfully.
+
+- ``LiteCQRS\Plugin\Swiftmailer\SpoolTransportHandler``
+
+You need a spool transport and a real transport instance for this. The Spool transport queues
+all messages and the transport handler sends all messages through the real transport, if the
+command/event handler was executed successfully.
+
