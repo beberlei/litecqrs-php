@@ -49,9 +49,10 @@ CQRS is an asynchroneous/event driven architecture:
    listen to the domain events (Pub-Sub).
 8. Event Handlers can create new commands again using the ``CommandBus``.
 
-Command execution should be wrapped in a transaction for example. The event
-triggering is not part of that transaction. If the command transaction fails,
-then the events are all dropped. No event handlers will be triggered in this
+Command and Event handler execution can be wrapped in handlers that manage
+transactions. Event store and event handling is outside of any command
+transaction. If the command fails with any exception all events created
+by the command are forgotten. No event handlers will be triggered in this
 case.
 
 In the case of InMemory CommandBus and EventMessageBus LiteCQRS makes sure that
