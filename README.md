@@ -178,8 +178,8 @@ the EntityManager:
 
 ### Symfony
 
-Inside symfony you can use LiteCQRS by registering services with ``litecqrs.command_handler``
-or the ``litecqrs.event_handler`` tag. These services are then autodiscovered for commands
+Inside symfony you can use LiteCQRS by registering services with ``lite_cqrs.command_handler``
+or the ``lite_cqrs.event_handler`` tag. These services are then autodiscovered for commands
 and events.
 
 Container Aware implementations of ``CommandBus`` and ``EventMessageBus`` implement lazy loading
@@ -199,7 +199,7 @@ command/event handler was executed successfully.
 ### CRUD
 
 Using ``AggregateResource`` abstract class or the ``CrudCreatable``, ``CrudUpdatable`` and
-``CrudDeletable`` you can implememnt CRUD functionality. This is possible to three commands:
+``CrudDeletable`` traits you can implememnt CRUD functionality. This is possible to three commands:
 
 - ``LiteCQRS\Plugin\CRUD\Model\Commands\CreateResourceCommand``
 - ``LiteCQRS\Plugin\CRUD\Model\Commands\UpdateResourceCommand``
