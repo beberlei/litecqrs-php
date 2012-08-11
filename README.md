@@ -171,6 +171,11 @@ Also to synchronize the events to event storage you can use the IdentityMapListe
 
 - ``LiteCQRS\Plugin\Doctrine\IdentityMapListener``
 
+It also ships with an implementation of ``AggregateRepositoryInterface`` wrapping
+the EntityManager:
+
+- ``LiteCQRS\Plugin\Doctrine\ORMRepository``
+
 ### Symfony
 
 Inside symfony you can use LiteCQRS by registering services with ``litecqrs.command_handler``
@@ -190,4 +195,24 @@ handler has actually finished successfully.
 You need a spool transport and a real transport instance for this. The Spool transport queues
 all messages and the transport handler sends all messages through the real transport, if the
 command/event handler was executed successfully.
+
+### CRUD
+
+Using ``AggregateResource`` abstract class or the ``CrudCreatable``, ``CrudUpdatable`` and
+``CrudDeletable`` you can implememnt CRUD functionality. This is possible to three commands:
+
+- ``LiteCQRS\Plugin\CRUD\Model\Commands\CreateResourceCommand``
+- ``LiteCQRS\Plugin\CRUD\Model\Commands\UpdateResourceCommand``
+- ``LiteCQRS\Plugin\CRUD\Model\Commands\DeleteResourceCommand``
+
+They have ``$class``, ``$id`` and ``$data`` properties. On the Create and Update commands,
+the ```$data`` is applied to the model using mass assignment. You have to make sure
+this is a safe operation for your models by implementing the ``apply*()`` methods yourself
+instead of relying on the mass assignment.
+
+After processing one of the following three domain events is emitted:
+
+- ``LiteCQRS\Plugin\CRUD\Model\Events\ResourceCreatedEvent``
+- ``LiteCQRS\Plugin\CRUD\Model\Events\ResourceUpdatedEvent``
+- ``LiteCQRS\Plugin\CRUD\Model\Events\ResourceDeletedEvent``
 
