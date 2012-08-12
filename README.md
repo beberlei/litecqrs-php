@@ -1,19 +1,31 @@
 # LiteCQRS for PHP
 
-Small convention based CQRS library for PHP (loosly based on [LiteCQRS for C#](https://github.com/danielwertheim/LiteCQRS)).
+Small convention based CQRS + Event Sourcing library for PHP (loosly based on
+[LiteCQRS for C#](https://github.com/danielwertheim/LiteCQRS)).  If you want to
+use CQRS without event sourcing, this might already be too big for you,
+although you can take some of the parts (CommandBus) in isolation to implement
+a sole CQRS solution.
 
 ## Conventions
 
-* All public methods of a command handler class are mapped to Commands "Command Class Shortname" => "MethodName"
-* Domain Events are applied on Entities/Aggregate Roots "Event Class Shortname" => "applyEventClassShortname"
-* Domain Events are applied to Event Handlers "Event Class Shortname" => "onEventClassShortname"
-* You can use the ``DomainObjectChanged`` Event to avoid creating lots of event classes. You can dynamically set the event name on it and exchange it with a real event implementation when it becomes necessary.
-* Otherwise you can extend the ``DefaultDomainEvent`` which has a constructor that maps its array input to properties and throws an exception if an unknown property is passed.
-* There is also a ``DefaultCommand`` with the same semantics as ``DefaultDomainEvent``
+* All public methods of a command handler class are mapped to Commands "Command
+  Class Shortname" => "MethodName"
+* Domain Events are applied on Entities/Aggregate Roots "Event Class Shortname"
+  => "applyEventClassShortname"
+* Domain Events are applied to Event Handlers "Event Class Shortname" =>
+  "onEventClassShortname"
+* You can use the ``DomainObjectChanged`` Event to avoid creating lots of event
+  classes. You can dynamically set the event name on it and exchange it with a
+  real event implementation when it becomes necessary.
+* Otherwise you can extend the ``DefaultDomainEvent`` which has a constructor
+  that maps its array input to properties and throws an exception if an unknown
+  property is passed.
+* There is also a ``DefaultCommand`` with the same semantics as
+  ``DefaultDomainEvent``
 
 Examples:
 
-* ``HelloWorld\GreetingCommand`` maps to the ``greeing($command)`` method when found on any registered handler.
+* ``HelloWorld\GreetingCommand`` maps to the ``greeting($command)`` method when found on any registered handler.
 * ``HelloWorld\GreetedEvent`` is delegated to ``applyGreeted($event)`` when created on the aggregate root
 * ``HelloWorld\GreetedEvent`` is passed to all event handlers that have a method ``onGreeted($event)``.
 * ``new DomainObjectChanged("Greeted", array("foo" => "bar"))`` is mapped to the "Greeted" event.
