@@ -5,6 +5,7 @@ namespace LiteCQRS\Bus;
 use LiteCQRS\Command;
 use LiteCQRS\EventStore\EventStoreInterface;
 use LiteCQRS\EventStore\IdentityMapInterface;
+use LiteCQRS\EventStore\EventStoreHandler;
 
 /**
  * Command Bus accepts commands and finds the appropriate
@@ -52,33 +53,10 @@ abstract class CommandBus
             $handler = new CommandInvocationHandler($service);
             $handler = $this->proxyHandler($handler);
 
-            $this->eventStore->beginTransaction(); // clear exisiting events
-
             try {
                 $handler->handle($command);
-
-                $this->passEventsToStore();
-                $this->eventStore->commit();
-
             } catch(\Exception $e) {
-                $this->eventStore->rollback();
-
-                // TODO: Exception stacking and throwing after command stack is
-                // empty.
                 throw $e;
-            }
-        }
-    }
-
-    protected function passEventsToStore()
-    {
-        if (!$this->identityMap) {
-            return;
-        }
-
-        foreach ($this->identityMap->all() as $aggregateRoot) {
-            foreach ($aggregateRoot->popAppliedEvents() as $event) {
-                $this->eventStore->add($event);
             }
         }
     }
@@ -86,7 +64,9 @@ abstract class CommandBus
     protected function proxyHandler($handler)
     {
         $proxyFactory = $this->proxyFactory;
-        return $proxyFactory($handler);
+        $handler = $proxyFactory($handler);
+
+        return new EventStoreHandler($handler, $this->eventStore, $this->identityMap);
     }
 }
 
