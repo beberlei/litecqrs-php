@@ -40,6 +40,15 @@ abstract class SequentialCommandBus implements CommandBus
      */
     abstract protected function getService($commandType);
 
+    /**
+     * Sequentially execute commands
+     *
+     * If an exception occurs in any command it will be put on a stack
+     * of exceptions that is thrown only when all the commands are processed.
+     *
+     * @param Command $command
+     * @throws CommandFailedStackException
+     */
     public function handle(Command $command)
     {
         $this->commandStack[] = $command;
@@ -47,6 +56,8 @@ abstract class SequentialCommandBus implements CommandBus
         if (count($this->commandStack) > 1) {
             return;
         }
+
+        $exceptions = array();
 
         while ($command = array_shift($this->commandStack)) {
             $type    = get_class($command);
@@ -57,8 +68,12 @@ abstract class SequentialCommandBus implements CommandBus
             try {
                 $handler->handle($command);
             } catch(\Exception $e) {
-                throw $e;
+                $exceptions[] = array('ex' => $e, 'command' => $command);
             }
+        }
+
+        if ($exceptions) {
+            throw new CommandFailedStackException($exceptions);
         }
     }
 
