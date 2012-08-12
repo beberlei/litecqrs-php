@@ -10,6 +10,16 @@ class HandlerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        $definition = $container->findDefinition('command_bus');
+        $args       = $definition->getArguments();
+        $args[1]    = $this->getProxyFactories('lite_cqrs.command_proxy_factory');
+        $definition->setArguments($args);
+
+        $definition = $container->findDefinition('litecqrs.event_message_bus');
+        $args       = $definition->getArguments();
+        $args[1]    = $this->getProxyFactories('lite_cqrs.event_proxy_factory');
+        $definition->setArguments($args);
+
         $services = array();
         foreach ($container->findTaggedServiceIds('lite_cqrs.command_handler') as $id => $attributes) {
             $definition = $container->findDefinition($id);
@@ -63,6 +73,29 @@ class HandlerPass implements CompilerPassInterface
 
         $messageBus = $container->findDefinition('litecqrs.event_message_bus');
         $messageBus->addMethodCall('registerServices', array($services));
+    }
+
+    private function getProxyFactories($container, $tag)
+    {
+        $services = array();
+        foreach ($container->findTaggedServiceIds($tag) as $id => $attributes) {
+            if (!isset($attributes['priority'])) {
+                $attributes['priority'] = 0;
+            }
+            if (!isset($services[$attributes['priority']])) {
+                $services[$attributes['priority']] = array();
+            }
+            $services[$attributes['priority']][] = new Reference($id);
+        }
+
+        $flat = array();
+        foreach (array_reverse($flag) as $services) {
+            foreach ($services as $service) {
+                $flat[] = $service;
+            }
+        }
+
+        return $flat;
     }
 }
 

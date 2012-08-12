@@ -3,31 +3,28 @@
 namespace LiteCQRS\Bus;
 
 use LiteCQRS\Command;
-use LiteCQRS\EventStore\EventStoreInterface;
-use LiteCQRS\EventStore\IdentityMapInterface;
-use LiteCQRS\EventStore\EventStoreHandler;
 
 /**
- * Command Bus accepts commands and finds the appropriate
- * handler to execute it.
+ * Process Commands and pass them to their handlers.
  *
- * Execution of commands is wrapped into a UnitOfWork
- * transaction of the event storage. Events are only
- * published, if the command execution was succesful.
+ * Any command handler execution can be wrapped by additional handlers to form
+ * a chain of responsibility. To control this process you can pass an array of
+ * proxy factories into the CommandBus. The factories are iterated in REVERSE
+ * order and get passed the current handler to stack the chain of
+ * responsibility. That means the proxy factory registered FIRST is the one
+ * that wraps itself around the previous handlers LAST.
  */
 abstract class CommandBus
 {
-    private $eventStore;
-    private $identityMap;
-    private $proxyFactoy;
-
+    /**
+     * @var callable[]
+     */
+    private $proxyFactories;
     private $commandStack = array();
 
-    public function __construct(EventStoreInterface $eventStore, IdentityMapInterface $identityMap = null, $proxyFactory = null)
+    public function __construct(array $proxyFactories = array())
     {
-        $this->eventStore   = $eventStore;
-        $this->identityMap  = $identityMap;
-        $this->proxyFactory = $proxyFactory ?: function($service) { return $service; };
+        $this->proxyFactories = $proxyFactories;
     }
 
     /**
@@ -63,10 +60,10 @@ abstract class CommandBus
 
     protected function proxyHandler($handler)
     {
-        $proxyFactory = $this->proxyFactory;
-        $handler = $proxyFactory($handler);
-
-        return new EventStoreHandler($handler, $this->eventStore, $this->identityMap);
+        foreach (array_reverse($this->proxyFactories) as $proxyFactory) {
+            $handler = $proxyFactory($handler);
+        }
+        return $handler;
     }
 }
 

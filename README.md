@@ -75,7 +75,19 @@ This prevents transactions affecting each other.
 
 See ``example/example1.php`` for a simple example.
 
-## Setup (Simple InMemory Case, no persistence)
+## Setup
+
+1. In Memory Command Handlers, No EventStore and Event Message Handling
+
+```php
+<?php
+$userService = new UserService();
+
+$commandBus = new DirectCommandBus()
+$commandBus->register('MyApp\ChangeEmailCommand', $userService);
+```
+
+2. In Memory Commands and Events, with Event Store
 
 ```php
 <?php
@@ -83,7 +95,9 @@ See ``example/example1.php`` for a simple example.
 $messageBus = new InMemoryEventMessageBus();
 $eventStore = new InMemoryEventStore($messageBus);
 $identityMap = new SimpleIdentityMap();
-$commandBus = new DirectCommandBus($eventStore, $identityMap);
+$commandBus = new DirectCommandBus(array(
+    new EventStoreHandlerFactory($eventStore, $identityMap)
+));
 
 // 2. Register a command service and an event handler
 $userService = new UserService($identityMap);
@@ -190,12 +204,16 @@ the EntityManager:
 
 ### Symfony
 
-Inside symfony you can use LiteCQRS by registering services with ``lite_cqrs.command_handler``
-or the ``lite_cqrs.event_handler`` tag. These services are then autodiscovered for commands
-and events.
+Inside symfony you can use LiteCQRS by registering services with
+``lite_cqrs.command_handler`` or the ``lite_cqrs.event_handler`` tag. These
+services are then autodiscovered for commands and events. You can also add
+proxy message handler factories for tags. For both commands and events the tags
+are ``lite_cqrs.event_proxy_factory`` and ``lite_cqrs.command_proxy_factory``
+respectively.
 
-Container Aware implementations of ``CommandBus`` and ``EventMessageBus`` implement lazy loading
-of all command- and event handlers for better performance.
+Container Aware implementations of ``CommandBus`` and ``EventMessageBus``
+implement lazy loading of all command- and event handlers for better
+performance.
 
 ### Swiftmailer
 
@@ -209,6 +227,10 @@ all messages and the transport handler sends all messages through the real trans
 command/event handler was executed successfully.
 
 ### CRUD
+
+While normally CRUD and CQRS don't match, if you use Doctrine as a primary data-source in the
+write model then with PHPs dynamic capabilities, you can decently do CRUD with LiteCQRS and
+this plugin.
 
 Using ``AggregateResource`` abstract class or the ``CrudCreatable``, ``CrudUpdatable`` and
 ``CrudDeletable`` traits you can implememnt CRUD functionality. This is possible to three commands:

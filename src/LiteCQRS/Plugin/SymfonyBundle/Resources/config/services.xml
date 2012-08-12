@@ -9,12 +9,13 @@
         <parameter key="litecqrs.event_store.class">LiteCQRS\EventStore\InMemoryEventStore</parameter>
         <parameter key="litecqrs.identity_map.class">LiteCQRS\EventStore\SimpleIdentityMap</parameter>
         <parameter key="litecqrs.command_bus.class">LiteCQRS\Plugin\SymfonyBundle\ContainerCommandBus</parameter>
+        <parameter key="litecqrs.event_store_handler_factory.class">LiteCQRS\EventStore\EventStoreHandlerFactory</parameter>
     </parameters>
 
     <services>
         <service id="litecqrs.event_message_bus" class="%litecqrs.event_message_bus.class%" public="false">
             <argument type="service" id="service_container" />
-            <argument type="service" id="litecqrs.proxy_factory" on-invalid="null" />
+            <argument type="collection" />
         </service>
 
         <service id="litecqrs.event_store" class="%litecqrs.event_store.class%" public="false">
@@ -24,11 +25,15 @@
         <service id="litecqrs.identity_map" class="%litecqrs.identity_map.class%" public="false">
         </service>
 
-        <service id="command_bus" class="%litecqrs.command_bus.class%">
-            <argument type="service" id="service_container" />
+        <service id="litecqrs.event_store_handler_factory" class="%litecqrs.event_store_handler_factory.class%">
             <argument type="service" id="litecqrs.event_store" />
             <argument type="service" id="litecqrs.identity_map" />
-            <argument type="service" id="litecqrs.proxy_factory" on-invalid="null" />
+            <tag name="lite_cqrs.command_proxy_factory" priority="255" />
+        </service>
+
+        <service id="command_bus" class="%litecqrs.command_bus.class%">
+            <argument type="service" id="service_container" />
+            <argument type="collection" />
         </service>
 
         <!-- extract to proper plugin file and loading -->

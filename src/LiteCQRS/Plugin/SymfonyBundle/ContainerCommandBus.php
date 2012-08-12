@@ -3,8 +3,6 @@
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
 use LiteCQRS\Bus\CommandBus;
-use LiteCQRS\EventStore\IdentityMapInterface;
-use LiteCQRS\EventStore\EventStoreInterface;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -13,9 +11,9 @@ class ContainerCommandBus extends CommandBus
     private $container;
     private $commandServices;
 
-    public function __construct(ContainerInterface $container, EventStoreInterface $eventStore, IdentityMapInterface $identityMap = null, $proxyFactory = null)
+    public function __construct(ContainerInterface $container, array $proxyFactories = array())
     {
-        parent::__construct($eventStore, $identityMap);
+        parent::__construct($proxyFactories);
         $this->container = $container;
     }
 
