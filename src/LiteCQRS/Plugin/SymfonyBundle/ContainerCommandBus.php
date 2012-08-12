@@ -6,7 +6,7 @@ use LiteCQRS\Bus\CommandBus;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ContainerCommandBus extends CommandBus
+class ContainerCommandBus extends SequentialCommandBus
 {
     private $container;
     private $commandServices;

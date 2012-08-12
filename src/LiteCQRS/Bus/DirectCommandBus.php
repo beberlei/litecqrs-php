@@ -1,7 +1,7 @@
 <?php
 namespace LiteCQRS\Bus;
 
-class DirectCommandBus extends CommandBus
+class DirectCommandBus extends SequentialCommandBus
 {
     private $handlers = array();
 
