@@ -2,6 +2,9 @@
 
 namespace LiteCQRS\Plugin\Swiftmailer;
 
+use Swift_Transport_SpoolTransport;
+use Swift_Transport;
+
 class SpoolHandlerFactory
 {
     private $spoolTransport;
