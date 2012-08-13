@@ -54,7 +54,7 @@
 
         <service id="litecqrs.plugin.crud_helper" class="LiteCQRS\Plugin\SymfonyBundle\Controller\CRUDHelper">
             <argument type="service" id="command_bus" />
-            <argument type="service" id="form_factory" />
+            <argument type="service" id="form.factory" />
         </service>
 
         <service id="litecqrs.plugin.crud_command_handler" class="LiteCQRS\Plugin\CRUD\CRUDCommandService">

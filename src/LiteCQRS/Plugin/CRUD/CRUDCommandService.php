@@ -2,6 +2,7 @@
 
 namespace LiteCQRS\Plugin\CRUD;
 
+use LiteCQRS\AggregateRepositoryInterface;
 use LiteCQRS\Plugin\CRUD\Model\Commands\CreateResourceCommand;
 use LiteCQRS\Plugin\CRUD\Model\Commands\UpdateResourceCommand;
 use LiteCQRS\Plugin\CRUD\Model\Commands\DeleteResourceCommand;

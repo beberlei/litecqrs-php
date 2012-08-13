@@ -12,12 +12,12 @@ class HandlerPass implements CompilerPassInterface
     {
         $definition = $container->findDefinition('command_bus');
         $args       = $definition->getArguments();
-        $args[1]    = $this->getProxyFactories('lite_cqrs.command_proxy_factory');
+        $args[1]    = $this->getProxyFactories($container, 'lite_cqrs.command_proxy_factory');
         $definition->setArguments($args);
 
         $definition = $container->findDefinition('litecqrs.event_message_bus');
         $args       = $definition->getArguments();
-        $args[1]    = $this->getProxyFactories('lite_cqrs.event_proxy_factory');
+        $args[1]    = $this->getProxyFactories($container, 'lite_cqrs.event_proxy_factory');
         $definition->setArguments($args);
 
         $services = array();
@@ -89,8 +89,8 @@ class HandlerPass implements CompilerPassInterface
         }
 
         $flat = array();
-        foreach (array_reverse($flag) as $services) {
-            foreach ($services as $service) {
+        foreach (array_reverse($services) as $s) {
+            foreach ($s as $service) {
                 $flat[] = $service;
             }
         }
