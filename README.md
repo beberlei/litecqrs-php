@@ -44,7 +44,7 @@ Install with [Composer](http://getcomposer.org):
 
 ## Workflow
 
-CQRS is an asynchroneous/event driven architecture:
+These are the steps that a command regularly takes through the LiteCQRS stack during execution:
 
 1. You push commands into a ``CommandBus``. Commands are simple objects
    extending ``Command`` created by you.
@@ -111,9 +111,9 @@ $messageBus->register($someEventHandler);
 
 ### To implement a Use Case of your application
 
-1. Create a command object that recieves all the necessary input values. Use public properties to simplify.
-2. Add a new command handler method on any of your services
-3. Register the command handler to handle the given command.
+1. Create a command object that recieves all the necessary input values. Use public properties to and extend ``LiteCQRS\DefaultCommand`` simplify.
+2. Add a new method with the name of the command to any of your services (command handler)
+3. Register the command handler to handle the given command on the CommandBus.
 4. Use the `DomainObjectChanged`` event to change the state of your domain objects.
 
 That is all there is for simple use-cases. If you use the ``DomainObjectChanged`` event instead of writing
