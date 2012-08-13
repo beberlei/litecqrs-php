@@ -56,6 +56,12 @@
             <tag name="lite_cqrs.command_handler" />
             <argument type="service" id="litecqrs.repository" />
         </service>
+
+        <service id="litecqrs.plugin.monolog.logger_factory" class="LiteCQRS\Plugin\Monolog\MonologLoggerFactory">
+            <argument type="service" id="logger" />
+            <tag name="lite_cqrs.command_proxy_factory" />
+            <tag name="lite_cqrs.event_proxy_factory" />
+        </service>
     </services>
 </container>
 

@@ -226,6 +226,12 @@ You need a spool transport and a real transport instance for this. The Spool tra
 all messages and the transport handler sends all messages through the real transport, if the
 command/event handler was executed successfully.
 
+### Monolog
+
+A plugin that logs the execution of every command and handler using
+[Monolog](https://github.com/Seldaek/monolog).  It includes the type and name
+of the message, its parameters as json and if its execution succeeded or failed.
+
 ### CRUD
 
 While normally CRUD and CQRS don't match, if you use Doctrine as a primary data-source in the
