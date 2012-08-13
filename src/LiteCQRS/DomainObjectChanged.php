@@ -1,5 +1,8 @@
 <?php
 namespace LiteCQRS;
+
+use LiteCQRS\Bus\EventMessageHeader;
+
 /**
  * Generic event that can be used when lazy.
  *
@@ -9,6 +12,11 @@ namespace LiteCQRS;
  */
 class DomainObjectChanged implements DomainEvent
 {
+    /**
+     * @var MessageHeader
+     */
+    private $messageHeader;
+
     private $eventName;
 
     public function __construct($eventName, array $args)
@@ -17,6 +25,7 @@ class DomainObjectChanged implements DomainEvent
         foreach ($args as $property => $value) {
             $this->$property = $value;
         }
+        $this->messageHeader = new EventMessageHeader();
     }
 
     public function getEventName()
@@ -30,6 +39,16 @@ class DomainObjectChanged implements DomainEvent
             return $this->$name;
         }
         return null;
+    }
+
+    public function getMessageHeader()
+    {
+        return $this->messageHeader;
+    }
+
+    public function getAggregateId()
+    {
+        return $this->messageHeader->getAggregateId();
     }
 }
 

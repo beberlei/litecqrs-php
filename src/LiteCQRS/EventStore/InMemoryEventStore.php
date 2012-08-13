@@ -12,9 +12,9 @@ use LiteCQRS\DomainEvent;
  */
 class InMemoryEventStore implements EventStoreInterface
 {
-    private $events          = array();
-    private $seenEvents;
-    private $eventMessageBus;
+    protected $events          = array();
+    protected $seenEvents;
+    protected $eventMessageBus;
 
     public function __construct(EventMessageBus $messageBus)
     {
@@ -47,12 +47,17 @@ class InMemoryEventStore implements EventStoreInterface
 
     public function commit()
     {
-        $events = $this->events;
+        $events = $this->sort($this->events);
         $this->events = array();
 
         foreach ($events as $event) {
             $this->eventMessageBus->handle($event);
         }
+    }
+
+    protected function sort($events)
+    {
+        return $events;
     }
 }
 

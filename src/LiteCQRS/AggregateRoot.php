@@ -27,6 +27,7 @@ abstract class AggregateRoot implements AggregateRootInterface
 
     protected function apply(DomainEvent $event)
     {
+        $event->getMessageHeader()->setAggregate($this);
         $this->executeEvent($event);
         $this->appliedEvents[] = $event;
     }

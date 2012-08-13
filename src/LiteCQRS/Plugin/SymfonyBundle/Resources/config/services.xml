@@ -6,8 +6,8 @@
     <parameters>
         <parameter key="litecqrs.event_message_bus.class">LiteCQRS\Plugin\SymfonyBundle\ContainerEventBus</parameter>
         <parameter key="litecqrs.command_bus.class">LiteCQRS\Bus\DirectCommandBus</parameter>
-        <parameter key="litecqrs.event_store.class">LiteCQRS\EventStore\InMemoryEventStore</parameter>
-        <parameter key="litecqrs.identity_map.class">LiteCQRS\EventStore\SimpleIdentityMap</parameter>
+        <parameter key="litecqrs.event_store.class">LiteCQRS\EventStore\OrderedInMemoryEventStore</parameter>
+        <parameter key="litecqrs.identity_map.class">LiteCQRS\Plugin\Doctrine\DoctrineIdentityMap</parameter>
         <parameter key="litecqrs.command_bus.class">LiteCQRS\Plugin\SymfonyBundle\ContainerCommandBus</parameter>
         <parameter key="litecqrs.event_store_handler_factory.class">LiteCQRS\EventStore\EventStoreHandlerFactory</parameter>
     </parameters>
@@ -23,6 +23,7 @@
         </service>
 
         <service id="litecqrs.identity_map" class="%litecqrs.identity_map.class%" public="false">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
         </service>
 
         <service id="litecqrs.event_store_handler_factory" class="%litecqrs.event_store_handler_factory.class%">
@@ -37,12 +38,6 @@
         </service>
 
         <!-- extract to proper plugin file and loading -->
-        <service id="litecqrs.plugin.doctrine.identity_map_listener" class="LiteCQRS\Plugin\Doctrine\IdentityMapListener">
-            <argument type="service" id="litecqrs.identity_map" />
-
-            <tag name="doctrine.event_subscriber" />
-        </service>
-
         <service id="litecqrs.plugin.doctrine.orm_handler_factory" class="LiteCQRS\Plugin\Doctrine\OrmHandlerFactory">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <tag name="lite_cqrs.command_proxy_factory" priority="20" />

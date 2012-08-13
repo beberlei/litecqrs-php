@@ -49,7 +49,13 @@ class EventStoreHandler implements MessageHandlerInterface
         }
 
         foreach ($this->identityMap->all() as $aggregateRoot) {
+            $id = $this->identityMap->getAggregateId($aggregateRoot);
             foreach ($aggregateRoot->popAppliedEvents() as $event) {
+                $header = $event->getMessageHeader();
+                $header->aggregateType = get_class($aggregateRoot);
+                $header->aggregateId   = $id;
+                $header->setAggregate(null);
+
                 $this->eventStore->add($event);
             }
         }

@@ -1,8 +1,15 @@
 <?php
 namespace LiteCQRS;
 
+use LiteCQRS\Bus\EventMessageHeader;
+
 abstract class DefaultDomainEvent implements DomainEvent
 {
+    /**
+     * @var MessageHeader
+     */
+    private $messageHeader;
+
     public function __construct(array $data = array())
     {
         foreach ($data as $key => $value) {
@@ -12,6 +19,7 @@ abstract class DefaultDomainEvent implements DomainEvent
 
             $this->$key = $value;
         }
+        $this->messageHeader = new EventMessageHeader();
     }
 
     public function getEventName()
@@ -28,6 +36,16 @@ abstract class DefaultDomainEvent implements DomainEvent
 
         $parts = explode("\\", $class);
         return end($parts);
+    }
+
+    public function getMessageHeader()
+    {
+        return $this->messageHeader;
+    }
+
+    public function getAggregateId()
+    {
+        return $this->messageHeader->getAggregateId();
     }
 }
 

@@ -15,5 +15,6 @@ interface IdentityMapInterface
 {
     public function add(AggregateRootInterface $object);
     public function all();
+    public function getAggregateId(AggregateRootInterface $object);
 }
 

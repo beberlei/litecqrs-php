@@ -7,6 +7,7 @@ use LiteCQRS\AggregateRootInterface;
 class SimpleIdentityMap implements IdentityMapInterface
 {
     private $map = array();
+
     public function add(AggregateRootInterface $object)
     {
         $this->map[spl_object_hash($object)] = $object;
@@ -14,6 +15,10 @@ class SimpleIdentityMap implements IdentityMapInterface
     public function all()
     {
         return array_values($this->map);
+    }
+    public function getAggregateId(AggregateRootInterface $object)
+    {
+        return null;
     }
 }
 
