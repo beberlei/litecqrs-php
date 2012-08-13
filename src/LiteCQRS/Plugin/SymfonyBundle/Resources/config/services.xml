@@ -45,11 +45,11 @@
 
         <service id="litecqrs.plugin.doctrine.orm_handler_factory" class="liteCQRS\Plugin\Doctrine\OrmHandlerFactory">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <tag name="lite_cqrs.command_proxy_factory" />
         </service>
 
         <service id="litecqrs.repository" class="LiteCQRS\Plugin\Doctrine\ORMRepository">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <tag name="lite_cqrs.command_proxy_factory" />
         </service>
 
         <service id="litecqrs.plugin.crud_helper" class="LiteCQRS\Plugin\SymfonyBundle\Controller\CRUDHelper">
