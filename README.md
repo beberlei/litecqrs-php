@@ -171,10 +171,10 @@ And register:
 
 ```php
 <?php
-$proxyFactory = function($handler) {
+$loggerProxyFactory = function($handler) {
     return new CommandLogger($handler);
 };
-$commandBus = new DirectCommandBus($eventStore, $identityMap, $proxyFactory);
+$commandBus = new DirectCommandBus(array($loggerProxyFactory));
 ```
 
 The same is possible for the ``EventMessageBus``.

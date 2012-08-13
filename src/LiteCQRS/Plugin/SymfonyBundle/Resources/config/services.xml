@@ -67,6 +67,11 @@
             <tag name="lite_cqrs.command_proxy_factory" />
             <tag name="lite_cqrs.event_proxy_factory" />
         </service>
+
+        <!--<service id="litecqrs.plugin.swiftmailer.spool_factory" class="LiteCQRS\Plugin\Swiftmailer\SpoolHandlerFactory">
+            <tag name="lite_cqrs.command_proxy_factory" />
+            <tag name="lite_cqrs.event_proxy_factory" />
+        </service>-->
     </services>
 </container>
 
