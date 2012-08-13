@@ -45,7 +45,7 @@ abstract class DefaultDomainEvent implements DomainEvent
 
     public function getAggregateId()
     {
-        return $this->messageHeader->getAggregateId();
+        return $this->messageHeader->aggregateId;
     }
 }
 
