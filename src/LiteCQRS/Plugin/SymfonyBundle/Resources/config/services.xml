@@ -45,7 +45,7 @@
 
         <service id="litecqrs.plugin.doctrine.orm_handler_factory" class="liteCQRS\Plugin\Doctrine\OrmHandlerFactory">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <tag name="lite_cqrs.command_proxy_factory" />
+            <tag name="lite_cqrs.command_proxy_factory" priority="20" />
         </service>
 
         <service id="litecqrs.repository" class="LiteCQRS\Plugin\Doctrine\ORMRepository">
@@ -64,14 +64,16 @@
 
         <service id="litecqrs.plugin.monolog.logger_factory" class="LiteCQRS\Plugin\Monolog\MonologLoggerFactory">
             <argument type="service" id="logger" />
-            <tag name="lite_cqrs.command_proxy_factory" />
-            <tag name="lite_cqrs.event_proxy_factory" />
+            <tag name="lite_cqrs.command_proxy_factory" priority="256" />
+            <tag name="lite_cqrs.event_proxy_factory" priority="256" />
         </service>
 
-        <!--<service id="litecqrs.plugin.swiftmailer.spool_factory" class="LiteCQRS\Plugin\Swiftmailer\SpoolHandlerFactory">
-            <tag name="lite_cqrs.command_proxy_factory" />
-            <tag name="lite_cqrs.event_proxy_factory" />
-        </service>-->
+        <service id="litecqrs.plugin.swiftmailer.spool_factory" class="LiteCQRS\Plugin\Swiftmailer\SpoolHandlerFactory">
+            <argument type="service" id="swiftmailer.transport" />
+            <argument type="service" id="swiftmailer.transport.real" />
+            <tag name="lite_cqrs.command_proxy_factory" priority="25" />
+            <tag name="lite_cqrs.event_proxy_factory" priority="25"  />
+        </service>
     </services>
 </container>
 
