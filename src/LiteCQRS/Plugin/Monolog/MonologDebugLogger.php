@@ -28,7 +28,7 @@ class MonologDebugLogger implements MessageHandlerInterface
     public function handle(MessageInterface $message)
     {
         if ($message instanceof Command) {
-            $parts = explode("\\", $message);
+            $parts = explode("\\", get_class($message));
             $log = "Command[%s]: " . end($parts) . ": " . json_encode($message);
         } else if ($message instanceof DomainEvent) {
             $log = "Event[%s]: " . $message->getEventName() . ": " . json_encode($message);

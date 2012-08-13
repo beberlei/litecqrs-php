@@ -4,7 +4,7 @@ namespace LiteCQRS\Plugin\SymfonyBundle;
 
 use LiteCQRS\Bus\EventMessageBus;
 use LiteCQRS\DomainEvent;
-use LIteCQRS\Bus\EventInvocationHandler;
+use LiteCQRS\Bus\EventInvocationHandler;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -14,11 +14,12 @@ class ContainerEventBus implements EventMessageBus
 {
     private $container;
     private $services;
+    private $proxyFactories;
 
-    public function __construct(ContainerInterface $container, $proxyFactory = null)
+    public function __construct(ContainerInterface $container, array $proxyFactories = array())
     {
         $this->container = $container;
-        $this->proxyFactory = $proxyFactory ?: function($handler) { return $handler; };
+        $this->proxyFactories = $proxyFactories;
     }
 
     public function handle(DomainEvent $event)
@@ -30,8 +31,9 @@ class ContainerEventBus implements EventMessageBus
             try {
                 $handler      = new EventInvocationHandler($service);
 
-                $proxyFactory = $this->proxyFactory;
-                $handler      = $proxyFactory($handler);
+                foreach ($this->proxyFactories as $proxyFactory) {
+                    $handler = $proxyFactory($handler);
+                }
 
                 $handler->handle($event);
             } catch(Exception $e) {

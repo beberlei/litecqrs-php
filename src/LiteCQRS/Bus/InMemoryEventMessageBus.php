@@ -21,11 +21,11 @@ use Exception;
 class InMemoryEventMessageBus implements EventMessageBus
 {
     private $handlers = array();
-    private $proxyFactory;
+    private $proxyFactories;
 
-    public function __construct($proxyFactory = null)
+    public function __construct(array $proxyFactories = array())
     {
-        $this->proxyFactory = $proxyFactory ?: function($handler) { return $handler; };
+        $this->proxyFactories = $proxyFactories;
     }
 
     public function handle(DomainEvent $event)
@@ -37,8 +37,9 @@ class InMemoryEventMessageBus implements EventMessageBus
             try {
                 $handler      = new EventInvocationHandler($service);
 
-                $proxyFactory = $this->proxyFactory;
-                $handler      = $proxyFactory($handler);
+                foreach ($this->proxyFactories as $proxyFactory) {
+                    $handler = $proxyFactory($handler);
+                }
 
                 $handler->handle($event);
             } catch(Exception $e) {

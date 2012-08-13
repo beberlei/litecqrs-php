@@ -25,6 +25,7 @@ abstract class SequentialCommandBus implements CommandBus
      */
     private $proxyFactories;
     private $commandStack = array();
+    private $executing = false;
 
     public function __construct(array $proxyFactories = array())
     {
@@ -53,23 +54,26 @@ abstract class SequentialCommandBus implements CommandBus
     {
         $this->commandStack[] = $command;
 
-        if (count($this->commandStack) > 1) {
+        if ($this->executing) {
             return;
         }
 
         $exceptions = array();
 
         while ($command = array_shift($this->commandStack)) {
-            $type    = get_class($command);
-            $service = $this->getService($type);
-            $handler = new CommandInvocationHandler($service);
-            $handler = $this->proxyHandler($handler);
-
             try {
+                $this->executing = true;
+                $type    = get_class($command);
+                $service = $this->getService($type);
+                $handler = new CommandInvocationHandler($service);
+                $handler = $this->proxyHandler($handler);
+
                 $handler->handle($command);
             } catch(\Exception $e) {
                 $exceptions[] = array('ex' => $e, 'command' => $command);
             }
+
+            $this->executing = false;
         }
 
         if ($exceptions) {
