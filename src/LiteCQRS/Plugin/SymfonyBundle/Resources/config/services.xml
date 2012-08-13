@@ -17,7 +17,7 @@
             <argument type="service" id="litecqrs.proxy_factory" on-invalid="null" />
         </service>
 
-        <service id="litecqrs.event_store" class="%litecqrs.event_store.class%" public="false">
+        <service id="litecqrs.event_store" class="%litecqrs.event_store.class%" public="true">
             <argument type="service" id="litecqrs.event_message_bus" />
         </service>
 
