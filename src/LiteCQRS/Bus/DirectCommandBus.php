@@ -1,25 +1,17 @@
 <?php
 namespace LiteCQRS\Bus;
 
-class DirectCommandBus extends CommandBus
+class DirectCommandBus extends SequentialCommandBus
 {
     private $handlers = array();
 
-    public function register($commandType, $service, $method = null)
+    public function register($commandType, $service)
     {
         if (!is_object($service)) {
             throw new \RuntimeException("No valid service given for command type '" . $commandType . "'");
         }
 
-        if ($method === null) {
-            $parts = explode("\\", $commandType);
-            $method = str_replace("Command", "", lcfirst(end($parts)));
-        }
-
-        $this->handlers[strtolower($commandType)] = array(
-            'service' => $service,
-            'method'  => $method
-        );
+        $this->handlers[strtolower($commandType)] = $service;
     }
 
     protected function getService($commandType)
@@ -28,7 +20,7 @@ class DirectCommandBus extends CommandBus
             throw new \RuntimeException("No service registered for command type '" . $commandType . "'");
         }
 
-        return $this->handlers[strtolower($commandType)]['service'];
+        return $this->handlers[strtolower($commandType)];
     }
 }
 

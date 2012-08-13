@@ -9,12 +9,13 @@
         <parameter key="litecqrs.event_store.class">LiteCQRS\EventStore\InMemoryEventStore</parameter>
         <parameter key="litecqrs.identity_map.class">LiteCQRS\EventStore\SimpleIdentityMap</parameter>
         <parameter key="litecqrs.command_bus.class">LiteCQRS\Plugin\SymfonyBundle\ContainerCommandBus</parameter>
+        <parameter key="litecqrs.event_store_handler_factory.class">LiteCQRS\EventStore\EventStoreHandlerFactory</parameter>
     </parameters>
 
     <services>
         <service id="litecqrs.event_message_bus" class="%litecqrs.event_message_bus.class%" public="false">
             <argument type="service" id="service_container" />
-            <argument type="service" id="litecqrs.proxy_factory" on-invalid="null" />
+            <argument type="collection" />
         </service>
 
         <service id="litecqrs.event_store" class="%litecqrs.event_store.class%" public="true">
@@ -24,11 +25,15 @@
         <service id="litecqrs.identity_map" class="%litecqrs.identity_map.class%" public="false">
         </service>
 
-        <service id="command_bus" class="%litecqrs.command_bus.class%">
-            <argument type="service" id="service_container" />
+        <service id="litecqrs.event_store_handler_factory" class="%litecqrs.event_store_handler_factory.class%">
             <argument type="service" id="litecqrs.event_store" />
             <argument type="service" id="litecqrs.identity_map" />
-            <argument type="service" id="litecqrs.proxy_factory" on-invalid="null" />
+            <tag name="lite_cqrs.command_proxy_factory" priority="255" />
+        </service>
+
+        <service id="command_bus" class="%litecqrs.command_bus.class%">
+            <argument type="service" id="service_container" />
+            <argument type="collection" />
         </service>
 
         <!-- extract to proper plugin file and loading -->
@@ -37,6 +42,36 @@
 
             <tag name="doctrine.event_subscriber" />
         </service>
+
+        <service id="litecqrs.plugin.doctrine.orm_handler_factory" class="liteCQRS\Plugin\Doctrine\OrmHandlerFactory">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+        </service>
+
+        <service id="litecqrs.repository" class="LiteCQRS\Plugin\Doctrine\ORMRepository">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <tag name="lite_cqrs.command_proxy_factory" />
+        </service>
+
+        <service id="litecqrs.plugin.crud_helper" class="LiteCQRS\Plugin\SymfonyBundle\Controller\CRUDHelper">
+            <argument type="service" id="command_bus" />
+            <argument type="service" id="form_factory" />
+        </service>
+
+        <service id="litecqrs.plugin.crud_command_handler" class="LiteCQRS\Plugin\CRUD\CRUDCommandService">
+            <tag name="lite_cqrs.command_handler" />
+            <argument type="service" id="litecqrs.repository" />
+        </service>
+
+        <service id="litecqrs.plugin.monolog.logger_factory" class="LiteCQRS\Plugin\Monolog\MonologLoggerFactory">
+            <argument type="service" id="logger" />
+            <tag name="lite_cqrs.command_proxy_factory" />
+            <tag name="lite_cqrs.event_proxy_factory" />
+        </service>
+
+        <!--<service id="litecqrs.plugin.swiftmailer.spool_factory" class="LiteCQRS\Plugin\Swiftmailer\SpoolHandlerFactory">
+            <tag name="lite_cqrs.command_proxy_factory" />
+            <tag name="lite_cqrs.event_proxy_factory" />
+        </service>-->
     </services>
 </container>
 
