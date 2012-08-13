@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
-use LiteCQRS\Bus\CommandBus;
+use LiteCQRS\Bus\SequentialCommandBus;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
