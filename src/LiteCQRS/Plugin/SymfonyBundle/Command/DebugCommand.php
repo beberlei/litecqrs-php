@@ -26,7 +26,7 @@ class DebugCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $builder = $this->getContainerBuilder();
+        $container = $this->getContainerBuilder();
 
         $maxName        = 0;
         $maxId          = 0;
@@ -50,7 +50,7 @@ class DebugCommand extends ContainerAwareCommand
 
                 $commandType = $commandParam->getClass()->getName();
                 $parts = explode("\\", $commandType);
-                $name = end($commandType);
+                $name = end($parts);
 
                 $commands[$commandType] = array('name' => $name, 'id'  => $id, 'class' => $class);
 
@@ -60,17 +60,18 @@ class DebugCommand extends ContainerAwareCommand
             }
         }
 
-        $output->writeln('Commands');
-        $output->writeln('========');
+        $output->writeln('<info>COMMANDS</info>');
+        $output->writeln('<info>========</info>');
+        $output->writeln('');
 
         $format  = '%-'.$maxName.'s %-'.$maxId.'s %s';
 
         // the title field needs extra space to make up for comment tags
         $format1  = '%-'.($maxName + 19).'s %-'.($maxId + 19).'s %s';
-        $output->writeln(sprintf($format1, '<comment>Command</comment>', '<comment>Service</comment>', '<comment>Class</comment>'));
+        $output->writeln(sprintf($format1, '<comment>Command</comment>', '<comment>Service/Handler</comment>', '<comment>Class</comment>'));
 
         foreach ($commands as $type => $command) {
-            $output->writeln(sprintf($format, $command['type'], $command['id'], $type));
+            $output->writeln(sprintf($format, $command['name'], $command['id'], $type));
         }
 
         $events         = array();
@@ -106,14 +107,16 @@ class DebugCommand extends ContainerAwareCommand
             }
         }
 
-        $output->writeln('EVENTS');
-        $output->writeln('======');
+        $output->writeln('');
+        $output->writeln('<info>EVENTS</info>');
+        $output->writeln('<info>========</info>');
+        $output->writeln('');
 
         $format  = '%-'.$maxName.'s %-'.$maxId.'s %s';
 
         // the title field needs extra space to make up for comment tags
         $format1  = '%-'.($maxName + 19).'s %-'.($maxId + 19).'s %s';
-        $output->writeln(sprintf($format1, '<comment>Event</comment>', '<comment>Service</comment>', '<comment>Class</comment>'));
+        $output->writeln(sprintf($format1, '<comment>Event</comment>', '<comment>Service/Handler</comment>', '<comment>Class</comment>'));
 
         foreach ($events as $event) {
             $output->writeln(sprintf($format, $event['eventName'], $event['id'], $event['class']));
