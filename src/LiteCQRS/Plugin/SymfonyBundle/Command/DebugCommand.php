@@ -52,7 +52,7 @@ class DebugCommand extends ContainerAwareCommand
                 $parts = explode("\\", $commandType);
                 $name = end($parts);
 
-                $commands[$commandType] = array('name' => $name, 'id'  => $id, 'class' => $class);
+                $commands[$id][$commandType] = array('name' => $name, 'id'  => $id, 'class' => $class);
 
                 $maxName        = max(strlen($name), $maxName);
                 $maxId          = max(strlen($id), $maxId);
@@ -64,14 +64,17 @@ class DebugCommand extends ContainerAwareCommand
         $output->writeln('<info>========</info>');
         $output->writeln('');
 
-        $format  = '%-'.$maxName.'s %-'.$maxId.'s %s';
+        $format  = '%-'.$maxId.'s %-'.$maxName.'s %s';
 
         // the title field needs extra space to make up for comment tags
-        $format1  = '%-'.($maxName + 19).'s %-'.($maxId + 19).'s %s';
-        $output->writeln(sprintf($format1, '<comment>Command</comment>', '<comment>Service/Handler</comment>', '<comment>Class</comment>'));
+        $format1  = '%-'.($maxId + 19).'s %-'.($maxName + 19).'s %s';
+        $output->writeln(sprintf($format1, '<comment>Command-Handler Service</comment>', '<comment>Command</comment>', '<comment>Class</comment>'));
 
-        foreach ($commands as $type => $command) {
-            $output->writeln(sprintf($format, $command['name'], $command['id'], $type));
+        foreach ($commands as $service => $serviceCommands) {
+            foreach ($serviceCommands as $type => $command) {
+                $output->writeln(sprintf($format, $service, $command['name'], $type));
+            }
+            $output->writeln('');
         }
 
         $events         = array();
@@ -94,16 +97,16 @@ class DebugCommand extends ContainerAwareCommand
                     continue;
                 }
 
-                $eventName = strtolower(substr($methodName, 2));
+                $eventName = (substr($methodName, 2));
 
                 if (!isset($services[$eventName])) {
                     $services[$eventName] = array();
                 }
 
-                $events[]     = array('eventName' => $eventName, 'id' => $id, 'class' => $class);
-                $maxName      = max(strlen($name), $maxName);
-                $maxId        = max(strlen($id), $maxId);
-                $maxEventName = max(strlen($eventName), $maxEventName);
+                $events[$id][] = array('eventName' => $eventName, 'id' => $id, 'class' => $class);
+                $maxName       = max(strlen($name), $maxName);
+                $maxId         = max(strlen($id), $maxId);
+                $maxEventName  = max(strlen($eventName), $maxEventName);
             }
         }
 
@@ -112,14 +115,17 @@ class DebugCommand extends ContainerAwareCommand
         $output->writeln('<info>========</info>');
         $output->writeln('');
 
-        $format  = '%-'.$maxName.'s %-'.$maxId.'s %s';
+        $format  = '%-'.$maxId.'s %-'.$maxEventName.'s %s';
 
         // the title field needs extra space to make up for comment tags
-        $format1  = '%-'.($maxName + 19).'s %-'.($maxId + 19).'s %s';
-        $output->writeln(sprintf($format1, '<comment>Event</comment>', '<comment>Service/Handler</comment>', '<comment>Class</comment>'));
+        $format1  = '%-'.($maxId + 19).'s %-'.($maxEventName + 19).'s %s';
+        $output->writeln(sprintf($format1, '<comment>Event-Handler Service</comment>', '<comment>Event</comment>', '<comment>Class</comment>'));
 
-        foreach ($events as $event) {
-            $output->writeln(sprintf($format, $event['eventName'], $event['id'], $event['class']));
+        foreach ($events as $serviceId => $serviceEvents) {
+            foreach ($serviceEvents as $event) {
+                $output->writeln(sprintf($format, $event['id'], $event['eventName'], $event['class']));
+            }
+            $output->writeln('');
         }
     }
 
