@@ -7,6 +7,8 @@
     },
     "require-dev": {
         "doctrine/common": ">=2.0,<2.5",
-        "symfony/framework-bundle": ">=2.0,<2.2"
+        "symfony/framework-bundle": ">=2.0,<2.2",
+        "symfony/console": ">=2.0,<2.2",
+        "swiftmailer/swiftmailer": "4.*"
     }
 }

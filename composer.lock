@@ -1,5 +1,5 @@
 {
-    "hash": "41604541ea6dc61eb145117c4f195f11",
+    "hash": "ca518ae2930e12900322cd380d4d1370",
     "packages": [
 
     ],
@@ -9,7 +9,15 @@
             "version": "2.2.2"
         },
         {
+            "package": "swiftmailer/swiftmailer",
+            "version": "v4.2.1"
+        },
+        {
             "package": "symfony/config",
+            "version": "v2.0.16"
+        },
+        {
+            "package": "symfony/console",
             "version": "v2.0.16"
         },
         {

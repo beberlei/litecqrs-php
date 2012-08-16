@@ -26,8 +26,8 @@ abstract class DefaultDomainEvent implements DomainEvent
     {
         $class = get_class($this);
 
-        if (substr($class, -6) === "Event") {
-            $class = substr($class, 0, -6);
+        if (substr($class, -5) === "Event") {
+            $class = substr($class, 0, -5);
         }
 
         if (strpos($class, "\\") === false) {

@@ -15,4 +15,19 @@
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>src</directory>
+            <exclude>
+                <directory>src/*/*Bundle/Resources</directory>
+                <directory>src/*/*Bundle/Tests</directory>
+                <directory>src/*/Bundle/*Bundle/Resources</directory>
+                <directory>src/*/Bundle/*Bundle/Tests</directory>
+                <file>src/LiteCQRS/Plugin/CRUD/CrudCreatable.php</file>
+                <file>src/LiteCQRS/Plugin/CRUD/CrudDeletable.php</file>
+                <file>src/LiteCQRS/Plugin/CRUD/CrudUpdatable.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
 </phpunit>

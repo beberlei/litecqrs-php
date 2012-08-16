@@ -35,10 +35,10 @@ class DomainObjectChanged implements DomainEvent
 
     public function __get($name)
     {
-        if (isset($this->$name)) {
-            return $this->$name;
+        if (!isset($this->$name)) {
+            throw new \RuntimeException("Property $name does not exist on event " . $this->getEventName());
         }
-        return null;
+        return $this->$name;
     }
 
     public function getMessageHeader()
