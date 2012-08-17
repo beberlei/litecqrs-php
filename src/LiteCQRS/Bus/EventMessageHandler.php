@@ -16,6 +16,7 @@ class EventMessageHandler implements MessageHandlerInterface
         $this->messageBus  = $messageBus;
         $this->identityMap = $identityMap;
     }
+
     public function handle(MessageInterface $command)
     {
         try {

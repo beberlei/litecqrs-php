@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Plugin\Doctrine;
 
-use LiteCQRS\EventStore\IdentityMapInterface;
+use LiteCQRS\Bus\IdentityMapInterface;
 use LiteCQRS\AggregateRootInterface;
 use Doctrine\ORM\EntityManager;
 
