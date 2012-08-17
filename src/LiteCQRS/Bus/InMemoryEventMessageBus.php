@@ -18,34 +18,9 @@ use Exception;
  * to report event failure back to the developer. This is a rather
  * simple approach and you should see if it works for you.
  */
-class InMemoryEventMessageBus implements EventMessageBus
+class InMemoryEventMessageBus extends AbstractEventMessageBus
 {
     private $handlers = array();
-    private $proxyFactories;
-
-    public function __construct(array $proxyFactories = array())
-    {
-        $this->proxyFactories = $proxyFactories;
-    }
-
-    public function handle(DomainEvent $event)
-    {
-        $eventName  = $event->getEventName();
-        $services   = $this->getHandlers($eventName);
-
-        foreach ($services as $service) {
-            try {
-                $handler      = new EventInvocationHandler($service);
-
-                foreach ($this->proxyFactories as $proxyFactory) {
-                    $handler = $proxyFactory($handler);
-                }
-
-                $handler->handle($event);
-            } catch(Exception $e) {
-            }
-        }
-    }
 
     public function register($handler)
     {

@@ -19,27 +19,16 @@ class EventStoreHandler implements MessageHandlerInterface
     private $eventStore;
     private $identityMap;
 
-    public function __construct(MessageHandlerInterface $next, EventStoreInterface $eventStore, IdentityMapInterface $identityMap = null)
+    public function __construct(MessageHandlerInterface $next, EventStoreInterface $eventStore)
     {
         $this->next        = $next;
         $this->eventStore  = $eventStore;
-        $this->identityMap = $identityMap;
     }
 
     public function handle(MessageInterface $message)
     {
-        $this->eventStore->beginTransaction(); // clear exisiting events
-
-        try {
-            $this->next->handle($message);
-
-            $this->passEventsToStore();
-            $this->eventStore->commit();
-
-        } catch(\Exception $e) {
-            $this->eventStore->rollback();
-            throw $e;
-        }
+        $this->eventStore->store($message);
+        $this->next->handle($message);
     }
 
     protected function passEventsToStore()

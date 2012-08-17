@@ -6,7 +6,7 @@ use LiteCQRS\Bus\InMemoryEventMessageBus;
 use LiteCQRS\DomainObjectChanged;
 use LiteCQRS\EventStore\InMemoryEventStore;
 use LiteCQRS\EventStore\SimpleIdentityMap;
-use LiteCQRS\EventStore\EventStoreHandlerFactory;
+use LiteCQRS\Bus\EventMessageHandlerFactory;
 
 class CQRSTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,11 +43,11 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testWhenSuccessfulCommandThenTriggersEventStoreCommit()
     {
-        $eventStore = $this->getMock('LiteCQRS\EventStore\EventStoreInterface');
-        $eventStore->expects($this->once())->method('commit');
+        $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
+        $messageBus->expects($this->once())->method('dispatchEvents');
 
         $userService = $this->getMock('UserService', array('changeEmail'));
-        $direct = new DirectCommandBus(array(new EventStoreHandlerFactory($eventStore)));
+        $direct = new DirectCommandBus(array(new EventMessageHandlerFactory($messageBus)));
         $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
 
         $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
@@ -55,13 +55,13 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testWhenFailingCommandThenTriggerEventStoreRollback()
     {
-        $eventStore = $this->getMock('LiteCQRS\EventStore\EventStoreInterface');
-        $eventStore->expects($this->once())->method('rollback');
+        $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
+        $messageBus->expects($this->once())->method('clear');
 
         $userService = $this->getMock('UserService', array('changeEmail'));
         $userService->expects($this->once())->method('changeEmail')->will($this->throwException(new \RuntimeException("DomainFail")));
 
-        $direct = new DirectCommandBus(array(new EventStoreHandlerFactory($eventStore)));
+        $direct = new DirectCommandBus(array(new EventMessageHandlerFactory($messageBus)));
         $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
 
         $this->setExpectedException('LiteCQRS\Bus\CommandFailedStackException', 'During sequential execution 1 commands failed to execute: ChangeEmailCommand: DomainFail');
@@ -91,8 +91,8 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $root = $this->getMock('LiteCQRS\AggregateRootInterface');
         $root->expects($this->once())->method('popAppliedEvents')->will($this->returnValue(array($event, $event)));
 
-        $eventStore = $this->getMock('LiteCQRS\EventStore\EventStoreInterface');
-        $eventStore->expects($this->exactly(2))->method('add');
+        $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
+        $messageBus->expects($this->exactly(2))->method('publish');
 
         $identityMap = $this->getMock('LiteCQRS\EventStore\IdentityMapInterface');
         $identityMap->expects($this->once())->method('all')->will($this->returnValue(array($root)));
@@ -100,7 +100,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $userService = $this->getMock('UserService', array('changeEmail'));
         $userService->expects($this->once())->method('changeEmail');
 
-        $direct = new DirectCommandBus(array(new EventStoreHandlerFactory($eventStore, $identityMap)));
+        $direct = new DirectCommandBus(array(new EventMessageHandlerFactory($messageBus, $identityMap)));
         $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
 
         $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
@@ -114,7 +114,8 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
         $bus = new InMemoryEventMessageBus();
         $bus->register($eventHandler);
-        $bus->handle($event);
+        $bus->publish($event);
+        $bus->dispatchEvents();
     }
 
     public function testHandleEventOnInMemoryEventMessageBusThrowsExceptionIsSwallowed()
@@ -125,71 +126,8 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
         $bus = new InMemoryEventMessageBus();
         $bus->register($eventHandler);
-        $bus->handle($event);
-    }
-
-    public function testCommitEventsInMemoryEventStoreDelegatesToMessageBus()
-    {
-        $event = new DomainObjectChanged("Foo", array());
-
-        $bus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
-        $bus->expects($this->once())->method('handle')->with($this->equalTo($event));
-
-        $store = new InMemoryEventStore($bus);
-        $store->add($event);
-        $store->commit();
-    }
-
-    public function testCommitEventsOnlyTriggersEachEventOnce()
-    {
-        $event = new DomainObjectChanged("Foo", array());
-
-        $bus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
-        $bus->expects($this->once())->method('handle')->with($this->equalTo($event));
-
-        $store = new InMemoryEventStore($bus);
-        $store->add($event);
-
-        $store->commit();
-        $store->commit();
-    }
-
-    public function testBeginTransactionEventExistNotPossibleToHandleNestedTransaction()
-    {
-        $event = new DomainObjectChanged("Foo", array());
-        $store = new InMemoryEventStore($this->getMock('LiteCQRS\Bus\EventMessageBus'));
-        $store->add($event);
-
-        $this->setExpectedException('RuntimeException');
-        $store->beginTransaction();
-    }
-
-    public function testWhenEventIsAddedTwiceToStoreItsOnlyRecordedOnce()
-    {
-        $event = new DomainObjectChanged("Foo", array());
-
-        $bus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
-        $bus->expects($this->exactly(1))->method('handle');
-
-        $store = new InMemoryEventStore($bus);
-        $store->add($event);
-        $store->add($event);
-
-        $store->commit();
-    }
-
-    public function testRollbackCommitEventsNotTriggers()
-    {
-        $event = new DomainObjectChanged("Foo", array());
-
-        $bus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
-        $bus->expects($this->never())->method('handle');
-
-        $store = new InMemoryEventStore($bus);
-        $store->add($event);
-
-        $store->rollback();
-        $store->commit();
+        $bus->publish($event);
+        $bus->dispatchEvents();
     }
 
     public function testEventsFromHistoryAreNotInTheAppliedEventsList()

@@ -1,20 +1,12 @@
 <?php
 
-namespace LiteCQRS\EventStore;
+namespace LiteCQRS\Plugin\DoctrineCouchDB\EventStore;
 
-use LiteCQRS\Bus\EventMessageBus;
-use LiteCQRS\DomainEvent;
+use LiteCQRS\EventStore\EventStoreInterface;
 
-/**
- * In Memory Event store for events.
- *
- * Iterates and handles all events when {@see commit()} operation is called and
- * directly passes them to the event message bus. Does not perform any
- * persistence operations on events.
- */
-class InMemoryEventStore implements EventStoreInterface
+class CouchDBEventStore implements EventStoreInterface
 {
-    protected $events          = array();
+    protected $events = array();
     protected $seenEvents;
     protected $eventMessageBus;
 
@@ -24,7 +16,7 @@ class InMemoryEventStore implements EventStoreInterface
         $this->seenEvents      = new \SplObjectStorage();
     }
 
-    public function store(DomainEvent $event)
+    public function add(DomainEvent $event)
     {
         if ($this->seenEvents->contains($event)) {
             return;

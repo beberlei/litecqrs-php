@@ -1,5 +1,5 @@
 {
-    "hash": "ca518ae2930e12900322cd380d4d1370",
+    "hash": "23d69f478b09658c4499e77d1bce8996",
     "packages": [
 
     ],
@@ -7,6 +7,12 @@
         {
             "package": "doctrine/common",
             "version": "2.2.2"
+        },
+        {
+            "package": "doctrine/couchdb",
+            "version": "dev-master",
+            "source-reference": "bd5911054f39504c884606db6e290a10b7f05f75",
+            "commit-date": "1345228208"
         },
         {
             "package": "swiftmailer/swiftmailer",
@@ -57,7 +63,7 @@
 
     ],
     "minimum-stability": "stable",
-    "stability-flags": [
-
-    ]
+    "stability-flags": {
+        "doctrine/couchdb": 20
+    }
 }
