@@ -114,7 +114,9 @@ $messageBus->register($someEventHandler);
 1. Create a command object that recieves all the necessary input values. Use public properties to and extend ``LiteCQRS\DefaultCommand`` simplify.
 2. Add a new method with the name of the command to any of your services (command handler)
 3. Register the command handler to handle the given command on the CommandBus.
-4. Use the `DomainObjectChanged`` event to change the state of your domain objects.
+4. Have your entities implement ``LiteCQRS\AggregateRoot``
+5. Use protected method ``raise(DomainEvent $event)`` or apply(DomainEvent $event)`` to attach
+   events to your aggregate root objects.
 
 That is all there is for simple use-cases. If you use the ``DomainObjectChanged`` event instead of writing
 your own for every change you get away cheap.
