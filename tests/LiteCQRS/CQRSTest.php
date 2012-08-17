@@ -64,7 +64,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $direct = new DirectCommandBus(array(new EventStoreHandlerFactory($eventStore)));
         $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
 
-        $this->setExpectedException('LiteCQRS\Bus\CommandFailedStackException', 'During sequential execution 1 commands failed to execute.');
+        $this->setExpectedException('LiteCQRS\Bus\CommandFailedStackException', 'During sequential execution 1 commands failed to execute: ChangeEmailCommand: DomainFail');
         $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
     }
 

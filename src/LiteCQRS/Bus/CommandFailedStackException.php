@@ -19,7 +19,7 @@ class CommandFailedStackException extends RuntimeException
         }
 
         parent::__construct(
-            sprintf('During sequential execution %d commands failed to execute: %s', count($exceptions), $message),
+            sprintf('During sequential execution %d commands failed to execute: %s', count($exceptions), rtrim($message)),
             0,
             $prevEx
         );
