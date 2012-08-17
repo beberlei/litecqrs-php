@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\EventStore;
+namespace LiteCQRS\Bus;
 
 use LiteCQRS\AggregateRootInterface;
 

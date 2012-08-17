@@ -2,15 +2,11 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
-use LiteCQRS\Bus\EventMessageBus;
-use LiteCQRS\DomainEvent;
-use LiteCQRS\Bus\EventInvocationHandler;
+use LiteCQRS\Bus\AbstractEventMessageBus;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Exception;
-
-class ContainerEventBus implements EventMessageBus
+class ContainerEventBus extends AbstractEventMessageBus
 {
     private $container;
     private $services;

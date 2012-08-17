@@ -3,7 +3,6 @@
 namespace LiteCQRS\Bus;
 
 use LiteCQRS\Command;
-use LiteCQRS\EventStore\IdentityMapInterface;
 
 class EventMessageHandlerFactory
 {

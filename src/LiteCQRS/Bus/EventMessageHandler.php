@@ -3,7 +3,6 @@
 namespace LiteCQRS\Bus;
 
 use Exception;
-use LiteCQRS\EventStore\IdentityMapInterface;
 
 class EventMessageHandler implements MessageHandlerInterface
 {

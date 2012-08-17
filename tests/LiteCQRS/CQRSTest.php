@@ -5,7 +5,7 @@ use LiteCQRS\Bus\DirectCommandBus;
 use LiteCQRS\Bus\InMemoryEventMessageBus;
 use LiteCQRS\DomainObjectChanged;
 use LiteCQRS\EventStore\InMemoryEventStore;
-use LiteCQRS\EventStore\SimpleIdentityMap;
+use LiteCQRS\Bus\SimpleIdentityMap;
 use LiteCQRS\Bus\EventMessageHandlerFactory;
 
 class CQRSTest extends \PHPUnit_Framework_TestCase
@@ -94,7 +94,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
         $messageBus->expects($this->exactly(2))->method('publish');
 
-        $identityMap = $this->getMock('LiteCQRS\EventStore\IdentityMapInterface');
+        $identityMap = $this->getMock('LiteCQRS\Bus\IdentityMapInterface');
         $identityMap->expects($this->once())->method('all')->will($this->returnValue(array($root)));
 
         $userService = $this->getMock('UserService', array('changeEmail'));
