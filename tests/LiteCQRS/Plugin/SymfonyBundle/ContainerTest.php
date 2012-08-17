@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Compiler\ResolveDefinitionTemplatesPass;
 
 use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\LiteCQRSExtension;
+use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\Compiler\HandlerPass;
 
 class ContainerTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,8 +15,9 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->createTestContainer();
 
-        $this->assertInstanceOf('LiteCQRS\Bus\CommandBus', $container->get('command_bus'));
+        $this->assertInstanceOf('LiteCQRS\Bus\CommandBus',      $container->get('command_bus'));
         $this->assertInstanceOf('LiteCQRS\Bus\EventMessageBus', $container->get('litecqrs.event_message_bus'));
+        $this->assertInstanceof('LiteCQRS\Plugin\Doctrine\ORMRepository', $container->get('litecqrs.repository'));
     }
 
     public function createTestContainer()
@@ -29,9 +31,13 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         )));
         $loader = new LiteCQRSExtension();
         $container->registerExtension($loader);
+        $container->set('doctrine.orm.default_entity_manager', $this->getMock('Doctrine\ORM\EntityManager'));
+        $container->set('logger', $this->getMock('Monolog\Logger'));
+        $container->set('swiftmailer.transport', $this->getMock('Swift_Transport_SpoolTransport', array(), array(), '', false));
+        $container->set('swiftmailer.transport.real', $this->getMock('Swift_Transport', array(), array(), '', false));
         $loader->load(array(array()), $container);
 
-        $container->getCompilerPassConfig()->setOptimizationPasses(array());
+        $container->getCompilerPassConfig()->setOptimizationPasses(array(new HandlerPass()));
         $container->getCompilerPassConfig()->setRemovingPasses(array());
         $container->compile();
 

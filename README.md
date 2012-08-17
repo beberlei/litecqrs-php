@@ -1,10 +1,23 @@
 # LiteCQRS for PHP
 
-Small convention based CQRS + Event Sourcing library for PHP (loosly based on
-[LiteCQRS for C#](https://github.com/danielwertheim/LiteCQRS)).  If you want to
-use CQRS without event sourcing, this might already be too big for you,
-although you can take some of the parts (CommandBus) in isolation to implement
-a sole CQRS solution.
+Small convention based CQRS library for PHP (loosly based on [LiteCQRS for
+C#](https://github.com/danielwertheim/LiteCQRS)).
+
+## Terminology
+
+CQS is Command-Query-Seperation: A paradigm where read methods never change
+state and write methods never return data.  Build on top, CQRS suggets the
+seperation of read- from write-model and uses the [DomainEvent
+pattern](http://martinfowler.com/eaaDev/DomainEvent.html) to notify the read
+model about changes in the write model.
+
+It does so by introducing an interface ``LiteCQRS\AggreateRootInterface`` and a
+corresponding default implementation ``LiteCQRS\AggregateRoot``. These classes
+act as event provider: They collect events that LiteCQRS later gathers after
+transactions completed and pushes to observing event handlers.
+
+LiteCQRS uses the command pattern and a central message bus service that
+handles commands and finds their corresponding handler to execute them.
 
 ## Conventions
 
@@ -52,24 +65,22 @@ These are the steps that a command regularly takes through the LiteCQRS stack du
    command has exactly one handler.
 3. The command handler changes state of the domain model. It does that by
    creating events (that represent state change) and passing them to the
-   ``AggregateRootInterface::apply()`` method of your domain objects.
+   ``AggregateRoot::apply()`` or ``AggregateRoot::raise()`` method of your domain objects.
 4. When the command is completed, the command bus will check all objects in the
    identity map for events.
-5. All found events will be passed to the ``EventStoreInterface#add()`` method.
-6. The EventStore can save all events to a persistent storage.
-7. After storing all events, the event store triggers event handlers that
-   listen to the domain events (Pub-Sub).
+5. All found events will be passed to the ``EventMessageBus#publish()`` method.
+6. The EventMessageBus dispatches all events to observing event handlers.
 8. Event Handlers can create new commands again using the ``CommandBus``.
 
 Command and Event handler execution can be wrapped in handlers that manage
-transactions. Event store and event handling is outside of any command
-transaction. If the command fails with any exception all events created
-by the command are forgotten. No event handlers will be triggered in this
-case.
+transactions. Event handling is always triggered outside of any command
+transaction. If the command fails with any exception all events created by the
+command are forgotten/ignored. No event handlers will be triggered in this case.
 
 In the case of InMemory CommandBus and EventMessageBus LiteCQRS makes sure that
-the execution of command and event handlers is never nested, but linearized.
-This prevents transactions affecting each other.
+the execution of command and event handlers is never nested, but in sequential
+linerarized order. This prevents independent transactions for each command
+from affecting each other.
 
 ## Example
 
@@ -77,7 +88,7 @@ See ``example/example1.php`` for a simple example.
 
 ## Setup
 
-1. In Memory Command Handlers, No EventStore and Event Message Handling
+1. In Memory Command Handlers, no event publishing/observing
 
 ```php
 <?php
@@ -87,16 +98,15 @@ $commandBus = new DirectCommandBus()
 $commandBus->register('MyApp\ChangeEmailCommand', $userService);
 ```
 
-2. In Memory Commands and Events, with Event Store
+2. In Memory Commands and Events Handlers
 
 ```php
 <?php
 // 1. Setup the Library with InMemory Handlers
 $messageBus = new InMemoryEventMessageBus();
-$eventStore = new InMemoryEventStore($messageBus);
 $identityMap = new SimpleIdentityMap();
 $commandBus = new DirectCommandBus(array(
-    new EventStoreHandlerFactory($eventStore, $identityMap)
+    new EventMessageHandlerFactory($messageBus, $identityMap)
 ));
 
 // 2. Register a command service and an event handler
@@ -130,15 +140,14 @@ While it seems "complicated" to create commands and events for every use-case. T
 dumb and only contain public properties. Using your IDE or editor functionality you can easily template
 them in no time.
 
-### EventStore and IdentityMap
+### Automtatic Event Publishing from IdentityMap
 
-You have to implement a mechanism to fill the ```IdentityMapInterface``` passed
-to the command bus. All aggregate root objects in this Identity Map will have their
-Events stored and published through the EventStore + EventMessageBus. All other events
+You have to implement a mechanism to fill the ```IdentityMapInterface```.
+All aggregate root objects in this Identity Map will have their
+Events stored and published through EventMessageBus. All other events
 will be forgotten!
 
-Example: The Doctrine ORM Plugin has an EventListener that synchronizes objects into the
-CQRSList IdentityMap.
+Example: The Doctrine ORM Plugin has an implementation of the `IdentityMapInterface``.
 
 ### Command/Event Handler Proxies
 
@@ -195,9 +204,9 @@ Doctrine Plugin ships with transactional wrapper handlers for Commands and Event
 - ``LiteCQRS\Plugin\Doctrine\MessageHandler\DbalTransactionalHandler``
 - ``LiteCQRS\Plugin\Doctrine\MessageHandler\OrmTransactionalHandler``
 
-Also to synchronize the events to event storage you can use the IdentityMapListener:
+Also to synchronize the events to event message bus you can use the DoctrineIdentityMap:
 
-- ``LiteCQRS\Plugin\Doctrine\IdentityMapListener``
+- ``LiteCQRS\Plugin\Doctrine\DoctrineIdentityMap``
 
 It also ships with an implementation of ``AggregateRepositoryInterface`` wrapping
 the EntityManager:
