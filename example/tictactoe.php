@@ -76,23 +76,38 @@ class Board extends AggregateRoot
 
         $this->fields[$field] = $player;
 
+        if ($row = $this->winningRow($player)) {
+            return $this->raise(new GameWon(array("row" => $row, "player" => $player)));
+        }
+
+        if ($this->isDraw()) {
+            return $this->raise(new GameDraw());
+        }
+
+        $this->raise(new FieldMarked(array("field" => $field, "player" => $player)));
+    }
+
+    private function isDraw()
+    {
         $cannotBeWon = 0;
         foreach ($this->rows as $row) {
-
-            if ($this->isWinner($player, $row)) {
-                $this->raise(new GameWon(array("row" => $row, "player" => $player)));
-                return;
-            } else if ($this->cannotBeWon($row)) {
+            if ($this->cannotBeWon($row)) {
                 $cannotBeWon++;
             }
         }
 
-        if ($cannotBeWon === count($this->rows)) {
-            $this->raise(new GameDraw());
-            return;
+        return ($cannotBeWon === count($this->rows));
+    }
+
+    private function winningRow($player)
+    {
+        foreach ($this->rows as $row) {
+            if ($this->isWinner($player, $row)) {
+                return $row;
+            }
         }
 
-        $this->raise(new FieldMarked(array("field" => $field, "player" => $player)));
+        return false;
     }
 
     private function isWinner($player, $row)
