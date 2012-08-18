@@ -29,19 +29,19 @@ class MonologDebugLogger implements MessageHandlerInterface
     {
         if ($message instanceof Command) {
             $parts = explode("\\", get_class($message));
-            $log   = "Command[%s]: ";
-            $info  = substr(end($parts) . ": " . json_encode($message), 0, 4000);
+            $log   = "Command[%s]: %s";
+            $info  = end($parts);
         } else if ($message instanceof DomainEvent) {
-            $log  = "Event[%s]: ";
-            $info = substr($message->getEventName() . ": " . json_encode($message), 0, 4000);
+            $log  = "Event[%s]: %s";
+            $info = $message->getEventName() . "/" . $event->getMessageHeader()->id;
         }
 
         try {
-            $this->logger->debug(sprintf($log, 'STARTING') . $info);
+            $this->logger->debug(sprintf($log, 'STARTING', $info));
             $this->next->handle($message);
-            $this->logger->err(sprintf($log, 'SUCCESS') . $info);
+            $this->logger->debug(sprintf($log, 'SUCCESS', $info));
         } catch(Exception $e) {
-            $this->logger->err(sprintf($log, 'FAIL') . ' - ' . $e->getMessage());
+            $this->logger->err(sprintf($log, 'FAIL', $info) . ' - ' . $e->getMessage());
             throw $e;
         }
     }
