@@ -6,7 +6,7 @@
  * You start, the computer plays a random strategy.
  *
  * Commands:
- * - Mark
+ * - MarkField
  *
  * Events:
  * - FieldMarked
@@ -14,10 +14,10 @@
  * - GameDraw
  *
  * Command Handlers:
- * - MarkCommand
+ * - BoardService
  *
  * Event Listeners:
- * - Draw Board Listener
+ * - Display Board Listener
  * - Human Player Listener
  * - Computer Player Listener
  */
@@ -145,8 +145,8 @@ class BoardService
 
 class HumanPlayerService
 {
-
     private $commandBus;
+    private $gameOver = false;
 
     public function __construct($commandBus)
     {
@@ -174,6 +174,21 @@ class HumanPlayerService
     {
         fwrite(STDOUT, "What field do you want to mark? ");
         return trim(fgets(STDIN));
+    }
+
+    public function onGameDraw(GameDraw $event)
+    {
+        $this->gameOver = true;
+    }
+
+    public function onGameWin(GameWin $event)
+    {
+        $this->gameOver = true;
+    }
+
+    public function gameOver()
+    {
+        return $this->gameOver;
     }
 }
 
@@ -288,7 +303,7 @@ $messageBus->register($aiService);
 $messageBus->register($uiService);
 $messageBus->register($humanService);
 
-while (true) {
+while (!$humanService->gameOver()) {
     try {
         $humanService->ask();
     } catch(CommandFailedStackException $e) {
