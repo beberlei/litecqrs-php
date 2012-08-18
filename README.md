@@ -1,7 +1,8 @@
 # LiteCQRS for PHP
 
 Small convention based CQRS library for PHP (loosly based on [LiteCQRS for
-C#](https://github.com/danielwertheim/LiteCQRS)).
+C#](https://github.com/danielwertheim/LiteCQRS)) that relies on the Message Bus,
+Command, Event and Domain Event patterns.
 
 ## Terminology
 
@@ -38,7 +39,7 @@ handles commands and finds their corresponding handler to execute them.
 
 Examples:
 
-* ``HelloWorld\GreetingCommand`` maps to the ``greeting($command)`` method when found on any registered handler.
+* ``HelloWorld\GreetingCommand`` maps to the ``greeting($command)`` method on the registered handler.
 * ``HelloWorld\GreetedEvent`` is delegated to ``applyGreeted($event)`` when created on the aggregate root
 * ``HelloWorld\GreetedEvent`` is passed to all event handlers that have a method ``onGreeted($event)``.
 * ``new DomainObjectChanged("Greeted", array("foo" => "bar"))`` is mapped to the "Greeted" event.
@@ -249,6 +250,13 @@ command/event handler was executed successfully.
 A plugin that logs the execution of every command and handler using
 [Monolog](https://github.com/Seldaek/monolog).  It includes the type and name
 of the message, its parameters as json and if its execution succeeded or failed.
+
+### JMS Serializer
+
+A plugin that uses JMS Serializer to serialize events to JSON. This is necessary
+for advanced logging of your events. It uses a custom type handler to convert
+aggregate root objects in the events into references and fetches them again
+on reconstruction. This way you don't serialize graphs of data into the event store.
 
 ### CRUD
 
