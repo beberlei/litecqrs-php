@@ -1,5 +1,5 @@
 {
-    "hash": "23d69f478b09658c4499e77d1bce8996",
+    "hash": "0c855baab030859b25831b82d190b800",
     "packages": [
 
     ],
@@ -13,6 +13,30 @@
             "version": "dev-master",
             "source-reference": "bd5911054f39504c884606db6e290a10b7f05f75",
             "commit-date": "1345228208"
+        },
+        {
+            "package": "doctrine/dbal",
+            "version": "2.2.2"
+        },
+        {
+            "package": "doctrine/orm",
+            "version": "2.2.3"
+        },
+        {
+            "package": "jms/metadata",
+            "version": "1.1.1"
+        },
+        {
+            "package": "jms/serializer-bundle",
+            "version": "dev-master",
+            "alias-pretty-version": "0.9.x-dev",
+            "alias-version": "0.9.9999999.9999999-dev"
+        },
+        {
+            "package": "jms/serializer-bundle",
+            "version": "dev-master",
+            "source-reference": "1f308a587742246e87e580290f3bae23073d1d70",
+            "commit-date": "1343641450"
         },
         {
             "package": "swiftmailer/swiftmailer",
@@ -64,6 +88,7 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "doctrine/couchdb": 20
+        "doctrine/couchdb": 20,
+        "jms/serializer-bundle": 20
     }
 }

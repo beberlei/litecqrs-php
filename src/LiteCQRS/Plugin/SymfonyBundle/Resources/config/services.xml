@@ -76,6 +76,16 @@
             <tag name="lite_cqrs.command_proxy_factory" priority="25" />
             <tag name="lite_cqrs.event_proxy_factory" priority="25"  />
         </service>
+
+        <service id="litecqrs.serializer" class="LiteCQRS\Plugin\JMSSerializer\JMSSerializer">
+            <argument type="service" id="serializer" />
+            <argument type="service" id="litecqrs.serializer.aggregate_root_handler" />
+        </service>
+
+        <service id="litecqrs.serializer.aggregate_root_handler" class="LiteCQRS\Plugin\JMSSerializer\AggregateRootHandler" public="false">
+            <argument type="service" id="litecqrs.identity_map" />
+            <argument type="service" id="litecqrs.repository" />
+        </service>
     </services>
 </container>
 
