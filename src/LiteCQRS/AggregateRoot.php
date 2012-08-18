@@ -42,7 +42,10 @@ abstract class AggregateRoot implements AggregateRootInterface
         $method = sprintf('apply%s', $event->getEventName());
 
         if (!method_exists($this, $method)) {
-            throw new \BadMethodCallException("There is no event named '$method' that can be applied to '" . get_class($this) . "'");
+            throw new \BadMethodCallException(
+                "There is no event named '$method' that can be applied to '" . get_class($this) . "'. " .
+                "If you just want to emit an event without appliying changes use the raise() method."
+            );
         }
 
         $this->$method($event);
