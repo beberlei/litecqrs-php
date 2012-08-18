@@ -181,7 +181,7 @@ class HumanPlayerService
         $this->gameOver = true;
     }
 
-    public function onGameWin(GameWin $event)
+    public function onGameWon(GameWon $event)
     {
         $this->gameOver = true;
     }
