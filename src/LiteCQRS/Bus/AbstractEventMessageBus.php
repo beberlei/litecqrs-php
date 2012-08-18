@@ -64,20 +64,30 @@ abstract class AbstractEventMessageBus implements EventMessageBus
 
     protected function handle(DomainEvent $event)
     {
-        $eventName  = $event->getEventName();
+        $eventName  = strtolower($event->getEventName());
         $services   = $this->getHandlers($eventName);
 
         foreach ($services as $service) {
-            try {
-                $handler      = new EventInvocationHandler($service);
+            $this->invokeEventHandler($service, $event);
+        }
+    }
 
-                foreach ($this->proxyFactories as $proxyFactory) {
-                    $handler = $proxyFactory($handler);
-                }
+    protected function invokeEventHandler($service, $event)
+    {
+        try {
+            $handler = new EventInvocationHandler($service);
 
-                $handler->handle($event);
-            } catch(Exception $e) {
+            foreach (array_reverse($this->proxyFactories) as $proxyFactory) {
+                $handler = $proxyFactory($handler);
             }
+
+            $handler->handle($event);
+        } catch(Exception $e) {
+            $this->handle(new EventExecutionFailed(array(
+                "service"   => get_class($service),
+                "exception" => $e,
+                "event"     => $event,
+            )));
         }
     }
 

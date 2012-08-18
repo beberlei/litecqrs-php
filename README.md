@@ -190,6 +190,13 @@ $commandBus = new DirectCommandBus(array($loggerProxyFactory));
 
 The same is possible for the ``EventMessageBus``.
 
+### Failing Events
+
+The EventMessageBus prevents exceptions from bubbling up. To allow some debugging of failed event handler
+execution there is a special event "EventExecutionFailed" that you can listen to. You will get passed
+an instanceof ``LiteCQRS\Bus\EventExecutionFailed`` with properties ``$exception``, ``$service`` and
+``$event`` to allow analysing failures in your application.
+
 ## Extension Points
 
 You should implement your own ``CommandBus`` or extend the existing to wire the whole process together

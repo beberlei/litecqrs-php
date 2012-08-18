@@ -7,6 +7,7 @@ use LiteCQRS\DomainObjectChanged;
 use LiteCQRS\EventStore\InMemoryEventStore;
 use LiteCQRS\Bus\SimpleIdentityMap;
 use LiteCQRS\Bus\EventMessageHandlerFactory;
+use DateTime;
 
 class CQRSTest extends \PHPUnit_Framework_TestCase
 {
@@ -114,6 +115,101 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
         $bus = new InMemoryEventMessageBus();
         $bus->register($eventHandler);
+        $bus->publish($event);
+        $bus->dispatchEvents();
+    }
+
+    public function testDispatchEventsReSortedByDate()
+    {
+        $event1 = new DomainObjectChanged("Foo", array());
+        $event2 = new DomainObjectChanged("Foo", array());
+
+        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
+        $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event1));
+        $eventHandler->expects($this->at(1))->method('onFoo')->with($this->equalTo($event2));
+
+        $bus = new InMemoryEventMessageBus();
+        $bus->register($eventHandler);
+        $bus->publish($event2);
+        $bus->publish($event1);
+        $bus->dispatchEvents();
+    }
+
+    public function testDispatchEventsInOrder()
+    {
+        $event1 = new DomainObjectChanged("Foo", array());
+        $event2 = new DomainObjectChanged("Foo", array());
+
+        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
+        $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event1));
+        $eventHandler->expects($this->at(1))->method('onFoo')->with($this->equalTo($event2));
+
+        $bus = new InMemoryEventMessageBus();
+        $bus->register($eventHandler);
+        $bus->publish($event1);
+        $bus->publish($event2);
+        $bus->dispatchEvents();
+    }
+
+    public function testDispatchEventsInDifferentSeconds()
+    {
+        $event1 = new DomainObjectChanged("Foo", array());
+        $event1->getMessageHeader()->date = new DateTime("2012-08-18 14:20:00");
+        $event2 = new DomainObjectChanged("Foo", array());
+        $event2->getMessageHeader()->date = new DateTime("2012-08-18 14:21:00");
+        $event3 = new DomainObjectChanged("Foo", array());
+        $event3->getMessageHeader()->date = new DateTime("2012-08-18 14:11:00");
+
+        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
+        $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event3));
+        $eventHandler->expects($this->at(1))->method('onFoo')->with($this->equalTo($event1));
+        $eventHandler->expects($this->at(2))->method('onFoo')->with($this->equalTo($event2));
+
+        $bus = new InMemoryEventMessageBus();
+        $bus->register($eventHandler);
+        $bus->publish($event1);
+        $bus->publish($event2);
+        $bus->publish($event3);
+        $bus->dispatchEvents();
+    }
+
+    public function testPublishSameEventTwiceIsOnlyTriggeringOnce()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
+        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
+
+        $bus = new InMemoryEventMessageBus();
+        $bus->register($eventHandler);
+        $bus->publish($event);
+        $bus->publish($event);
+        $bus->dispatchEvents();
+    }
+
+    public function testPublishEventWithFailureTriggersFailureEventHandler()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+        $eventHandler = $this->getMock('EventHandler', array('onFoo', 'onEventExecutionFailed'));
+        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event))->will($this->throwException(new \Exception));
+        $eventHandler->expects($this->once())->method('onEventExecutionFailed');
+
+        $bus = new InMemoryEventMessageBus();
+        $bus->register($eventHandler);
+        $bus->publish($event);
+        $bus->dispatchEvents();
+    }
+
+    public function testPublishSameEventAfterDispatchingAgainIsIgnored()
+    {
+        $event = new DomainObjectChanged("Foo", array());
+        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
+        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
+
+        $bus = new InMemoryEventMessageBus();
+        $bus->register($eventHandler);
+        $bus->publish($event);
+        $bus->dispatchEvents();
+
         $bus->publish($event);
         $bus->dispatchEvents();
     }
