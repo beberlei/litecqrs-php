@@ -83,9 +83,15 @@ the execution of command and event handlers is never nested, but in sequential
 linerarized order. This prevents independent transactions for each command
 from affecting each other.
 
-## Example
+## Examples
 
-See ``example/example1.php`` for a simple example.
+See [examples/](https://github.com/beberlei/litecqrs-php/tree/master/example) for
+some examples:
+
+1. ``example1.php`` shows usage of the Command- and EventMessageBus with one domain object
+2. ``example2_event.php`` shows direct usage of the EventMessageBus inside a command
+3. ``example3_sequential_commands.php`` demonstrates how commands are processed sequentially.
+4. ``tictactoe.php`` implements a tic tac toe game with CQRS.
 
 ## Setup
 
