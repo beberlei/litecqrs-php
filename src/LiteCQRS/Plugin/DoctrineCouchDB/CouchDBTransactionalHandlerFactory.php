@@ -11,7 +11,7 @@ class CouchDBTransactionalHandlerFactory
 
     public function __construct(ObjectManager $manager)
     {
-
+        $this->manager = $manager;
     }
 
     public function __invoke(MessageHandlerInterface $handler)
