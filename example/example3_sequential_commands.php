@@ -1,10 +1,14 @@
 <?php
 /**
- * LiteCQRS processes commands sequentially and in isolation.
- * If you have a chain of commands, called from each other,
- * then they are executed in isolation and one after another.
+ * LiteCQRS processes commands sequentially and in isolation.  If you have a
+ * chain of commands, called from each other, then they are executed in
+ * isolation and one after another.
  *
  * This requires some rethinking, but also simplifies considerably.
+ *
+ * This example shows how nesting many commands still executes them
+ * sequentially. Commands are handled and then a value is ecohed in the parent
+ * command that clearly shows that the child command hasnt been executed yet.
  */
 
 namespace MyApp;
@@ -27,20 +31,19 @@ class StringManipulation
     public function slugify(Slugify $command)
     {
         $this->commandBus->handle(new Lower(array("string" => $command->string)));
-        $this->commandBus->handle(new Ucfirst(array("string" => $command->string)));
-        $this->commandBus->handle(new RemoveNonAscii(array("string" => $command->string)));
-
         echo "Scheduled some comands, current value: " . $command->string->value . "\n";
     }
 
     public function lower(Lower $command)
     {
+        $this->commandBus->handle(new Ucfirst(array("string" => $command->string)));
         $command->string->value = strtolower($command->string->value);
         echo "Lower executed, current value: " . $command->string->value . "\n";
     }
 
     public function ucfirst(Ucfirst $command)
     {
+        $this->commandBus->handle(new RemoveNonAscii(array("string" => $command->string)));
         $command->string->value = ucfirst($command->string->value);
         echo "Ucfirst executed, current value: " . $command->string->value . "\n";
     }
