@@ -6,12 +6,9 @@ use LiteCQRS\Bus\MessageHandlerInterface;
 use LiteCQRS\Bus\MessageInterface;
 
 /**
- * Event Store Transaction around a command handler.
+ * Event Store Handler
  *
- * If you want to use EventSourcing then the command handler has to wrap this
- * event store handler, which passes all events from the identity map
- * containing all aggregate roots, to event store. The event store then commits
- * its transaction and publishes all the events to all listeners.
+ * This handler takes care of saving all events into an event store.
  */
 class EventStoreHandler implements MessageHandlerInterface
 {
@@ -29,25 +26,6 @@ class EventStoreHandler implements MessageHandlerInterface
     {
         $this->eventStore->store($message);
         $this->next->handle($message);
-    }
-
-    protected function passEventsToStore()
-    {
-        if (!$this->identityMap) {
-            return;
-        }
-
-        foreach ($this->identityMap->all() as $aggregateRoot) {
-            $id = $this->identityMap->getAggregateId($aggregateRoot);
-            foreach ($aggregateRoot->popAppliedEvents() as $event) {
-                $header = $event->getMessageHeader();
-                $header->aggregateType = get_class($aggregateRoot);
-                $header->aggregateId   = $id;
-                $header->setAggregate(null);
-
-                $this->eventStore->add($event);
-            }
-        }
     }
 }
 
