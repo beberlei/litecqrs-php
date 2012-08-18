@@ -258,6 +258,11 @@ for advanced logging of your events. It uses a custom type handler to convert
 aggregate root objects in the events into references and fetches them again
 on reconstruction. This way you don't serialize graphs of data into the event store.
 
+### Doctrine CouchDB
+
+A plugin that contains a CouchDB EventStore and Transactional Handler for
+Doctrine CouchDB ODM.
+
 ### CRUD
 
 While normally CRUD and CQRS don't match, if you use Doctrine as a primary data-source in the

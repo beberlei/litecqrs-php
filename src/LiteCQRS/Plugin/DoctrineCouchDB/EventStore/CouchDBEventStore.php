@@ -3,7 +3,10 @@
 namespace LiteCQRS\Plugin\DoctrineCouchDB\EventStore;
 
 use LiteCQRS\EventStore\EventStoreInterface;
+use LiteCQRS\EventStore\SerializerInterface;
 use LiteCQRS\DomainEvent;
+
+use Doctrine\CouchDB\CouchDBClient;
 
 /**
  * Event Store for CouchDB.
@@ -30,6 +33,7 @@ class CouchDBEventStore implements EventStoreInterface
     {
         $header = $event->getMessageHeader();
         $data   = array(
+            'type'           => 'litecqrs_event',
             'aggregate_type' => $header->aggregateType,
             'aggregate_id'   => $header->aggregateId,
             'event'          => $event->getEventName(),
@@ -38,7 +42,7 @@ class CouchDBEventStore implements EventStoreInterface
             'session_id'     => $header->sessionId,
             "payload"        => json_decode($this->serializer->serialize($event, "json"))
         );
-        $this->couch->putDocument($header->id, $data);
+        $this->couch->putDocument($data, $header->id);
     }
 }
 
