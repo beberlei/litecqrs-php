@@ -141,6 +141,15 @@ While it seems "complicated" to create commands and events for every use-case. T
 dumb and only contain public properties. Using your IDE or editor functionality you can easily template
 them in no time.
 
+### Difference between apply() and raise() in AggregateRoot
+
+The ``LiteCQRS\AggregateRoot`` has two methods for emitting events:
+
+- ``raise(DomainEvent $event)`` is the simple one, it emits an event and does nothing more.
+- ``apply(DomainEvent $event)`` requires you to add a method ``apply$eventName($event)`` that can be used to replay events on objects.
+
+If you don't use event sourcing then you are fine just using ``raise()`` and ignoring ``apply()`` alltogether.
+
 ### Automtatic Event Publishing from IdentityMap
 
 You have to implement a mechanism to fill the ```IdentityMapInterface```.
