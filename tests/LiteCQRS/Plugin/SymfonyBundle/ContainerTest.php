@@ -40,10 +40,11 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $container->set('serializer', $this->getMock('JMS\SerializerBundle\Serializer\SerializerInterface'));
         $container->set('form.factory', $this->getMock('Symfony\Component\Form\FormFactoryInterface'));
         $loader->load(array(array(
-            "orm"            => true,
-            "jms_serializer" => true,
-            "crud"           => true,
-            "swift_mailer"   => true,
+            "orm"              => true,
+            "jms_serializer"   => true,
+            "crud"             => true,
+            "swift_mailer"     => true,
+            "dbal_event_store" => true,
         )), $container);
 
         $container->getCompilerPassConfig()->setAfterRemovingPasses(array(new HandlerPass()));

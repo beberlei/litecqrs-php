@@ -20,6 +20,10 @@ class EventStoreHandlerFactory
 
     public function __invoke($handler)
     {
+        if (!$this->eventStore) {
+            return $handler;
+        }
+
         return new EventStoreHandler($handler, $this->eventStore, $this->identityMap);
     }
 }

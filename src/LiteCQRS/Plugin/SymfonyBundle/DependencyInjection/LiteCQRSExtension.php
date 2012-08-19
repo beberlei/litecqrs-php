@@ -38,6 +38,10 @@ class LiteCQRSExtension extends Extension
         if ($config['swift_mailer']) {
             $loader->load('swiftmailer.xml');
         }
+
+        if ($config['dbal_event_store']) {
+            $loader->load('dbal_event_store.xml');
+        }
     }
 }
 
