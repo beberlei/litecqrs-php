@@ -1,18 +1,18 @@
 # LiteCQRS for PHP
 
-Small convention based CQRS library for PHP (loosly based on [LiteCQRS for
+Small convention based CQRS library for PHP (loosely based on [LiteCQRS for
 C#](https://github.com/danielwertheim/LiteCQRS)) that relies on the Message Bus,
 Command, Event and Domain Event patterns.
 
 ## Terminology
 
-CQS is Command-Query-Seperation: A paradigm where read methods never change
-state and write methods never return data.  Build on top, CQRS suggets the
-seperation of read- from write-model and uses the [DomainEvent
+CQS is Command-Query-Separation: A paradigm where read methods never change
+state and write methods never return data.  Build on top, CQRS suggests the
+separation of read- from write-model and uses the [DomainEvent
 pattern](http://martinfowler.com/eaaDev/DomainEvent.html) to notify the read
 model about changes in the write model.
 
-It does so by introducing an interface ``LiteCQRS\AggreateRootInterface`` and a
+It does so by introducing an interface ``LiteCQRS\AggregateRootInterface`` and a
 corresponding default implementation ``LiteCQRS\AggregateRoot``. These classes
 act as event provider: They collect events that LiteCQRS later gathers after
 transactions completed and pushes to observing event handlers.
@@ -80,7 +80,7 @@ command are forgotten/ignored. No event handlers will be triggered in this case.
 
 In the case of InMemory CommandBus and EventMessageBus LiteCQRS makes sure that
 the execution of command and event handlers is never nested, but in sequential
-linerarized order. This prevents independent transactions for each command
+linearized order. This prevents independent transactions for each command
 from affecting each other.
 
 ## Examples
@@ -128,7 +128,7 @@ $messageBus->register($someEventHandler);
 
 ### To implement a Use Case of your application
 
-1. Create a command object that recieves all the necessary input values. Use public properties to and extend ``LiteCQRS\DefaultCommand`` simplify.
+1. Create a command object that receives all the necessary input values. Use public properties to and extend ``LiteCQRS\DefaultCommand`` simplify.
 2. Add a new method with the name of the command to any of your services (command handler)
 3. Register the command handler to handle the given command on the CommandBus.
 4. Have your entities implement ``LiteCQRS\AggregateRoot``
@@ -154,9 +154,9 @@ The ``LiteCQRS\AggregateRoot`` has two methods for emitting events:
 - ``raise(DomainEvent $event)`` is the simple one, it emits an event and does nothing more.
 - ``apply(DomainEvent $event)`` requires you to add a method ``apply$eventName($event)`` that can be used to replay events on objects.
 
-If you don't use event sourcing then you are fine just using ``raise()`` and ignoring ``apply()`` alltogether.
+If you don't use event sourcing then you are fine just using ``raise()`` and ignoring ``apply()`` altogether.
 
-### Automtatic Event Publishing from IdentityMap
+### Automatic Event Publishing from IdentityMap
 
 You have to implement a mechanism to fill the ```IdentityMapInterface```.
 All aggregate root objects in this Identity Map will have their
@@ -303,7 +303,7 @@ write model then with PHPs dynamic capabilities, you can decently do CRUD with L
 this plugin.
 
 Using ``AggregateResource`` abstract class or the ``CrudCreatable``, ``CrudUpdatable`` and
-``CrudDeletable`` traits you can implememnt CRUD functionality. This is possible to three commands:
+``CrudDeletable`` traits you can implement CRUD functionality. This is possible to three commands:
 
 - ``LiteCQRS\Plugin\CRUD\Model\Commands\CreateResourceCommand``
 - ``LiteCQRS\Plugin\CRUD\Model\Commands\UpdateResourceCommand``
