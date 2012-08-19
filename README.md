@@ -257,7 +257,7 @@ new \LiteCQRS\Plugin\SymfonyBundle\LiteCQRSBundle(),
 
 You can enable/disable the different plugins by adding the following to your config.yml:
 
-    litecqrs:
+    lite_cqrs:
         orm:                    true
         swift_mailer:           true
         monolog:                true
