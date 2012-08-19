@@ -52,7 +52,7 @@ Install with [Composer](http://getcomposer.org):
 
     {
         "require": {
-            "beberlei/lite-cqrs"
+            "beberlei/lite-cqrs": "dev-master"
         }
     }
 
