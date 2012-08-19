@@ -37,7 +37,7 @@ class EventMessageHandler implements MessageHandlerInterface
 
         foreach ($this->identityMap->all() as $aggregateRoot) {
             $id = $this->identityMap->getAggregateId($aggregateRoot);
-            foreach ($aggregateRoot->popAppliedEvents() as $event) {
+            foreach ($aggregateRoot->dequeueAppliedEvents() as $event) {
                 $header = $event->getMessageHeader();
                 $header->aggregateType = get_class($aggregateRoot);
                 $header->aggregateId   = $id;

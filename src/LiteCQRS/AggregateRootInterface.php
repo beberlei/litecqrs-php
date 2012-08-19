@@ -12,7 +12,7 @@ namespace LiteCQRS;
 interface AggregateRootInterface
 {
     public function getAppliedEvents();
-    public function popAppliedEvents();
+    public function dequeueAppliedEvents();
     public function loadFromHistory(array $events);
 }
 

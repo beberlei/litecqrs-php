@@ -18,7 +18,7 @@ abstract class AggregateRoot implements AggregateRootInterface
         return $this->appliedEvents;
     }
 
-    public function popAppliedEvents()
+    public function dequeueAppliedEvents()
     {
         $events = $this->appliedEvents;
         $this->appliedEvents = array();

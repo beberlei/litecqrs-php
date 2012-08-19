@@ -89,7 +89,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
     {
         $event = new DomainObjectChanged("Foo", array());
         $root = $this->getMock('LiteCQRS\AggregateRootInterface');
-        $root->expects($this->once())->method('popAppliedEvents')->will($this->returnValue(array($event, $event)));
+        $root->expects($this->once())->method('dequeueAppliedEvents')->will($this->returnValue(array($event, $event)));
 
         $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
         $messageBus->expects($this->exactly(2))->method('publish');
@@ -243,10 +243,10 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $user = new User();
         $user->changeEmail("foo@bar.com");
 
-        $events = $user->popAppliedEvents();
+        $events = $user->dequeueAppliedEvents();
         $this->assertEquals(1, count($events));
 
-        $events = $user->popAppliedEvents();
+        $events = $user->dequeueAppliedEvents();
         $this->assertEquals(0, count($events));
     }
 
