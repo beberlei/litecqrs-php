@@ -31,6 +31,7 @@ class DebugCommand extends ContainerAwareCommand
         $maxName        = 0;
         $maxId          = 0;
         $maxCommandType = 0;
+        $commands       = array();
 
         foreach ($container->findTaggedServiceIds('lite_cqrs.command_handler') as $id => $attributes) {
             $definition = $container->findDefinition($id);
