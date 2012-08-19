@@ -249,6 +249,24 @@ Container Aware implementations of ``CommandBus`` and ``EventMessageBus``
 implement lazy loading of all command- and event handlers for better
 performance.
 
+To enable the bundle put the following in your Kernel:
+
+```php
+new \LiteCQRS\Plugin\SymfonyBundle\LiteCQRSBundle(),
+```
+
+You can enable/disable the different plugins by adding the following to your config.yml:
+
+    litecqrs:
+        orm:                    true
+        swift_mailer:           true
+        monolog:                true
+        jms_serializer:         true
+        crud:                   true
+        dbal_event_store:       true
+        couchdb_event_store:    true
+        couchdb_odm:            true
+
 ### Swiftmailer
 
 The Swiftmailer Plugin allows you to defer the sending of mails until after a command or event

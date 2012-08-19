@@ -19,6 +19,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('LiteCQRS\Bus\EventMessageBus', $container->get('litecqrs.event_message_bus'));
         $this->assertInstanceof('LiteCQRS\Plugin\Doctrine\ORMRepository', $container->get('litecqrs.repository'));
         $this->assertInstanceOf('LiteCQRS\EventStore\SerializerInterface', $container->get('litecqrs.serializer'));
+        $this->assertInstanceOf('LiteCQRS\Plugin\SymfonyBundle\Controller\CRUDHelper', $container->get('litecqrs.crud.helper'));
     }
 
     public function createTestContainer()
@@ -37,9 +38,15 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $container->set('swiftmailer.transport', $this->getMock('Swift_Transport_SpoolTransport', array(), array(), '', false));
         $container->set('swiftmailer.transport.real', $this->getMock('Swift_Transport', array(), array(), '', false));
         $container->set('serializer', $this->getMock('JMS\SerializerBundle\Serializer\SerializerInterface'));
-        $loader->load(array(array()), $container);
+        $container->set('form.factory', $this->getMock('Symfony\Component\Form\FormFactoryInterface'));
+        $loader->load(array(array(
+            "orm"            => true,
+            "jms_serializer" => true,
+            "crud"           => true,
+            "swift_mailer"   => true,
+        )), $container);
 
-        $container->getCompilerPassConfig()->setOptimizationPasses(array(new HandlerPass()));
+        $container->getCompilerPassConfig()->setAfterRemovingPasses(array(new HandlerPass()));
         $container->getCompilerPassConfig()->setRemovingPasses(array());
         $container->compile();
 

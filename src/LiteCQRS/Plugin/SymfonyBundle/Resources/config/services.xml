@@ -7,12 +7,12 @@
         <parameter key="litecqrs.command_bus.class">LiteCQRS\Plugin\SymfonyBundle\ContainerCommandBus</parameter>
         <parameter key="litecqrs.event_message_bus.class">LiteCQRS\Plugin\SymfonyBundle\ContainerEventBus</parameter>
         <parameter key="litecqrs.event_message_handler_factory.class">LiteCQRS\Bus\EventMessageHandlerFactory</parameter>
-        <parameter key="litecqrs.identity_map.class">LiteCQRS\Plugin\Doctrine\DoctrineIdentityMap</parameter>
-        <parameter key="litecqrs.event_store_handler_factory.class">LiteCQRS\EventStore\EventStoreHandlerFactory</parameter>
-        <parameter key="litecqrs.event_store.class">LiteCQRS\EventStore\OrderedInMemoryEventStore</parameter>
+        <parameter key="litecqrs.bus.simple_identity_map.class">LiteCQRS\Bus\SimpleIdentityMap</parameter>
     </parameters>
 
     <services>
+        <service id="litecqrs.identity_map" class="%litecqrs.bus.simple_identity_map.class%" />
+
         <service id="litecqrs.event_message_bus" class="%litecqrs.event_message_bus.class%" public="true">
             <argument type="service" id="service_container" />
             <argument type="collection" />
@@ -24,67 +24,9 @@
             <tag name="lite_cqrs.command_proxy_factory" priority="255" />
         </service>
 
-        <!--
-        <service id="litecqrs.event_store" class="%litecqrs.event_store.class%" public="true">
-            <argument type="service" id="litecqrs.event_message_bus" />
-        </service>
-
-        <service id="litecqrs.event_store_handler_factory" class="%litecqrs.event_store_handler_factory.class%">
-            <argument type="service" id="litecqrs.event_store" />
-            <tag name="lite_cqrs.event_proxy_factory" priority="255" />
-        </service>
-        -->
-
-        <service id="litecqrs.identity_map" class="%litecqrs.identity_map.class%" public="false">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-        </service>
-
         <service id="command_bus" class="%litecqrs.command_bus.class%">
             <argument type="service" id="service_container" />
             <argument type="collection" />
-        </service>
-
-        <!-- extract to proper plugin file and loading -->
-        <service id="litecqrs.plugin.doctrine.orm_handler_factory" class="LiteCQRS\Plugin\Doctrine\OrmHandlerFactory" public="false">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <tag name="lite_cqrs.command_proxy_factory" priority="20" />
-        </service>
-
-        <service id="litecqrs.repository" class="LiteCQRS\Plugin\Doctrine\ORMRepository">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-        </service>
-
-        <service id="litecqrs.plugin.crud_helper" class="LiteCQRS\Plugin\SymfonyBundle\Controller\CRUDHelper">
-            <argument type="service" id="command_bus" />
-            <argument type="service" id="form.factory" />
-        </service>
-
-        <service id="litecqrs.plugin.crud_command_handler" class="LiteCQRS\Plugin\CRUD\CRUDCommandService">
-            <tag name="lite_cqrs.command_handler" />
-            <argument type="service" id="litecqrs.repository" />
-        </service>
-
-        <service id="litecqrs.plugin.monolog.logger_factory" class="LiteCQRS\Plugin\Monolog\MonologLoggerFactory">
-            <argument type="service" id="logger" />
-            <tag name="lite_cqrs.command_proxy_factory" priority="256" />
-            <tag name="lite_cqrs.event_proxy_factory" priority="256" />
-        </service>
-
-        <service id="litecqrs.plugin.swiftmailer.spool_factory" class="LiteCQRS\Plugin\Swiftmailer\SpoolHandlerFactory">
-            <argument type="service" id="swiftmailer.transport" />
-            <argument type="service" id="swiftmailer.transport.real" />
-            <tag name="lite_cqrs.command_proxy_factory" priority="25" />
-            <tag name="lite_cqrs.event_proxy_factory" priority="25"  />
-        </service>
-
-        <service id="litecqrs.serializer" class="LiteCQRS\Plugin\JMSSerializer\JMSSerializer">
-            <argument type="service" id="serializer" />
-            <argument type="service" id="litecqrs.serializer.aggregate_root_handler" />
-        </service>
-
-        <service id="litecqrs.serializer.aggregate_root_handler" class="LiteCQRS\Plugin\JMSSerializer\AggregateRootHandler" public="false">
-            <argument type="service" id="litecqrs.identity_map" />
-            <argument type="service" id="litecqrs.repository" />
         </service>
     </services>
 </container>

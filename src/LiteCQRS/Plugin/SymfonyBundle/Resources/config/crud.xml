@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="litecqrs.crud.helper.class">LiteCQRS\Plugin\SymfonyBundle\Controller\CRUDHelper</parameter>
+        <parameter key="litecqrs.crud.command_handler.class">LiteCQRS\Plugin\CRUD\CRUDCommandService</parameter>
+    </parameters>
+
+    <services>
+        <service id="litecqrs.crud.helper" class="%litecqrs.crud.helper.class%">
+            <argument type="service" id="command_bus" />
+            <argument type="service" id="form.factory" />
+        </service>
+
+        <service id="litecqrs.crud.command_handler" class="%litecqrs.crud.command_handler.class%">
+            <tag name="lite_cqrs.command_handler" />
+            <argument type="service" id="litecqrs.repository" />
+        </service>
+    </services>
+</container>

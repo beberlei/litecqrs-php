@@ -8,6 +8,7 @@ use LiteCQRS\Plugin\CRUD\Model\Commands\DeleteResourceCommand;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
+use LiteCQRS\Bus\CommandBus;
 
 /**
  * Helper class to avoid repetition when implementing the controllers
