@@ -3,7 +3,7 @@
 namespace LiteCQRS\Plugin\Doctrine;
 
 use LiteCQRS\Bus\IdentityMapInterface;
-use LiteCQRS\AggregateRootInterface;
+use LiteCQRS\EventProviderInterface;
 use Doctrine\ORM\EntityManager;
 
 class DoctrineIdentityMap implements IdentityMapInterface
@@ -15,7 +15,7 @@ class DoctrineIdentityMap implements IdentityMapInterface
         $this->entityManager = $entityManager;
     }
 
-    public function add(AggregateRootInterface $object)
+    public function add(EventProviderInterface $object)
     {
         $this->entityManager->persist($object);
     }
@@ -27,7 +27,7 @@ class DoctrineIdentityMap implements IdentityMapInterface
 
         foreach ($uow->getIdentityMap() as $class => $entities) {
             foreach ($entities as $entity) {
-                if (!($entity instanceof AggregateRootInterface)) {
+                if (!($entity instanceof EventProviderInterface)) {
                     break;
                 }
 
@@ -38,7 +38,7 @@ class DoctrineIdentityMap implements IdentityMapInterface
         return $aggregateRoots;
     }
 
-    public function getAggregateId(AggregateRootInterface $object)
+    public function getAggregateId(EventProviderInterface $object)
     {
         $class = $this->entityManager->getClassMetadata(get_class($object));
 

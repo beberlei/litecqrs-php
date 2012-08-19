@@ -11,6 +11,9 @@ use JMS\SerializerBundle\Annotation\ExclusionPolicy;
  */
 abstract class AggregateRoot implements AggregateRootInterface
 {
+    /**
+     * @var DomainEvent[]
+     */
     private $appliedEvents = array();
 
     public function getAppliedEvents()
@@ -25,16 +28,11 @@ abstract class AggregateRoot implements AggregateRootInterface
         return $events;
     }
 
-    protected function raise(DomainEvent $event)
-    {
-        $event->getMessageHeader()->setAggregate($this);
-        $this->appliedEvents[] = $event;
-    }
-
     protected function apply(DomainEvent $event)
     {
         $this->executeEvent($event);
-        $this->raise($event);
+        $event->getMessageHeader()->setAggregate($this);
+        $this->appliedEvents[] = $event;
     }
 
     private function executeEvent(DomainEvent $event)

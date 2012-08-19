@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\AggregateRootInterface;
+use LiteCQRS\EventProviderInterface;
 
 /**
  * Identity map tracks all aggregate roots.
@@ -13,8 +13,8 @@ use LiteCQRS\AggregateRootInterface;
  */
 interface IdentityMapInterface
 {
-    public function add(AggregateRootInterface $object);
+    public function add(EventProviderInterface $object);
     public function all();
-    public function getAggregateId(AggregateRootInterface $object);
+    public function getAggregateId(EventProviderInterface $object);
 }
 

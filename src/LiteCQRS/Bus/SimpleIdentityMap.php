@@ -2,13 +2,13 @@
 
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\AggregateRootInterface;
+use LiteCQRS\EventProviderInterface;
 
 class SimpleIdentityMap implements IdentityMapInterface
 {
     private $map = array();
 
-    public function add(AggregateRootInterface $object)
+    public function add(EventProviderInterface $object)
     {
         $this->map[spl_object_hash($object)] = $object;
     }
@@ -16,7 +16,7 @@ class SimpleIdentityMap implements IdentityMapInterface
     {
         return array_values($this->map);
     }
-    public function getAggregateId(AggregateRootInterface $object)
+    public function getAggregateId(EventProviderInterface $object)
     {
         return null;
     }

@@ -9,10 +9,8 @@ namespace LiteCQRS;
  * and allow other objects to access these events and store
  * them.
  */
-interface AggregateRootInterface
+interface AggregateRootInterface extends EventProviderInterface
 {
-    public function getAppliedEvents();
-    public function dequeueAppliedEvents();
     public function loadFromHistory(array $events);
 }
 

@@ -12,7 +12,7 @@ namespace MyApp;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-use LiteCQRS\AggregateRoot;
+use LiteCQRS\DomainEventProvider;
 use LiteCQRS\Bus\DirectCommandBus;
 use LiteCQRS\Bus\InMemoryEventMessageBus;
 use LiteCQRS\Bus\SimpleIdentityMap;
@@ -20,7 +20,7 @@ use LiteCQRS\Bus\EventMessageHandlerFactory;
 use LiteCQRS\DefaultCommand;
 use LiteCQRS\DomainObjectChanged;
 
-class User extends AggregateRoot
+class User extends DomainEventProvider
 {
     private $email = "old@beberlei.de";
 

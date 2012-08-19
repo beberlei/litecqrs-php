@@ -12,10 +12,15 @@ seperation of read- from write-model and uses the [DomainEvent
 pattern](http://martinfowler.com/eaaDev/DomainEvent.html) to notify the read
 model about changes in the write model.
 
-It does so by introducing an interface ``LiteCQRS\AggreateRootInterface`` and a
-corresponding default implementation ``LiteCQRS\AggregateRoot``. These classes
-act as event provider: They collect events that LiteCQRS later gathers after
-transactions completed and pushes to observing event handlers.
+LiteCQRS follows this pattern so by introducing an interface
+``LiteCQRS\EventProviderInterface`` and a corresponding default implementation
+``LiteCQRS\DomainEventProvider``. These classes act as event provider: They
+collect events that LiteCQRS later gathers after transactions completed and
+pushes to observing event handlers.
+
+If you want to use the "Event Sourcing" pattern, replaying all events
+to reconstitute an object then you have to use the ``LiteCQRS\AggregateRootInterface``
+and its implementation ``LiteCQRS\AggregateRoot``.
 
 LiteCQRS uses the command pattern and a central message bus service that
 handles commands and finds their corresponding handler to execute them.
@@ -66,7 +71,7 @@ These are the steps that a command regularly takes through the LiteCQRS stack du
    command has exactly one handler.
 3. The command handler changes state of the domain model. It does that by
    creating events (that represent state change) and passing them to the
-   ``AggregateRoot::apply()`` or ``AggregateRoot::raise()`` method of your domain objects.
+   ``AggregateRoot::apply()`` or ``DomainEventProvider::raise()`` method of your domain objects.
 4. When the command is completed, the command bus will check all objects in the
    identity map for events.
 5. All found events will be passed to the ``EventMessageBus#publish()`` method.
@@ -131,7 +136,7 @@ $messageBus->register($someEventHandler);
 1. Create a command object that recieves all the necessary input values. Use public properties to and extend ``LiteCQRS\DefaultCommand`` simplify.
 2. Add a new method with the name of the command to any of your services (command handler)
 3. Register the command handler to handle the given command on the CommandBus.
-4. Have your entities implement ``LiteCQRS\AggregateRoot``
+4. Have your entities implement ``LiteCQRS\AggregateRoot`` or ``LiteCQRS\DomainEventProvider``
 5. Use protected method ``raise(DomainEvent $event)`` or apply(DomainEvent $event)`` to attach
    events to your aggregate root objects.
 
@@ -147,16 +152,16 @@ While it seems "complicated" to create commands and events for every use-case. T
 dumb and only contain public properties. Using your IDE or editor functionality you can easily template
 them in no time.
 
-### Difference between apply() and raise() in AggregateRoot
+### Difference between apply() and raise()
 
-The ``LiteCQRS\AggregateRoot`` has two methods for emitting events:
+There are two ways to publish events to the outside world.
 
-- ``raise(DomainEvent $event)`` is the simple one, it emits an event and does nothing more.
-- ``apply(DomainEvent $event)`` requires you to add a method ``apply$eventName($event)`` that can be used to replay events on objects.
+- ``DomainEventProvider#raise(DomainEvent $event)`` is the simple one, it emits an event and does nothing more.
+- ``AggregateRoot#apply(DomainEvent $event)`` requires you to add a method ``apply$eventName($event)`` that can be used to replay events on objects. This is used to replay an object from events.
 
 If you don't use event sourcing then you are fine just using ``raise()`` and ignoring ``apply()`` alltogether.
 
-### Automtatic Event Publishing from IdentityMap
+### Automatic Event Publishing from IdentityMap
 
 You have to implement a mechanism to fill the ```IdentityMapInterface```.
 All aggregate root objects in this Identity Map will have their

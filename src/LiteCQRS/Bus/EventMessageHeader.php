@@ -3,7 +3,7 @@
 namespace LiteCQRS\Bus;
 
 use LiteCQRS\Util;
-use LiteCQRS\AggregateRootInterface;
+use LiteCQRS\EventProviderInterface;
 
 class EventMessageHeader
 {
@@ -21,7 +21,7 @@ class EventMessageHeader
     public $id;
 
     /**
-     * @var AggregateRootInterface
+     * @var EventProviderInterface
      */
     private $aggregate;
 
@@ -59,7 +59,7 @@ class EventMessageHeader
         $this->date = Util::createMicrosecondsNow();
     }
 
-    public function setAggregate(AggregateRootInterface $object = null)
+    public function setAggregate(EventProviderInterface $object = null)
     {
         $this->aggregate = $object;
     }
