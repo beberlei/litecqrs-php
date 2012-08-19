@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\Compiler\HandlerPass;
-use LiteCQRS\Plugin\SymfonyBundle\AggregateRootHandlerFactory;
+use LiteCQRS\Plugin\JMSSerializer\AggregateRootHandlerFactory;
 use JMS\SerializerBundle\DependencyInjection\JMSSerializerExtension;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
