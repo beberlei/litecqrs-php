@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="litecqrs.couchdb_odm.manager_handler_factory.class">LiteCQRS\Plugin\CouchDB\CouchDBTransactionalHandlerFactory</parameter>
+    </parameters>
+
+    <services>
+        <service id="litecqrs.couchdb_odm.manager_handler_factory" class="%litecqrs.couchdb_odm.manager_handler_factory.class%">
+            <argument type="service" id="doctrine_couchdb.odm.default_document_manager" />
+        </service>
+    </services>
+</container>

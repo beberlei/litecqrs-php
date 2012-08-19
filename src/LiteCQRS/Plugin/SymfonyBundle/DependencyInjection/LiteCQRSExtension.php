@@ -42,6 +42,14 @@ class LiteCQRSExtension extends Extension
         if ($config['dbal_event_store']) {
             $loader->load('dbal_event_store.xml');
         }
+
+        if ($config['couchdb_odm']) {
+            $loader->load('couchdb_odm.xml');
+        }
+
+        if ($config['couchdb_event_store']) {
+            $loader->load('couchdb_event_store.xml');
+        }
     }
 }
 

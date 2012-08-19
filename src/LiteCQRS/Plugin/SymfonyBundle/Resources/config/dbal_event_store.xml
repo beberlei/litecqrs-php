@@ -18,7 +18,7 @@
             <argument type="service" id="litecqrs.doctrine.event_store" />
             <argument type="service" id="litecqrs.identity_map" />
 
-            <tag name="lite_cqrs.event_handler_factory" priority="255" />
+            <tag name="lite_cqrs.event_handler_factory" priority="200" />
         </service>
     </services>
 </container>
