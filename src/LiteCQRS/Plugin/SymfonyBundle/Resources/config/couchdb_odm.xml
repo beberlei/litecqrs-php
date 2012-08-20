@@ -13,7 +13,7 @@
         <service id="litecqrs.couchdb_odm.manager_handler_factory" class="%litecqrs.couchdb_odm.manager_handler_factory.class%">
             <argument type="service" id="doctrine_couchdb.odm.default_document_manager" />
 
-            <tag name="lite_cqrs.command_handler_factory" />
+            <tag name="lite_cqrs.command_proxy_factory" priority="255" />
         </service>
 
         <service id="litecqrs.repository.couchdb" class="%litecqrs.couchdb_odm.repository.class%">
