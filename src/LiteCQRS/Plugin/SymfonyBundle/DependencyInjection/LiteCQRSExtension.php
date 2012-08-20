@@ -40,6 +40,7 @@ class LiteCQRSExtension extends Extension
 
         if ($config['dbal_event_store']) {
             $loader->load('dbal_event_store.xml');
+            $container->setAlias('litecqrs.event_store', 'litecqrs.doctrine.event_store');
         }
 
         if ($config['couchdb_odm']) {
@@ -50,6 +51,7 @@ class LiteCQRSExtension extends Extension
 
         if ($config['couchdb_event_store']) {
             $loader->load('couchdb_event_store.xml');
+            $container->setAlias('litecqrs.event_store', 'litecqrs.couchdb.event_store');
         }
     }
 }

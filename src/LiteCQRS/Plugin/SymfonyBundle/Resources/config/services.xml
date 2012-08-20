@@ -21,6 +21,7 @@
         <service id="litecqrs.event_message_handler_factory" class="%litecqrs.event_message_handler_factory.class%">
             <argument type="service" id="litecqrs.event_message_bus" />
             <argument type="service" id="litecqrs.identity_map" />
+            <argument type="service" id="litecqrs.event_store" on-invalid="null" />
             <tag name="lite_cqrs.command_proxy_factory" priority="255" />
         </service>
 
