@@ -2,6 +2,8 @@
 
 namespace LiteCQRS\EventStore;
 
+use LiteCQRS\Bus\IdentityMapInterface;
+
 /**
  * Handler Proxy Factory just for the event store. Accepts
  * another proxy factory to create a bigger handler chain.

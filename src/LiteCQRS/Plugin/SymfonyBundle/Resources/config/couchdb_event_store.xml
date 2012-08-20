@@ -4,8 +4,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="litecqrs.couchdb.event_store.class">LiteCQRS\Plugin\CouchDB\EventStore\CouchDBEventStore</parameter>
-        <parameter key="litecqrs.couchdb.event_store_handler_factory.class">LiteCQRS\EventStore\EventMessageHandlerFactory</parameter>
+        <parameter key="litecqrs.couchdb.event_store.class">LiteCQRS\Plugin\DoctrineCouchDB\EventStore\CouchDBEventStore</parameter>
+        <parameter key="litecqrs.couchdb.event_store_handler_factory.class">LiteCQRS\EventStore\EventStoreHandlerFactory</parameter>
     </parameters>
 
     <services>
@@ -18,7 +18,7 @@
             <argument type="service" id="litecqrs.couchdb.event_store" />
             <argument type="service" id="litecqrs.identity_map" />
 
-            <tag name="lite_cqrs.event_handler_factory" priority="200" />
+            <tag name="lite_cqrs.event_proxy_factory" priority="200" />
         </service>
     </services>
 </container>
