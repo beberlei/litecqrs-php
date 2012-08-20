@@ -4,7 +4,7 @@ namespace LiteCQRS\Plugin\DoctrineCouchDB;
 
 use LiteCQRS\AggregateRepositoryInterface;
 use LiteCQRS\AggregateRootInterface;
-use Doctrine\Common\ObjectManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class CouchDBRepository implements AggregateRepositoryInterface
 {
