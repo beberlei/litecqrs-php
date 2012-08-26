@@ -289,6 +289,12 @@ A plugin that logs the execution of every command and handler using
 [Monolog](https://github.com/Seldaek/monolog).  It includes the type and name
 of the message, its parameters as json and if its execution succeeded or failed.
 
+The Monolog integration into Symfony registers a specific channel ``lite_cqrs``
+which you can configure differently from the default channels in Symfony.  See
+[the Symfony
+cookbook](http://symfony.com/doc/master/cookbook/logging/channels_handlers.html)
+for more information.
+
 ### JMS Serializer
 
 A plugin that uses JMS Serializer to serialize events to JSON. This is necessary

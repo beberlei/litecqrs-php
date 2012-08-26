@@ -9,6 +9,7 @@
 
     <services>
         <service id="litecqrs.monolog.logger_factory" class="%litecqrs.monolog.logger_factory.class%">
+            <tag name="monolog.logger" channel="lite_cqrs" />
             <argument type="service" id="logger" />
             <tag name="lite_cqrs.command_proxy_factory" priority="256" />
             <tag name="lite_cqrs.event_proxy_factory" priority="256" />
