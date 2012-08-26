@@ -9,7 +9,7 @@
     </parameters>
 
     <services>
-        <service id="litecqrs.plugin.doctrine.orm_handler_factory" class="LiteCQRS\Plugin\Doctrine\OrmHandlerFactory" public="false">
+        <service id="litecqrs.plugin.doctrine.orm_handler_factory" class="LiteCQRS\Plugin\Doctrine\OrmHandlerFactory">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <tag name="lite_cqrs.command_proxy_factory" priority="20" />
         </service>
