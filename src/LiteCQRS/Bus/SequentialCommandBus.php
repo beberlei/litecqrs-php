@@ -58,7 +58,7 @@ abstract class SequentialCommandBus implements CommandBus
             return;
         }
 
-        $exceptions = array();
+        $first = true;
 
         while ($command = array_shift($this->commandStack)) {
             try {
@@ -70,14 +70,19 @@ abstract class SequentialCommandBus implements CommandBus
 
                 $handler->handle($command);
             } catch(\Exception $e) {
-                $exceptions[] = array('ex' => $e, 'command' => $command);
+                $this->executing = false;
+                $this->handleException($e, $first);
             }
 
             $this->executing = false;
+            $first = false;
         }
+    }
 
-        if ($exceptions) {
-            throw new CommandFailedStackException($exceptions);
+    protected function handleException($e, $first)
+    {
+        if ($first) {
+            throw $e;
         }
     }
 
