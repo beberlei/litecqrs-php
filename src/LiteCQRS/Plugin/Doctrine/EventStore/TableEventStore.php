@@ -44,7 +44,7 @@ class TableEventStore implements EventStoreInterface
     public function addEventsToSchema(Schema $schema)
     {
         $table = $schema->createTable($this->table);
-        $table->addColumn('id', 'integer', array('auto_increment' => true));
+        $table->addColumn('id', 'integer', array('autoincrement' => true));
         $table->addColumn('event_id', 'string', array('notnull' => true));
         $table->addColumn('aggregate_type', 'string', array('notnull' => false));
         $table->addColumn('aggregate_id', 'integer', array('notnull' => false));
