@@ -47,7 +47,7 @@ class TableEventStore implements EventStoreInterface
         $table->addColumn('id', 'integer', array('autoincrement' => true));
         $table->addColumn('event_id', 'string', array('notnull' => true));
         $table->addColumn('aggregate_type', 'string', array('notnull' => false));
-        $table->addColumn('aggregate_id', 'integer', array('notnull' => false));
+        $table->addColumn('aggregate_id', 'string', array('notnull' => false));
         $table->addColumn('event', 'string', array('notnull' => true));
         $table->addColumn('event_date', 'datetime', array('notnull' => true));
         $table->addColumn('command_id', 'string', array('notnull' => false));
