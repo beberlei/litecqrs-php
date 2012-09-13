@@ -4,7 +4,8 @@ namespace LiteCQRS\Plugin\Doctrine;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Schema;
-use LiteCQRS\Plugin\Doctrine\EventStore\TableEventStore;
+use LiteCQRS\Plugin\Doctrine\EventStore\TableEventStore,
+    LiteCQRS\Plugin\Doctrine\EventStore\TableEventStoreSchema;
 use LiteCQRS\DomainObjectChanged;
 
 class TableEventStoreTest extends \PHPUnit_Framework_TestCase
@@ -15,11 +16,12 @@ class TableEventStoreTest extends \PHPUnit_Framework_TestCase
         $serializer->expects($this->once())->method('serialize')->will($this->returnValue('{}'));
 
         $conn = DriverManager::getConnection(array("driver" => "pdo_sqlite", "memory" => true));
-        $eventStore = new TableEventStore($conn, $serializer);
 
-        $schema = new Schema();
-        $eventStore->addEventsToSchema($schema);
-        $conn->getSchemaManager()->createTable($schema->getTable('litecqrs_events'));
+        $schema = new TableEventStoreSchema();
+        $tableSchema = $schema->getTableSchema();
+        $conn->getSchemaManager()->createTable($tableSchema);
+
+        $eventStore = new TableEventStore($conn, $serializer, $tableSchema->getName());
 
         $event = new DomainObjectChanged("Test", array());
 

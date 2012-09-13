@@ -18,7 +18,7 @@ class TableEventStore implements EventStoreInterface
     private $table;
     private $serializer;
 
-    public function __construct(Connection $conn, SerializerInterface $serializer, $table = 'litecqrs_events')
+    public function __construct(Connection $conn, SerializerInterface $serializer, $table)
     {
         $this->conn       = $conn;
         $this->serializer = $serializer;
@@ -39,22 +39,6 @@ class TableEventStore implements EventStoreInterface
             'session_id'     => $header->sessionId,
             'data'           => $this->serializer->serialize($event, 'json'),
         ));
-    }
-
-    public function addEventsToSchema(Schema $schema)
-    {
-        $table = $schema->createTable($this->table);
-        $table->addColumn('id', 'integer', array('autoincrement' => true));
-        $table->addColumn('event_id', 'string', array('notnull' => true));
-        $table->addColumn('aggregate_type', 'string', array('notnull' => false));
-        $table->addColumn('aggregate_id', 'string', array('notnull' => false));
-        $table->addColumn('event', 'string', array('notnull' => true));
-        $table->addColumn('event_date', 'datetime', array('notnull' => true));
-        $table->addColumn('command_id', 'string', array('notnull' => false));
-        $table->addColumn('session_id', 'string', array('notnull' => false));
-        $table->addColumn('data', 'text');
-        $table->setPrimaryKey(array('id'));
-        $table->addIndex(array('aggregate_type', 'aggregate_id'));
     }
 }
 
