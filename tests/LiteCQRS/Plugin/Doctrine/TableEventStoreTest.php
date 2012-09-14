@@ -4,8 +4,8 @@ namespace LiteCQRS\Plugin\Doctrine;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Schema;
-use LiteCQRS\Plugin\Doctrine\EventStore\TableEventStore,
-    LiteCQRS\Plugin\Doctrine\EventStore\TableEventStoreSchema;
+use LiteCQRS\Plugin\Doctrine\EventStore\TableEventStore;
+use LiteCQRS\Plugin\Doctrine\EventStore\TableEventStoreSchema;
 use LiteCQRS\DomainObjectChanged;
 
 class TableEventStoreTest extends \PHPUnit_Framework_TestCase
