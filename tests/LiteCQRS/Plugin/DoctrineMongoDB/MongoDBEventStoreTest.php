@@ -18,9 +18,8 @@ class MongoDBEventStoreTest extends \PHPUnit_Framework_TestCase
         ;
 
         $connection = new Connection();
-        $database   = $connection->selectDatabase('litecqrs_tests');
-        $collection = $database->selectCollection('litecqrs_events');
-        $eventStore = new MongoDBEventStore($database, $serializer, 'litecqrs_events');
+        $collection = $connection->selectCollection('litecqrs_tests', 'litecqrs_events');
+        $eventStore = new MongoDBEventStore($connection, $serializer, 'litecqrs_tests', 'litecqrs_events');
         $event      = new DomainObjectChanged("Test", array());
 
         $eventStore->store($event);

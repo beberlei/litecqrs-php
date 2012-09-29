@@ -2,15 +2,16 @@
 
 namespace LiteCQRS\Plugin\DoctrineMongoDB\EventStore;
 
-use Doctrine\MongoDB\Database;
+use Doctrine\MongoDB\Connection;
 use LiteCQRS\EventStore\SerializerInterface;
 use LiteCQRS\DomainEvent;
 
 class MongoDBEventStore implements \LiteCQRS\EventStore\EventStoreInterface
 {
-    public function __construct(Database $database, SerializerInterface $serializer, $collection = 'litecqrs_events')
+    public function __construct(Connection $connection, SerializerInterface $serializer, $database, $collection = 'litecqrs_events')
     {
-        $this->database = $database;
+        $this->connection = $connection;
+        $this->database   = $database;
         $this->serializer = $serializer;
         $this->collection = $collection;
     }
@@ -30,6 +31,6 @@ class MongoDBEventStore implements \LiteCQRS\EventStore\EventStoreInterface
             'data'           => json_decode($this->serializer->serialize($event, 'json')),
         );
 
-        $this->database->selectCollection($this->collection)->insert($data);
+        $this->connection->selectCollection($this->database, $this->collection)->insert($data);
     }
 }
