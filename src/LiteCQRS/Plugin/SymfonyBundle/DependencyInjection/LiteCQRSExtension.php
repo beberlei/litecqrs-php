@@ -53,6 +53,11 @@ class LiteCQRSExtension extends Extension
             $loader->load('couchdb_event_store.xml');
             $container->setAlias('litecqrs.event_store', 'litecqrs.couchdb.event_store');
         }
+
+        if (isset($config['mongodb_event_store'])) {
+            $loader->load('mongodb_event_store.xml');
+            $container->setAlias('litecqrs.event_store', 'litecqrs.mongodb.event_store');
+        }
     }
 }
 
