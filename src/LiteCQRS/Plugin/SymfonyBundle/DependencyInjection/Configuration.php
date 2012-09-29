@@ -21,6 +21,12 @@ class Configuration implements ConfigurationInterface
                     ->booleannode('jms_serializer')->defaultFalse()->end()
                     ->booleanNode('dbal_event_store')->defaultFalse()->end()
                     ->booleanNode('couchdb_event_store')->defaultFalse()->end()
+                    ->arrayNode('mongodb_event_store')
+                        ->canBeUnset()
+                        ->children()
+                            ->scalarNode('database')->isRequired()->end()
+                        ->end()
+                    ->end()
                     ->booleanNode('couchdb_odm')->defaultFalse()->end()
                     ->booleanNode('crud')->defaultFalse()->end()
                 ->end();
