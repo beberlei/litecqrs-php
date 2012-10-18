@@ -1,7 +1,7 @@
 <?php
 namespace LiteCQRS;
 
-// This is necessary, because JMS is very aggresive about parsing stuff and
+// This is necessary, because JMS is very aggressive about parsing stuff and
 // then complaining.
 use JMS\SerializerBundle\Annotation\ExclusionPolicy;
 use LiteCQRS\Bus\EventMessageHeader;

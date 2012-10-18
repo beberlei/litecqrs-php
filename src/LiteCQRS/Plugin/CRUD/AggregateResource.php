@@ -14,7 +14,7 @@ use LiteCQRS\Plugin\CRUD\Model\Events\ResourceDeletedEvent;
  * on aggregate roots of this type.
  *
  * Important: By default this implementation is vulnerable
- * to mass assignment vulnarbility. See {@link
+ * to mass assignment vulnerability. See {@link
  * http://chadmoran.com/posts/mass-assignment-vulnerability-isn-quo-t-just-for-rails}
  * for more details. To fix this issue implement a white
  * list of properties that are allowed to be updated using

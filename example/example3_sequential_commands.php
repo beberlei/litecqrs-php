@@ -7,8 +7,8 @@
  * This requires some rethinking, but also simplifies considerably.
  *
  * This example shows how nesting many commands still executes them
- * sequentially. Commands are handled and then a value is ecohed in the parent
- * command that clearly shows that the child command hasnt been executed yet.
+ * sequentially. Commands are handled and then a value is echoed in the parent
+ * command that clearly shows that the child command hasn't been executed yet.
  */
 
 namespace MyApp;
@@ -31,7 +31,7 @@ class StringManipulation
     public function slugify(Slugify $command)
     {
         $this->commandBus->handle(new Lower(array("string" => $command->string)));
-        echo "Scheduled some comands, current value: " . $command->string->value . "\n";
+        echo "Scheduled some commands, current value: " . $command->string->value . "\n";
     }
 
     public function lower(Lower $command)
