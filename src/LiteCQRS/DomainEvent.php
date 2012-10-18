@@ -11,7 +11,7 @@ use LiteCQRS\Bus\EventMessageHeader;
  * Changing events can cause weird problems, so avoid this.
  *
  * You can apply events to {@see AggregateRoot} objects and they record
- * that these events have happend. You have to make sure that events
+ * that these events have happened. You have to make sure that events
  * are processed into the {@see EventStore} before the {@see CommandBus}
  * commits all the events. This happens right before the commit, when
  * the CommandBus iterates over the {@see IdentityMapInterface} and passes
