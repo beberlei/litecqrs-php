@@ -19,7 +19,7 @@ class DomainObjectChanged implements DomainEvent
 
     private $eventName;
 
-    public function __construct($eventName, array $args)
+    public function __construct($eventName, array $args = array())
     {
         $this->eventName = $eventName;
         foreach ($args as $property => $value) {
