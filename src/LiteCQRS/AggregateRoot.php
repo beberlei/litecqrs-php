@@ -2,7 +2,7 @@
 
 namespace LiteCQRS;
 
-// This is necessary, because JMS is very aggresive about parsing stuff and
+// This is necessary, because JMS is very aggressive about parsing stuff and
 // then complaining.
 use JMS\SerializerBundle\Annotation\ExclusionPolicy;
 
@@ -42,7 +42,7 @@ abstract class AggregateRoot implements AggregateRootInterface
         if (!method_exists($this, $method)) {
             throw new \BadMethodCallException(
                 "There is no event named '$method' that can be applied to '" . get_class($this) . "'. " .
-                "If you just want to emit an event without appliying changes use the raise() method."
+                "If you just want to emit an event without applying changes use the raise() method."
             );
         }
 

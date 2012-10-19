@@ -14,7 +14,7 @@ interface EventStoreInterface
      *
      * Makes sure that events are not added multiple times. Events
      * have identity and can only be executed once. Multiple
-     * registiration of the same event is ignored.
+     * registration of the same event is ignored.
      */
     public function store(DomainEvent $event);
 }
