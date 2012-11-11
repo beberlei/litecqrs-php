@@ -3,7 +3,6 @@
 namespace LiteCQRS\Plugin\DoctrineCouchDB;
 
 use LiteCQRS\AggregateRepositoryInterface;
-use LiteCQRS\AggregateRootInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 class CouchDBRepository implements AggregateRepositoryInterface
@@ -20,12 +19,12 @@ class CouchDBRepository implements AggregateRepositoryInterface
         return $this->objectManager->find($class, $id);
     }
 
-    public function add(AggregateRootInterface $object)
+    public function add($object)
     {
         $this->objectManager->persist($object);
     }
 
-    public function remove(AggregateRootInterface $object)
+    public function remove($object)
     {
         $this->objectManager->remove($object);
     }

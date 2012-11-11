@@ -2,12 +2,8 @@
 
 namespace LiteCQRS\Plugin\CRUD\Model\Events;
 
-use LiteCQRS\DefaultDomainEvent;
-
-class ResourceUpdatedEvent extends DefaultDomainEvent
+class ResourceUpdatedEvent extends DefaultDataEvent
 {
     public $class;
     public $id;
-    public $data = array();
 }
-

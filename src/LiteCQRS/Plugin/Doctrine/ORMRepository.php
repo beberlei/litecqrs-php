@@ -3,7 +3,6 @@
 namespace LiteCQRS\Plugin\Doctrine;
 
 use LiteCQRS\AggregateRepositoryInterface;
-use LiteCQRS\AggregateRootInterface;
 use Doctrine\ORM\EntityManager;
 
 class ORMRepository implements AggregateRepositoryInterface
@@ -20,12 +19,12 @@ class ORMRepository implements AggregateRepositoryInterface
         return $this->entityManager->find($class, $id);
     }
 
-    public function add(AggregateRootInterface $object)
+    public function add($object)
     {
         $this->entityManager->persist($object);
     }
 
-    public function remove(AggregateRootInterface $object)
+    public function remove($object)
     {
         $this->entityManager->remove($object);
     }
