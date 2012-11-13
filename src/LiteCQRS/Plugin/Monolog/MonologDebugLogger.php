@@ -33,7 +33,7 @@ class MonologDebugLogger implements MessageHandlerInterface
             $info  = end($parts);
         } else if ($message instanceof DomainEvent) {
             $log  = "Event[%s]: %s";
-            $info = $message->getEventName() . "/" . $message->getMessageHeader()->id;
+            $info = $message->getEventName() . " - " . $message->getMessageHeader()->id;
         }
 
         try {
