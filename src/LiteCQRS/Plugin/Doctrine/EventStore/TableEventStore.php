@@ -29,10 +29,15 @@ class TableEventStore implements EventStoreInterface
     {
         $header = $event->getMessageHeader();
 
+        $aggregateId = $header->aggregateId;
+        if (is_array($aggregateId)) {
+            $aggregateId = json_encode($aggregateId);
+        }
+
         $this->conn->insert($this->table, array(
             'event_id'       => $header->id,
             'aggregate_type' => $header->aggregateType,
-            'aggregate_id'   => $header->aggregateId,
+            'aggregate_id'   => $aggregateId,
             'event'          => $event->getEventName(),
             'event_date'     => $header->date->format('Y-m-d H:i:s'),// looses microseconds precision
             'command_id'     => $header->commandId,

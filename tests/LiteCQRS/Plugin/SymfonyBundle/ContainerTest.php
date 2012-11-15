@@ -33,6 +33,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         )));
         $loader = new LiteCQRSExtension();
         $container->registerExtension($loader);
+        $container->set('doctrine.dbal.default_connection', $this->getMock('Doctrine\DBAL\Connection', array(), array(), '', false));
         $container->set('doctrine.orm.default_entity_manager', $this->getMock('Doctrine\ORM\EntityManager', array(), array(), '', false));
         $container->set('logger', $this->getMock('Monolog\Logger'));
         $container->set('swiftmailer.transport', $this->getMock('Swift_Transport_SpoolTransport', array(), array(), '', false));
