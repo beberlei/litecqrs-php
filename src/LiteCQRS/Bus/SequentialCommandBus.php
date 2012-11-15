@@ -33,7 +33,7 @@ abstract class SequentialCommandBus implements CommandBus
     }
 
     /**
-     * Given a Commmand Type (ClassName) return an instance of
+     * Given a Command Type (ClassName) return an instance of
      * the service that is handling this command.
      *
      * @param string $commandType A Command Class name

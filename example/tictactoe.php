@@ -150,7 +150,7 @@ class BoardService
     public function markField(MarkField $command)
     {
         if ($command->player !== $this->currentPlayer) {
-            throw new \InvalidArgumentException("You are not currenetly on turn.");
+            throw new \InvalidArgumentException("You are not currently on turn.");
         }
 
         $this->board->mark($command->field, $command->player);

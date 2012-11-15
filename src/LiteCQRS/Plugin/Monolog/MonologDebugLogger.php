@@ -11,7 +11,7 @@ use Exception;
 use Monolog\Logger;
 
 /**
- * Logs all commands or events and their sucess/failure status
+ * Logs all commands or events and their success/failure status
  * into a logger. The input data is json serialized during that process.
  */
 class MonologDebugLogger implements MessageHandlerInterface
@@ -33,7 +33,7 @@ class MonologDebugLogger implements MessageHandlerInterface
             $info  = end($parts);
         } else if ($message instanceof DomainEvent) {
             $log  = "Event[%s]: %s";
-            $info = $message->getEventName() . "/" . $message->getMessageHeader()->id;
+            $info = $message->getEventName() . " - " . $message->getMessageHeader()->id;
         }
 
         try {

@@ -5,12 +5,18 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="litecqrs.doctrine.table_event_store.class">LiteCQRS\Plugin\Doctrine\EventStore\TableEventStore</parameter>
+        <parameter key="litecqrs.dbal.schema_listener.class">LiteCQRS\Plugin\SymfonyBundle\EventListener\SchemaListener</parameter>
     </parameters>
 
     <services>
         <service id="litecqrs.doctrine.event_store" class="%litecqrs.doctrine.table_event_store.class%">
             <argument type="service" id="doctrine.dbal.default_connection" />
             <argument type="service" id="litecqrs.serializer" />
+        </service>
+
+        <service id="litecqrs.dbal.schema_listener" class="%litecqrs.dbal.schema_listener.class%" public="false">
+            <tag name="doctrine.event_listener" event="postGenerateSchema" lazy="true" connection="default" />
+            <argument type="service" id="litecqrs.doctrine.event_store" />
         </service>
     </services>
 </container>
