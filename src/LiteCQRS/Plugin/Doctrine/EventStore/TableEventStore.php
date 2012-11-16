@@ -18,7 +18,7 @@ class TableEventStore implements EventStoreInterface
     private $table;
     private $serializer;
 
-    public function __construct(Connection $conn, SerializerInterface $serializer, $table)
+    public function __construct(Connection $conn, SerializerInterface $serializer, $table = 'litecqrs_events')
     {
         $this->conn       = $conn;
         $this->serializer = $serializer;
