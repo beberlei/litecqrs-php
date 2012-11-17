@@ -29,32 +29,21 @@ class TableEventStore implements EventStoreInterface
     {
         $header = $event->getMessageHeader();
 
+        $aggregateId = $header->aggregateId;
+        if (is_array($aggregateId)) {
+            $aggregateId = json_encode($aggregateId);
+        }
+
         $this->conn->insert($this->table, array(
             'event_id'       => $header->id,
             'aggregate_type' => $header->aggregateType,
-            'aggregate_id'   => $header->aggregateId,
+            'aggregate_id'   => $aggregateId,
             'event'          => $event->getEventName(),
             'event_date'     => $header->date->format('Y-m-d H:i:s'),// looses microseconds precision
             'command_id'     => $header->commandId,
             'session_id'     => $header->sessionId,
             'data'           => $this->serializer->serialize($event, 'json'),
         ));
-    }
-
-    public function addEventsToSchema(Schema $schema)
-    {
-        $table = $schema->createTable($this->table);
-        $table->addColumn('id', 'integer', array('autoincrement' => true));
-        $table->addColumn('event_id', 'string', array('notnull' => true));
-        $table->addColumn('aggregate_type', 'string', array('notnull' => false));
-        $table->addColumn('aggregate_id', 'string', array('notnull' => false));
-        $table->addColumn('event', 'string', array('notnull' => true));
-        $table->addColumn('event_date', 'datetime', array('notnull' => true));
-        $table->addColumn('command_id', 'string', array('notnull' => false));
-        $table->addColumn('session_id', 'string', array('notnull' => false));
-        $table->addColumn('data', 'text');
-        $table->setPrimaryKey(array('id'));
-        $table->addIndex(array('aggregate_type', 'aggregate_id'));
     }
 }
 
