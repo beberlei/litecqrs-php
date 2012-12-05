@@ -28,20 +28,23 @@ class MonologDebugLogger implements MessageHandlerInterface
     public function handle(MessageInterface $message)
     {
         if ($message instanceof Command) {
-            $parts = explode("\\", get_class($message));
-            $log   = "Command[%s]: %s";
-            $info  = end($parts);
+            $parts   = explode("\\", get_class($message));
+            $log     = "Command[%s]: %s";
+            $info    = end($parts);
+            $context = array();
         } else if ($message instanceof DomainEvent) {
-            $log  = "Event[%s]: %s";
-            $info = $message->getEventName() . " - " . $message->getMessageHeader()->id;
+            $header  = $message->getMessageHeader();
+            $log     = "Event[%s]: %s";
+            $info    = $message->getEventName() . " - " . ->id;
+            $context = array('aggregate_type' => $header->aggregateType, 'aggregate_id' => $header->aggregateId);
         }
 
         try {
-            $this->logger->debug(sprintf($log, 'STARTING', $info));
+            $this->logger->debug(sprintf($log, 'STARTING', $info), $context);
             $this->next->handle($message);
-            $this->logger->debug(sprintf($log, 'SUCCESS', $info));
+            $this->logger->debug(sprintf($log, 'SUCCESS', $info), $context);
         } catch(Exception $e) {
-            $this->logger->err(sprintf($log, 'FAIL', $info) . ' - ' . $e->getMessage());
+            $this->logger->err(sprintf($log, 'FAIL', $info) . ' - ' . $e->getMessage(), $context);
             throw $e;
         }
     }
