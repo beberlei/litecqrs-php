@@ -35,7 +35,7 @@ class MonologDebugLogger implements MessageHandlerInterface
         } else if ($message instanceof DomainEvent) {
             $header  = $message->getMessageHeader();
             $log     = "Event[%s]: %s";
-            $info    = $message->getEventName() . " - " . ->id;
+            $info    = $message->getEventName() . " - " . $header->id;
             $context = array('aggregate_type' => $header->aggregateType, 'aggregate_id' => $header->aggregateId);
         }
 
