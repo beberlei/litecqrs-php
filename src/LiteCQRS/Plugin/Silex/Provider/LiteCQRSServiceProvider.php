@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Plugin\Silex\Provider;
 
-use LiteCQRS\Plugin\Silex\ApplicationCommandBus;
+use LiteCQRS\Plugin\Silex;
 use LiteCQRS\Bus;
 use Silex\Application;
 
@@ -16,8 +16,11 @@ class LiteCQRSServiceProvider implements \Silex\ServiceProviderInterface
      */
     public function register(Application $app)
     {
+        $app['lite_cqrs.event_proxy_factories'] = array();
+        $app['lite_cqrs.command_proxy_factories'] = array();
+
         $app['command_bus'] = $app->share(function (Application $app) {
-            return new ApplicationCommandBus($app, $app['lite_cqrs.command_proxy_factories']);
+            return new Silex\ApplicationCommandBus($app, $app['lite_cqrs.command_proxy_factories']);
         });
 
         $app['lite_cqrs.commands'] = array();
@@ -27,8 +30,9 @@ class LiteCQRSServiceProvider implements \Silex\ServiceProviderInterface
         });
 
         $app['lite_cqrs.event_message_bus'] = $app->share(function () {
-            return new Bus\InMemoryEventMessageBus();
+            return new Silex\ApplicationEventBus($app, $app['lite_cqrs.event_proxy_factories']);
         });
+
 
         $app['lite_cqrs.event_message_handler'] = $app->share(function (Application $app) {
             return new Bus\EventMessageHandlerFactory($app['lite_cqrs.event_message_bus'], $app['lite_cqrs.identity_map']);
