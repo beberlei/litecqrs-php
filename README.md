@@ -244,7 +244,7 @@ the EntityManager:
 ### Silex
 
 Silex plugin ships with a CommandBus and a EventMessageBus that knows how to get services out of
-your Silex application asw ell as a ServiceProvider. The ServiceProvider adds the most basic services
+your Silex application as well as a ServiceProvider. The ServiceProvider adds the most basic services
 to get LiteCQRS to run.
 
 To enable the service provider register it on your application:
