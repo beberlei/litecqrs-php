@@ -28,7 +28,7 @@ class ApplicationEventBus extends \LiteCQRS\Bus\AbstractEventMessageBus
      */
     public function registerServices(array $eventServices)
     {
-        $this->eventServices = $eventServices;
+        $this->eventServices = array_change_key_case($eventServices);
     }
 
     /**
@@ -44,11 +44,8 @@ class ApplicationEventBus extends \LiteCQRS\Bus\AbstractEventMessageBus
             return array();
         }
 
-
-        foreach ($this->eventServices[$eventName] as $serviceIds) {
-            $serviceIds = (array) $serviceIds;
-
-            foreach ($serviceIds as $serviceId) {
+        foreach ((array) $this->eventServices[$eventName] as $serviceIds) {
+            foreach ((array) $serviceIds as $serviceId) {
                 $handlers[] = $this->application[$serviceId];
             }
         }
