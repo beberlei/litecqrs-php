@@ -243,9 +243,9 @@ the EntityManager:
 
 ### Silex
 
-Silex plugin ships with a CommandBus that knows how to get services out of your Silex application
-aswell as a ServiceProvider. The ServiceProvider adds the most basic services to get LiteCQRS to
-run.
+Silex plugin ships with a CommandBus and a EventMessageBus that knows how to get services out of
+your Silex application as well as a ServiceProvider. The ServiceProvider adds the most basic services
+to get LiteCQRS to run.
 
 To enable the service provider register it on your application:
 
@@ -254,7 +254,7 @@ To enable the service provider register it on your application:
 $app->register(new LiteCQRS\Plugin\Silex\Provider\LiteCQRSServiceProvider());
 ```
 
-`lite_cqrs.commands` is automatically injected into the `ApplicationCommandBus`. So to add Command's to
+`lite_cqrs.commands` is automatically injected into the `ApplicationCommandBus`. So to add Commands to
 the bus extend the service with:
 
 ``` php
@@ -264,11 +264,28 @@ $app['lite_cqrs.commands'] = $app->extend(function ($commands) {
     $commands['MyCustom\\SearchCommand'] = 'search_handler';
 
     return $commands;
-})
+});
 ```
 
 Remember that the key have to be the Command class and the value must be the service id that have the right 
 handler method implemented.
+
+To add a EventHandler for a specific event it is needed to call `registerServices` on the `lite_cqrs.event_bus`
+service.
+
+The array given to `registerServices` must look like:
+
+``` php
+<?php
+
+$eventServices = array(
+    'EventName' => 'service_id_id', // or
+    'AnotherEvent => array(
+        'service_id_1',
+        'service_id_2',
+    ),
+);
+```
 
 
 ### Symfony
