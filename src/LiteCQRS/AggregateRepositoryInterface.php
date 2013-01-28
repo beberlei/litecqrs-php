@@ -15,22 +15,22 @@ interface AggregateRepositoryInterface
      * @param string $class
      * @param mixed $id
      *
-     * @return AggregateRootInterface
+     * @return object
      */
     public function find($class, $id);
 
     /**
      * Add aggregate root to repository and schedule for persistence.
      *
-     * @param AggregateRootInterface $object
+     * @param object $object
      */
-    public function add(AggregateRootInterface $object);
+    public function add($object);
 
     /**
      * Schedule aggregate root for removal
      *
-     * @param AggregateRootInterface $object
+     * @param object $object
      */
-    public function remove(AggregateRootInterface $object);
+    public function remove($object);
 }
 

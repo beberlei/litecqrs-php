@@ -2,12 +2,9 @@
 
 namespace LiteCQRS\Plugin\CRUD\Model\Events;
 
-use LiteCQRS\DefaultDomainEvent;
-
-class ResourceCreatedEvent extends DefaultDomainEvent
+class ResourceCreatedEvent extends DefaultDataEvent
 {
     public $class;
     public $id;
-    public $data = array();
 }
 

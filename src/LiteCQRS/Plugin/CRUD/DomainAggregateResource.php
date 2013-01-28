@@ -3,11 +3,9 @@
 namespace LiteCQRS\Plugin\CRUD;
 
 use LiteCQRS\AggregateRoot;
-use LiteCQRS\Plugin\CRUD\Model\Events\ResourceCreatedEvent;
-use LiteCQRS\Plugin\CRUD\Model\Events\ResourceUpdatedEvent;
-use LiteCQRS\Plugin\CRUD\Model\Events\ResourceDeletedEvent;
 
-use LiteCQRS\DomainEvent;
+use LiteCQRS\Plugin\CRUD\Updater\AccessFilter\UniversalFilter;
+use LiteCQRS\Plugin\CRUD\Updater\ReflectionBasedUpdater;
 
 /**
  * Aggregate Resource Base class that helps you implement
@@ -22,11 +20,16 @@ use LiteCQRS\DomainEvent;
  * list of properties that are allowed to be updated using
  * the {@see getAccessibleProperties()} method.
  */
-abstract class AggregateResource extends AggregateRoot
+class DomainAggregateResource extends AggregateRoot
 {
-    use DomainAsAggregate;
+    use DomainAsProperty;
     use CrudCreatable;
     use CrudDeletable;
     use CrudUpdatable;
-}
 
+    public function __construct()
+    {
+        $this->filter  = new UniversalFilter;
+        $this->updater = new ReflectionBasedUpdater;
+    }
+}

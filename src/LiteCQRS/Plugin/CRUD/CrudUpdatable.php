@@ -17,13 +17,6 @@ trait CrudUpdatable
 
     protected function applyResourceUpdated(ResourceUpdatedEvent $event)
     {
-        $properties = array_keys(get_class_vars($this));
-
-        foreach ($event->data as $key => $value) {
-            if (in_array($key, $properties)) {
-                $this->$key = $value;
-            }
-        }
+        $this->updateDomain($event);
     }
 }
-
