@@ -260,14 +260,12 @@ the bus extend the service with:
 ``` php
 <?php
 
-$app['lite_cqrs.commands'] = $app->extend(function ($commands) {
-    $commands['MyCustom\\SearchCommand'] = 'search_handler';
-
-    return $commands;
-});
+$app['lite_cqrs.commands'] = array_merge($app['lite_cqrs.commands'], array(
+    'MyCustom\\SearchCommand' => 'search_handler',
+));
 ```
 
-Remember that the key have to be the Command class and the value must be the service id that have the right 
+Remember that the key have to be the Command class and the value must be the service id that have the right
 handler method implemented.
 
 To add a EventHandler for a specific event it is needed to call `registerServices` on the `lite_cqrs.event_bus`
