@@ -39,8 +39,10 @@ class InMemoryEventMessageBus extends AbstractEventMessageBus
         }
     }
 
-    protected function getHandlers($eventName)
+    protected function getHandlers(EventName $eventName)
     {
+        $eventName = strtolower($eventName);
+
         if (!isset($this->handlers[$eventName])) {
             return array();
         }

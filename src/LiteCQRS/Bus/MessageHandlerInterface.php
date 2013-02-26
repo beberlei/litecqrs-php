@@ -4,6 +4,6 @@ namespace LiteCQRS\Bus;
 
 interface MessageHandlerInterface
 {
-    public function handle(MessageInterface $message);
+    public function handle($message);
 }
 

@@ -1,6 +1,6 @@
 # LiteCQRS for PHP
 
-Small convention based CQRS library for PHP (loosely based on [LiteCQRS for
+Small naming-convention based CQRS library for PHP (loosely based on [LiteCQRS for
 C#](https://github.com/danielwertheim/LiteCQRS)) that relies on the Message Bus,
 Command, Event and Domain Event patterns.
 
@@ -25,29 +25,34 @@ and its implementation ``LiteCQRS\AggregateRoot``.
 LiteCQRS uses the command pattern and a central message bus service that
 handles commands and finds their corresponding handler to execute them.
 
+## Changes
+
+### From 1.0 to 1.1
+
+* Extending ``LiteCQRS\Command`` and ``LiteCQRS\DomainEvent`` is NOT required anymore.
+  In fact you can use any class as command or event. The naming conventions alone
+  make sure command handlers and event listeners are detected.
+
 ## Conventions
 
 * All public methods of a command handler class are mapped to Commands "Command
-  Class Shortname" => "MethodName"
+  Class Shortname" => "MethodName" when the method and command class shortname match.
+  Implementing an interface for the commands is NOT required (since 1.1)
+* Domain Events are applied to Event Handlers "Event Class Shortname" =>
+  "onEventClassShortname". Only if this matches is an event listener registered.
 * Domain Events are applied on Entities/Aggregate Roots "Event Class Shortname"
   => "applyEventClassShortname"
-* Domain Events are applied to Event Handlers "Event Class Shortname" =>
-  "onEventClassShortname"
-* You can use the ``DomainObjectChanged`` Event to avoid creating lots of event
-  classes. You can dynamically set the event name on it and exchange it with a
-  real event implementation when it becomes necessary.
-* Otherwise you can extend the ``DefaultDomainEvent`` which has a constructor
+* You can optionally extend the ``DefaultDomainEvent`` which has a constructor
   that maps its array input to properties and throws an exception if an unknown
   property is passed.
 * There is also a ``DefaultCommand`` with the same semantics as
-  ``DefaultDomainEvent``
+  ``DefaultDomainEvent``. Extending this is not required.
 
 Examples:
 
-* ``HelloWorld\GreetingCommand`` maps to the ``greeting($command)`` method on the registered handler.
+* ``HelloWorld\GreetingCommand`` maps to the ``greeting(GreetingCommand $command)`` method on the registered handler.
+* ``HelloWorld\GreetedEvent`` is passed to all event handlers that have a method ``onGreeted(GreetedEvent $event)``.
 * ``HelloWorld\GreetedEvent`` is delegated to ``applyGreeted($event)`` when created on the aggregate root
-* ``HelloWorld\GreetedEvent`` is passed to all event handlers that have a method ``onGreeted($event)``.
-* ``new DomainObjectChanged("Greeted", array("foo" => "bar"))`` is mapped to the "Greeted" event.
 
 ## Installation & Requirements
 
@@ -180,7 +185,6 @@ If you want to log all commands:
 ```php
 <?php
 use LiteCQRS\Bus\MessageHandlerInterface;
-use LiteCQRS\Bus\MessageInterface;
 
 class CommandLogger implements MessageHandlerInterface
 {
@@ -191,7 +195,7 @@ class CommandLogger implements MessageHandlerInterface
         $this->next = $next;
     }
 
-    public function handle(MessageInterface $command)
+    public function handle($command)
     {
         syslog(LOG_INFO, "Executing: " . get_class($command));
         $this->next->handle($command);

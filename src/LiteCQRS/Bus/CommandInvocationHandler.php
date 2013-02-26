@@ -2,8 +2,6 @@
 
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\Command;
-
 class CommandInvocationHandler implements MessageHandlerInterface
 {
     private $service;
@@ -13,9 +11,9 @@ class CommandInvocationHandler implements MessageHandlerInterface
         $this->service = $service;
     }
 
-    public function handle(MessageInterface $command)
+    public function handle($command)
     {
-        if (!($command instanceof Command)) {
+        if ( ! is_object($command)) {
             throw new \RuntimeException("No command given to CommandInvocationHandler.");
         }
 
@@ -31,6 +29,7 @@ class CommandInvocationHandler implements MessageHandlerInterface
     public function getHandlerMethodName($command)
     {
         $parts = explode("\\", get_class($command));
+
         return str_replace("Command", "", lcfirst(end($parts)));
     }
 }

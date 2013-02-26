@@ -3,7 +3,6 @@
 namespace LiteCQRS\Plugin\Doctrine\MessageHandler;
 
 use LiteCQRS\Bus\MessageHandlerInterface;
-use LiteCQRS\Bus\MessageInterface;
 
 use Exception;
 
@@ -20,7 +19,7 @@ class OrmTransactionalHandler implements MessageHandlerInterface
         $this->next = $next;
     }
 
-    public function handle(MessageInterface $message)
+    public function handle($message)
     {
         $this->entityManager->beginTransaction();
 

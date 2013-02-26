@@ -62,9 +62,9 @@ abstract class AbstractEventMessageBus implements EventMessageBus
         return $events;
     }
 
-    protected function handle(DomainEvent $event)
+    protected function handle($event)
     {
-        $eventName  = strtolower($event->getEventName());
+        $eventName  = new EventName($event);
         $services   = $this->getHandlers($eventName);
 
         foreach ($services as $service) {
@@ -91,7 +91,7 @@ abstract class AbstractEventMessageBus implements EventMessageBus
         }
     }
 
-    abstract protected function getHandlers($eventName);
+    abstract protected function getHandlers(EventName $eventName);
 }
 
 

@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Plugin\JMSSerializer;
 
-use LiteCQRS\Bus\IdentityMapInterface;
+use LiteCQRS\Bus\IdentityMap\IdentityMapInterface;
 use LiteCQRS\AggregateRepositoryInterface;
 
 use JMS\SerializerBundle\Serializer\VisitorInterface;
@@ -19,7 +19,7 @@ use JMS\SerializerBundle\Serializer\GenericSerializationVisitor;
 class AggregateRootHandler implements DeserializationHandlerInterface, SerializationHandlerInterface
 {
     private $enabled = false;
-    private $identityMap = array();
+    private $identityMap;
 
     public function __construct(IdentityMapInterface $identityMap, AggregateRepositoryInterface $repository)
     {
