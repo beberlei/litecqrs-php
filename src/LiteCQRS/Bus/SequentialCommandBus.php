@@ -2,8 +2,6 @@
 
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\Command;
-
 /**
  * Process Commands and pass them to their handlers in sequential order.
  *

@@ -2,7 +2,6 @@
 
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\Command;
 use LiteCQRS\EventStore\EventStoreInterface;
 
 class EventMessageHandlerFactory

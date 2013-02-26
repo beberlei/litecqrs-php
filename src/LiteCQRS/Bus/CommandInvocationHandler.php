@@ -2,8 +2,6 @@
 
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\Command;
-
 class CommandInvocationHandler implements MessageHandlerInterface
 {
     private $service;

@@ -26,19 +26,31 @@ class HandlerPass implements CompilerPassInterface
             $class = $definition->getClass();
 
             $reflClass = new \ReflectionClass($class);
-            foreach ($reflClass->getMethods() as $method) {
+
+            foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+                // skip events
+                if (strpos($method->getName(), "on") === 0) {
+                    continue;
+                }
+
                 if ($method->getNumberOfParameters() != 1) {
                     continue;
                 }
 
                 $commandParam = current($method->getParameters());
 
-                if (!$commandParam->getClass() || !in_array('LiteCQRS\Command', class_implements($commandParam->getClass()->getName()))) {
+                if (!$commandParam->getClass()) {
                     continue;
                 }
 
-                $commandType = $commandParam->getClass()->getName();
-                $services[$commandType] = $id;
+                $commandClass = $commandParam->getClass();
+
+                // skip methods where the command class name does not match the method name
+                if (strtolower($commandClass->getShortName()) !== strtolower($method->getName())) {
+                    continue;
+                }
+
+                $services[$commandClass->getName()] = $id;
             }
         }
 
