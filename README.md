@@ -1,6 +1,6 @@
 # LiteCQRS for PHP
 
-Small convention based CQRS library for PHP (loosely based on [LiteCQRS for
+Small naming-convention based CQRS library for PHP (loosely based on [LiteCQRS for
 C#](https://github.com/danielwertheim/LiteCQRS)) that relies on the Message Bus,
 Command, Event and Domain Event patterns.
 
@@ -30,7 +30,7 @@ handles commands and finds their corresponding handler to execute them.
 ### From 1.0 to 1.1
 
 * Extending ``LiteCQRS\Command`` and ``LiteCQRS\DomainEvent`` is NOT required anymore.
-  In fact you can use any class as command or event. The naming concentions alone
+  In fact you can use any class as command or event. The naming conventions alone
   make sure command handlers and event listeners are detected.
 
 ## Conventions
@@ -42,9 +42,9 @@ handles commands and finds their corresponding handler to execute them.
   "onEventClassShortname". Only if this matches is an event listener registered.
 * Domain Events are applied on Entities/Aggregate Roots "Event Class Shortname"
   => "applyEventClassShortname"
-* You can extend the ``DefaultDomainEvent`` which has a constructor
+* You can optionally extend the ``DefaultDomainEvent`` which has a constructor
   that maps its array input to properties and throws an exception if an unknown
-  property is passed. Extending this is not required.
+  property is passed.
 * There is also a ``DefaultCommand`` with the same semantics as
   ``DefaultDomainEvent``. Extending this is not required.
 
@@ -185,7 +185,6 @@ If you want to log all commands:
 ```php
 <?php
 use LiteCQRS\Bus\MessageHandlerInterface;
-use LiteCQRS\Bus\MessageInterface;
 
 class CommandLogger implements MessageHandlerInterface
 {
@@ -196,7 +195,7 @@ class CommandLogger implements MessageHandlerInterface
         $this->next = $next;
     }
 
-    public function handle(MessageInterface $command)
+    public function handle($command)
     {
         syslog(LOG_INFO, "Executing: " . get_class($command));
         $this->next->handle($command);

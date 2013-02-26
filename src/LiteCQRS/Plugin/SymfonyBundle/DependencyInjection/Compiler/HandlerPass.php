@@ -44,9 +44,10 @@ class HandlerPass implements CompilerPassInterface
                 }
 
                 $commandClass = $commandParam->getClass();
+                $commandName = strtolower(str_replace("Command", "", $commandClass->getShortName()));
 
                 // skip methods where the command class name does not match the method name
-                if (strtolower($commandClass->getShortName()) !== strtolower($method->getName())) {
+                if ($commandName !== strtolower($method->getName())) {
                     continue;
                 }
 
