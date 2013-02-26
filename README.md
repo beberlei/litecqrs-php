@@ -51,7 +51,9 @@ handles commands and finds their corresponding handler to execute them.
 Examples:
 
 * ``HelloWorld\GreetingCommand`` maps to the ``greeting(GreetingCommand $command)`` method on the registered handler.
+* ``HelloWorld\Commands\Greeting`` maps to the ``greeting(Greeting $command)`` method on the registered handler.
 * ``HelloWorld\GreetedEvent`` is passed to all event handlers that have a method ``onGreeted(GreetedEvent $event)``.
+* ``HelloWorld\Events\Greeted`` is passed to all event handlers that have a method ``onGreeted(Greeted $event)``.
 * ``HelloWorld\GreetedEvent`` is delegated to ``applyGreeted($event)`` when created on the aggregate root
 
 ## Installation & Requirements
@@ -117,13 +119,16 @@ $commandBus->register('MyApp\ChangeEmailCommand', $userService);
 
 2. In Memory Commands and Events Handlers
 
+This uses ``LiteCQRS\EventProviderInterface`` instances to trigger domain events.
+
 ```php
 <?php
 // 1. Setup the Library with InMemory Handlers
 $messageBus = new InMemoryEventMessageBus();
 $identityMap = new SimpleIdentityMap();
+$queue = new EventProviderQueue($identityMap);
 $commandBus = new DirectCommandBus(array(
-    new EventMessageHandlerFactory($messageBus, $identityMap)
+    new EventMessageHandlerFactory($messageBus, $queue)
 ));
 
 // 2. Register a command service and an event handler
@@ -132,6 +137,22 @@ $commandBus->register('MyApp\ChangeEmailCommand', $userService);
 
 $someEventHandler = new MyEventHandler();
 $messageBus->register($someEventHandler);
+```
+
+3. In Memory Commands + Custom Event Queue
+
+LiteCQRS knows about triggered events by asking ``LiteCQRS\Bus\EventQueue``.
+Provide your own implementation to be independent of
+your domain objects having to implement ``EventProviderInterface``.
+
+```php
+<?php
+$messageBus = new InMemoryEventMessageBus();
+$queue = new MyCustomEventQueue();
+
+$commandBus = new DirectCommandBus(array(
+    new EventMessageHandlerFactory($messageBus, $queue)
+));
 ```
 
 ## Usage
@@ -145,8 +166,7 @@ $messageBus->register($someEventHandler);
 5. Use protected method ``raise(DomainEvent $event)`` or apply(DomainEvent $event)`` to attach
    events to your aggregate root objects.
 
-That is all there is for simple use-cases. If you use the ``DomainObjectChanged`` event instead of writing
-your own for every change you get away cheap.
+That is all there is for simple use-cases.
 
 If your command triggers events that listeners check for, you should:
 
@@ -154,8 +174,8 @@ If your command triggers events that listeners check for, you should:
 2. Create a event handler(s) or add method(s) to existing event handler(s).
 
 While it seems "complicated" to create commands and events for every use-case. These objects are really
-dumb and only contain public properties. Using your IDE or editor functionality you can easily template
-them in no time.
+dumb and only contain public properties. Using your IDE or editor functionality you can easily generate
+them in no time. In turn, they will make your code very explicit.
 
 ### Difference between apply() and raise()
 
@@ -177,8 +197,8 @@ Example: The Doctrine ORM Plugin has an implementation of the `IdentityMapInterf
 
 ### Command/Event Handler Proxies
 
-If you want to wrap the command/event handler in a transaction, you have to extend the ``CommandBus``
-and pass a proxy factory closure/invokable object into the ```CommandBus```.
+If you want to wrap the command/event handling inside custom logic, you have to extend the ``MessageHandlerInterface``
+and pass a proxy factory closure/invokable object into the ```MessageHandlerInterface```.
 
 If you want to log all commands:
 
@@ -212,8 +232,6 @@ $loggerProxyFactory = function($handler) {
 };
 $commandBus = new DirectCommandBus(array($loggerProxyFactory));
 ```
-
-The same is possible for the ``EventMessageBus``.
 
 ### Failing Events
 
