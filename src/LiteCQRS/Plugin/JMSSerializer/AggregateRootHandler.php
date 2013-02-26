@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Plugin\JMSSerializer;
 
-use LiteCQRS\Bus\IdentityMapInterface;
+use LiteCQRS\Bus\IdentityMap\IdentityMapInterface;
 use LiteCQRS\AggregateRepositoryInterface;
 
 use JMS\SerializerBundle\Serializer\VisitorInterface;

@@ -34,7 +34,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
 {
     public function testSerializeEvent()
     {
-        $identityMap = $this->getMock('LiteCQRS\Bus\IdentityMapInterface');
+        $identityMap = $this->getMock('LiteCQRS\Bus\IdentityMap\IdentityMapInterface');
         $repository = $this->getMock('LiteCQRS\AggregateRepositoryInterface');
         $serializer = $this->createJmsSerializer($identityMap, $repository);
 
@@ -48,7 +48,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
     {
         $data = '{"root":{"aggregate_type":"LiteCQRS\\\\Plugin\\\\JMSSerializer\\\\SomeAggregateRoot","aggregate_id":1}}';
 
-        $identityMap = $this->getMock('LiteCQRS\Bus\IdentityMapInterface');
+        $identityMap = $this->getMock('LiteCQRS\Bus\IdentityMap\IdentityMapInterface');
         $repository = $this->getMock('LiteCQRS\AggregateRepositoryInterface');
         $repository->expects($this->once())
                    ->method('find')

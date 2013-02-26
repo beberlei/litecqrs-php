@@ -3,7 +3,6 @@
 namespace LiteCQRS\Bus\IdentityMap;
 
 use LiteCQRS\Bus\EventQueue;
-use LiteCQRS\Bus\IdentityMapInterface;
 
 /**
  * Returns all events from {@see EventProviderInterface} instances

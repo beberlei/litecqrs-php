@@ -26,7 +26,7 @@ class LiteCQRSServiceProvider implements \Silex\ServiceProviderInterface
         });
 
         $app['lite_cqrs.identity_map'] = $app->share(function () {
-            return new Bus\SimpleIdentityMap();
+            return new Bus\IdentityMap\SimpleIdentityMap();
         });
 
         $app['lite_cqrs.event_message_bus'] = $app->share(function (Application $app) {

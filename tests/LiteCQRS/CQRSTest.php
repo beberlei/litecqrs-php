@@ -4,7 +4,7 @@ namespace LiteCQRS;
 use LiteCQRS\Bus\DirectCommandBus;
 use LiteCQRS\Bus\InMemoryEventMessageBus;
 use LiteCQRS\DomainObjectChanged;
-use LiteCQRS\Bus\SimpleIdentityMap;
+use LiteCQRS\Bus\IdentityMap\SimpleIdentityMap;
 use LiteCQRS\Bus\EventMessageHandlerFactory;
 use DateTime;
 

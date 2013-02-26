@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Bus;
+namespace LiteCQRS\Bus\IdentityMap;
 
 use LiteCQRS\EventProviderInterface;
 

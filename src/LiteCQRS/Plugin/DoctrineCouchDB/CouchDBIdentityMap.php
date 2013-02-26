@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Plugin\DoctrineCouchDB;
 
-use LiteCQRS\Bus\IdentityMapInterface;
+use LiteCQRS\Bus\IdentityMap\IdentityMapInterface;
 use LiteCQRS\EventProviderInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
