@@ -12,18 +12,17 @@ separation of read- from write-model and uses the [DomainEvent
 pattern](http://martinfowler.com/eaaDev/DomainEvent.html) to notify the read
 model about changes in the write model.
 
-LiteCQRS follows this pattern so by introducing an interface
-``LiteCQRS\EventProviderInterface`` and a corresponding default implementation
-``LiteCQRS\DomainEventProvider``. These classes act as event provider: They
-collect events that LiteCQRS later gathers after transactions completed and
-pushes to observing event handlers.
-
-If you want to use the "Event Sourcing" pattern, replaying all events
-to reconstitute an object then you have to use the ``LiteCQRS\AggregateRootInterface``
-and its implementation ``LiteCQRS\AggregateRoot``.
-
 LiteCQRS uses the command pattern and a central message bus service that
-handles commands and finds their corresponding handler to execute them.
+finds the corresponding handler to execute a command. A command is just a class
+with some properties describing it, it can optionally implement ``LiteCQRS\Command``.
+
+During the execution of a command, domain events can be triggered. These are
+again just simple classes with some properties and they can optionally implement
+``LiteCQRS\DomainEvent``.
+
+An event queue knows what domain events have been triggered during a command
+and then publishes them to an event message bus, where many listeners can
+listen to them.
 
 ## Changes
 
