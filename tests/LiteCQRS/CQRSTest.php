@@ -88,19 +88,17 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
     public function testHandleWithIdentityMapWillPassEventsToStoreAfterSuccess()
     {
         $event = new DomainObjectChanged("Foo", array());
-        $root = $this->getMock('LiteCQRS\AggregateRootInterface');
-        $root->expects($this->once())->method('dequeueAppliedEvents')->will($this->returnValue(array($event, $event)));
 
         $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
         $messageBus->expects($this->exactly(2))->method('publish');
 
-        $identityMap = $this->getMock('LiteCQRS\Bus\IdentityMapInterface');
-        $identityMap->expects($this->once())->method('all')->will($this->returnValue(array($root)));
+        $queue = $this->getMock('LiteCQRS\Bus\EventQueue');
+        $queue->expects($this->once())->method('dequeueAllEvents')->will($this->returnValue(array($event, $event)));
 
         $userService = $this->getMock('UserService', array('changeEmail'));
         $userService->expects($this->once())->method('changeEmail');
 
-        $direct = new DirectCommandBus(array(new EventMessageHandlerFactory($messageBus, $identityMap)));
+        $direct = new DirectCommandBus(array(new EventMessageHandlerFactory($messageBus, $queue)));
         $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
 
         $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
