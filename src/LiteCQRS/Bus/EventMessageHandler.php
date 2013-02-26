@@ -20,7 +20,7 @@ class EventMessageHandler implements MessageHandlerInterface
         $this->eventStore  = $eventStore;
     }
 
-    public function handle(MessageInterface $command)
+    public function handle($command)
     {
         try {
             $this->next->handle($command);

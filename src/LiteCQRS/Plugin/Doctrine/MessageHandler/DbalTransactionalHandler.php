@@ -3,7 +3,6 @@
 namespace LiteCQRS\Plugin\Doctrine\CommandHandler;
 
 use LiteCQRS\Bus\MessageHandlerInterface;
-use LiteCQRS\Bus\MessageInterface;
 
 use Exception;
 
@@ -20,7 +19,7 @@ class DbalTransactionalHandler implements MessageHandlerInterface
         $this->next = $next;
     }
 
-    public function handle(MessageInterface $message)
+    public function handle($message)
     {
         $this->conn->beginTransaction();
 

@@ -3,7 +3,6 @@
 namespace LiteCQRS\Plugin\Monolog;
 
 use LiteCQRS\Bus\MessageHandlerInterface;
-use LiteCQRS\Bus\MessageInterface;
 use LiteCQRS\DomainEvent;
 use LiteCQRS\Command;
 use Exception;
@@ -25,7 +24,7 @@ class MonologDebugLogger implements MessageHandlerInterface
         $this->logger = $logger;
     }
 
-    public function handle(MessageInterface $message)
+    public function handle($message)
     {
         if ($message instanceof Command) {
             $parts   = explode("\\", get_class($message));
@@ -37,6 +36,11 @@ class MonologDebugLogger implements MessageHandlerInterface
             $log     = "Event[%s]: %s";
             $info    = $message->getEventName() . " - " . $header->id;
             $context = array('aggregate_type' => $header->aggregateType, 'aggregate_id' => $header->aggregateId);
+        } else {
+            $parts   = explode("\\", get_class($message));
+            $log = "Message[%s]: %s";
+            $info    = end($parts);
+            $context = array();
         }
 
         try {

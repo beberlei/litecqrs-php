@@ -3,7 +3,6 @@
 namespace LiteCQRS\Plugin\Swiftmailer;
 
 use LiteCQRS\Bus\MessageHandlerInterface;
-use LiteCQRS\Bus\MessageInterface;
 
 use Swift_Transport_SpoolTransport;
 use Swift_Transport;
@@ -61,7 +60,7 @@ class SpoolTransportHandler implements MessageHandlerInterface
         $this->next           = $next;
     }
 
-    public function handle(MessageInterface $message)
+    public function handle($message)
     {
         try {
             $spool = new Swift_MemorySpool();

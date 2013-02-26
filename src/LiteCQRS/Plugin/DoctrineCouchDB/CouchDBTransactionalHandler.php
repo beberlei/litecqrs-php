@@ -3,7 +3,6 @@
 namespace LiteCQRS\Plugin\DoctrineCouchDB;
 
 use LiteCQRS\Bus\MessageHandlerInterface;
-use LiteCQRS\Bus\MessageInterface;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -17,7 +16,7 @@ class CouchDBTransactionalHandler implements MessageHandlerInterface
         $this->manager = $manager;
     }
 
-    public function handle(MessageInterface $message)
+    public function handle($message)
     {
         $this->next->handle($message);
         $this->manager->flush();

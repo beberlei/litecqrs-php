@@ -13,7 +13,7 @@ class EventInvocationHandler implements MessageHandlerInterface
         $this->service = $service;
     }
 
-    public function handle(MessageInterface $event)
+    public function handle($event)
     {
         if (!($event instanceof DomainEvent)) {
             throw new \RuntimeException("No DomainEvent instance passed to EventInvocationHandler");

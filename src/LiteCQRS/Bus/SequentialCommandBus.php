@@ -47,10 +47,10 @@ abstract class SequentialCommandBus implements CommandBus
      * If an exception occurs in any command it will be put on a stack
      * of exceptions that is thrown only when all the commands are processed.
      *
-     * @param Command $command
+     * @param object $command
      * @throws CommandFailedStackException
      */
-    public function handle(Command $command)
+    public function handle($command)
     {
         $this->commandStack[] = $command;
 
