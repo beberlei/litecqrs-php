@@ -15,7 +15,8 @@ require_once __DIR__ . "/../vendor/autoload.php";
 use LiteCQRS\DomainEventProvider;
 use LiteCQRS\Bus\DirectCommandBus;
 use LiteCQRS\Bus\InMemoryEventMessageBus;
-use LiteCQRS\Bus\SimpleIdentityMap;
+use LiteCQRS\Bus\IdentityMap\SimpleIdentityMap;
+use LiteCQRS\Bus\IdentityMap\EventProviderQueue;
 use LiteCQRS\Bus\EventMessageHandlerFactory;
 use LiteCQRS\DefaultCommand;
 use LiteCQRS\DomainObjectChanged;
@@ -76,8 +77,9 @@ class MyEventHandler
 // 1. Setup the Library with InMemory Handlers
 $messageBus  = new InMemoryEventMessageBus();
 $identityMap = new SimpleIdentityMap();
+$queue = new EventProviderQueue($identityMap);
 $commandBus  = new DirectCommandBus(array(
-    new EventMessageHandlerFactory($messageBus, $identityMap)
+    new EventMessageHandlerFactory($messageBus, $queue)
 ));
 
 // 2. Register a command service and an event handler
