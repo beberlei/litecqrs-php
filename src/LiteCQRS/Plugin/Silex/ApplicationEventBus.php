@@ -3,11 +3,13 @@
 namespace LiteCQRS\Plugin\Silex;
 
 use Silex\Application;
+use LiteCQRS\Bus\EventName;
+use LiteCQRS\Bus\AbstractEventMessageBus;
 
 /**
  * @package LiteCQRS
  */
-class ApplicationEventBus extends \LiteCQRS\Bus\AbstractEventMessageBus
+class ApplicationEventBus extends AbstractEventMessageBus
 {
     protected $application;
     protected $eventServices = array();
@@ -35,7 +37,7 @@ class ApplicationEventBus extends \LiteCQRS\Bus\AbstractEventMessageBus
      * @param string $eventName
      * @return array
      */
-    protected function getHandlers($eventName)
+    protected function getHandlers(EventName $eventName)
     {
         $handlers = array();
         $eventName = strtolower($eventName);

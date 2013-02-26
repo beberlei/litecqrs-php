@@ -3,6 +3,7 @@
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
 use LiteCQRS\Bus\AbstractEventMessageBus;
+use LiteCQRS\Bus\EventName;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -17,7 +18,7 @@ class ContainerEventBus extends AbstractEventMessageBus
         parent::__construct($proxyFactories);
     }
 
-    protected function getHandlers($eventName)
+    protected function getHandlers(EventName $eventName)
     {
         $eventName = strtolower($eventName);
 
