@@ -38,20 +38,25 @@ class DebugCommand extends ContainerAwareCommand
             $class = $definition->getClass();
 
             $reflClass = new \ReflectionClass($class);
-            foreach ($reflClass->getMethods() as $method) {
+            foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
                 if ($method->getNumberOfParameters() != 1) {
                     continue;
                 }
 
                 $commandParam = current($method->getParameters());
 
-                if (!$commandParam->getClass() || !in_array('LiteCQRS\Command', class_implements($commandParam->getClass()->getName()))) {
+                if (!$commandParam->getClass()) {
                     continue;
                 }
 
-                $commandType = $commandParam->getClass()->getName();
+                $commandClass = $commandParam->getClass();
+                $commandType = $commandClass->getName();
                 $parts = explode("\\", $commandType);
                 $name = end($parts);
+
+                if (strtolower($method->getName()) !== strtolower($commandClass->getShortName())) {
+                    continue;
+                }
 
                 $commands[$id][$commandType] = array('name' => $name, 'id'  => $id, 'class' => $class);
 
@@ -88,7 +93,7 @@ class DebugCommand extends ContainerAwareCommand
             $class = $definition->getClass();
 
             $reflClass = new \ReflectionClass($class);
-            foreach ($reflClass->getMethods() as $method) {
+            foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
                 if ($method->getNumberOfParameters() != 1) {
                     continue;
                 }
