@@ -19,7 +19,7 @@ interface EventMessageBus
      * @param DomainEvent $event
      * @return void
      */
-    public function publish(DomainEvent $event);
+    public function publish($event);
 
     /**
      * Clear all events that have been published, but not yet dispatched to handlers.

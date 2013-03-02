@@ -19,7 +19,7 @@ abstract class AbstractEventMessageBus implements EventMessageBus
         $this->scheduledEvents = new SplObjectStorage();
     }
 
-    public function publish(DomainEvent $event)
+    public function publish($event)
     {
         if ($this->events->contains($event)) {
             return;
