@@ -25,7 +25,7 @@ class DbalTransactionalHandler implements MessageHandlerInterface
 
         try {
             $this->next->handle($message);
-            $this->next->commit();
+            $this->conn->commit();
         } catch(Exception $e) {
             $this->conn->rollBack();
             throw $e;

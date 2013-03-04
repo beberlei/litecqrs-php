@@ -42,7 +42,8 @@ class CouchDBEventStore implements EventStoreInterface
             'session_id'     => $header->sessionId,
             "payload"        => json_decode($this->serializer->serialize($event, "json"))
         );
-        $response = $this->couch->putDocument($data, $header->id);
+
+        $this->couch->putDocument($data, $header->id);
     }
 }
 

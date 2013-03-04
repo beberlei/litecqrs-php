@@ -77,7 +77,7 @@ class CRUDHelper
         $deleteCommand->class = $class;
         $deleteCommand->id    = $id;
 
-        $this->commandHandlerService->delete($deleteCommand);
+        $this->commandBus->handle($deleteCommand);
     }
 }
 

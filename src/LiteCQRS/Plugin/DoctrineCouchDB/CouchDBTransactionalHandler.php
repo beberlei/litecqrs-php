@@ -9,6 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 class CouchDBTransactionalHandler implements MessageHandlerInterface
 {
     private $next;
+    private $manager;
 
     public function __construct(MessageHandlerInterface $next, ObjectManager $manager)
     {

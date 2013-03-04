@@ -7,6 +7,8 @@ use Doctrine\ORM\Tools\Event\GenerateSchemaEventArgs;
 
 class SchemaListener
 {
+    private $store;
+
     public function __construct(TableEventStore $store)
     {
         $this->store = $store;

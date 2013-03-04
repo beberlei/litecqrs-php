@@ -8,6 +8,11 @@ use LiteCQRS\DomainEvent;
 
 class MongoDBEventStore implements \LiteCQRS\EventStore\EventStoreInterface
 {
+    private $connection;
+    private $database;
+    private $serializer;
+    private $collection;
+
     public function __construct(Connection $connection, SerializerInterface $serializer, $database, $collection = 'litecqrs_events')
     {
         $this->connection = $connection;
