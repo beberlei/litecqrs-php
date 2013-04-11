@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Plugin\Doctrine;
+namespace LiteCQRS\Plugin\Doctrine\MessageHandler;
 
 use LiteCQRS\Bus\MessageHandlerInterface;
 

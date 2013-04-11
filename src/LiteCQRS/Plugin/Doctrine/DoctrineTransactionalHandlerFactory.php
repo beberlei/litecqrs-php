@@ -1,9 +1,10 @@
 <?php
 
-namespace LiteCQRS\Plugin\DoctrineCouchDB;
+namespace LiteCQRS\Plugin\Doctrine;
 
-use LiteCQRS\Bus\MessageHandlerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use LiteCQRS\Bus\MessageHandlerInterface;
+use LiteCQRS\Plugin\Doctrine\MessageHandler\DoctrineTransactionalHandler;
 
 class DoctrineTransactionalHandlerFactory
 {
