@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Plugin\Doctrine;
+namespace LiteCQRS\Plugin\Doctrine\EventStore;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Schema;
