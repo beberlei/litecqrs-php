@@ -1,12 +1,12 @@
 <?php
 
-namespace LiteCQRS\Plugin\DoctrineCouchDB;
+namespace LiteCQRS\Plugin\Doctrine;
 
 use LiteCQRS\AggregateRepositoryInterface;
 use LiteCQRS\AggregateRootInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class CouchDBRepository implements AggregateRepositoryInterface
+class DoctrineRepository implements AggregateRepositoryInterface
 {
     private $objectManager;
 

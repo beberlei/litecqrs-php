@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Plugin\DoctrineCouchDB;
+namespace LiteCQRS\Plugin\Doctrine;
 
 use LiteCQRS\Bus\MessageHandlerInterface;
 
