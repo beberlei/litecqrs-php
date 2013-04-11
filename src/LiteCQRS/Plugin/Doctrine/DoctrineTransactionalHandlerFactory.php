@@ -5,7 +5,7 @@ namespace LiteCQRS\Plugin\DoctrineCouchDB;
 use LiteCQRS\Bus\MessageHandlerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class CouchDBTransactionalHandlerFactory
+class DoctrineTransactionalHandlerFactory
 {
     private $manager;
 
@@ -16,7 +16,7 @@ class CouchDBTransactionalHandlerFactory
 
     public function __invoke(MessageHandlerInterface $handler)
     {
-        return new CouchDBTransactionalHandler($handler, $this->manager);
+        return new DoctrineTransactionalHandler($handler, $this->manager);
     }
 }
 
