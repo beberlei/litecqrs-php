@@ -13,5 +13,3 @@ interface AggregateRootInterface extends EventProviderInterface
 {
     public function loadFromHistory(array $events);
 }
-
-

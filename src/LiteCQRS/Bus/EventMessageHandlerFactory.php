@@ -22,4 +22,3 @@ class EventMessageHandlerFactory
         return new EventMessageHandler($handler, $this->messageBus, $this->queue, $this->eventStore);
     }
 }
-

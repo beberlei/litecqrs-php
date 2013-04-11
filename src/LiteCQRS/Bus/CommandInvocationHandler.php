@@ -33,4 +33,3 @@ class CommandInvocationHandler implements MessageHandlerInterface
         return str_replace("Command", "", lcfirst(end($parts)));
     }
 }
-

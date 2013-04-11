@@ -30,4 +30,3 @@ class DoctrineRepository implements AggregateRepositoryInterface
         $this->objectManager->remove($object);
     }
 }
-

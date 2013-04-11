@@ -26,7 +26,7 @@ class EventMessageHandler implements MessageHandlerInterface
             $this->next->handle($command);
             $this->passEventsToStore();
             $this->messageBus->dispatchEvents();
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $this->messageBus->clear();
             throw $e;
         }
@@ -47,4 +47,3 @@ class EventMessageHandler implements MessageHandlerInterface
         }
     }
 }
-

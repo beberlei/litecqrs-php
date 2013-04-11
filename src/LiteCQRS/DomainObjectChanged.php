@@ -38,6 +38,7 @@ class DomainObjectChanged implements DomainEvent
         if (!isset($this->$name)) {
             throw new \RuntimeException("Property $name does not exist on event " . $this->getEventName());
         }
+
         return $this->$name;
     }
 
@@ -51,4 +52,3 @@ class DomainObjectChanged implements DomainEvent
         return $this->messageHeader->aggregateId;
     }
 }
-

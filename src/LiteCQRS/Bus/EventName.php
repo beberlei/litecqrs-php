@@ -40,6 +40,7 @@ class EventName
         }
 
         $parts = explode("\\", $class);
+
         return end($parts);
     }
 }

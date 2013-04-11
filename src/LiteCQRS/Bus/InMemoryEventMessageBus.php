@@ -1,10 +1,6 @@
 <?php
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\DomainEvent;
-
-use Exception;
-
 /**
  * In Memory Event Message Bus
  *
@@ -50,4 +46,3 @@ class InMemoryEventMessageBus extends AbstractEventMessageBus
         return $this->handlers[$eventName];
     }
 }
-

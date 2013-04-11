@@ -111,4 +111,3 @@ class HandlerPass implements CompilerPassInterface
         return $flat;
     }
 }
-

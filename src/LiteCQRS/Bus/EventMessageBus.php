@@ -16,7 +16,7 @@ interface EventMessageBus
     /**
      * Publish an event to the bus.
      *
-     * @param DomainEvent $event
+     * @param  DomainEvent $event
      * @return void
      */
     public function publish($event);
@@ -35,4 +35,3 @@ interface EventMessageBus
      */
     public function dispatchEvents();
 }
-

@@ -17,4 +17,3 @@ interface IdentityMapInterface
     public function all();
     public function getAggregateId(EventProviderInterface $object);
 }
-

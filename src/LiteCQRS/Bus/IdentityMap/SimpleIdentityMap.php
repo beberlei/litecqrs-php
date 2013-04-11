@@ -21,4 +21,3 @@ class SimpleIdentityMap implements IdentityMapInterface
         return null;
     }
 }
-

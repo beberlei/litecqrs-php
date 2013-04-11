@@ -24,4 +24,3 @@ class LiteCQRSBundle extends Bundle
         $ext->addHandlerFactory(new AggregateRootHandlerFactory());
     }
 }
-

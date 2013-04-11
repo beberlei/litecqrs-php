@@ -18,4 +18,3 @@ interface EventStoreInterface
      */
     public function store(DomainEvent $event);
 }
-

@@ -13,7 +13,7 @@ interface AggregateRepositoryInterface
      * Find an aggregate root by class name and id
      *
      * @param string $class
-     * @param mixed $id
+     * @param mixed  $id
      *
      * @return AggregateRootInterface
      */
@@ -33,4 +33,3 @@ interface AggregateRepositoryInterface
      */
     public function remove(AggregateRootInterface $object);
 }
-

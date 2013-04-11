@@ -23,4 +23,3 @@ class DoctrineTransactionalHandler implements MessageHandlerInterface
         $this->manager->flush();
     }
 }
-

@@ -8,4 +8,3 @@ class ResourceDeletedEvent extends DefaultDomainEvent
     public $class;
     public $id;
 }
-

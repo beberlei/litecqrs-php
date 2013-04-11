@@ -27,10 +27,9 @@ class OrmTransactionalHandler implements MessageHandlerInterface
             $this->next->handle($message);
             $this->entityManager->flush();
             $this->entityManager->commit();
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $this->entityManager->rollBack();
             throw $e;
         }
     }
 }
-

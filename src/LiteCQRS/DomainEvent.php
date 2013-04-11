@@ -2,7 +2,6 @@
 namespace LiteCQRS;
 
 use LiteCQRS\Bus\MessageInterface;
-use LiteCQRS\Bus\EventMessageHeader;
 
 /**
  * Domain Events happen during command execution/handling.
@@ -27,4 +26,3 @@ interface DomainEvent extends MessageInterface
     public function getMessageHeader();
     public function getAggregateId();
 }
-

@@ -19,4 +19,3 @@ class EventInvocationHandler implements MessageHandlerInterface
         $this->service->$methodName($event);
     }
 }
-

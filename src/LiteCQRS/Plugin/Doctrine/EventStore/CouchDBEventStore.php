@@ -46,4 +46,3 @@ class CouchDBEventStore implements EventStoreInterface
         $this->couch->putDocument($data, $header->id);
     }
 }
-

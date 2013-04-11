@@ -25,6 +25,7 @@ class DomainEventProvider implements EventProviderInterface
     {
         $events = $this->appliedEvents;
         $this->appliedEvents = array();
+
         return $events;
     }
 
@@ -34,4 +35,3 @@ class DomainEventProvider implements EventProviderInterface
         $this->appliedEvents[] = $event;
     }
 }
-

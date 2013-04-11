@@ -21,4 +21,3 @@ class SpoolHandlerFactory
         return new SpoolTransportHandler($this->spoolTransport, $this->realTransport, $handler);
     }
 }
-

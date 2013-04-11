@@ -42,4 +42,3 @@ class CRUDCommandService
         $this->repository->remove($object);
     }
 }
-

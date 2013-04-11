@@ -45,7 +45,7 @@ class CRUDHelper
 
         try {
             $this->commandBus->handle($createCommand);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return $this->view(array('form' => $form->createView(), 'data' => $form->getData()));
         }
     }
@@ -66,7 +66,7 @@ class CRUDHelper
 
         try {
             $this->commandBus->handle($updateCommand);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return $this->view(array('form' => $form->createView(), 'data' => $form->getData()));
         }
     }
@@ -80,4 +80,3 @@ class CRUDHelper
         $this->commandBus->handle($deleteCommand);
     }
 }
-

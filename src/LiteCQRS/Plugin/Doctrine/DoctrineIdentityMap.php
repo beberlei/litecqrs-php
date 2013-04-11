@@ -43,4 +43,3 @@ class DoctrineIdentityMap implements IdentityMapInterface
         return $class->getIdentifierValue($object);
     }
 }
-

@@ -7,4 +7,3 @@ use LiteCQRS\Bus\MessageInterface;
 interface Command extends MessageInterface
 {
 }
-

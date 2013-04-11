@@ -19,4 +19,3 @@ class DoctrineTransactionalHandlerFactory
         return new DoctrineTransactionalHandler($handler, $this->manager);
     }
 }
-

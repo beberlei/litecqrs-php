@@ -6,7 +6,6 @@ use LiteCQRS\Bus\IdentityMap\IdentityMapInterface;
 use LiteCQRS\AggregateRepositoryInterface;
 
 use JMS\SerializerBundle\Serializer\VisitorInterface;
-use JMS\SerializerBundle\Metadata\ClassMetadata;
 use JMS\SerializerBundle\Serializer\Handler\DeserializationHandlerInterface;
 use JMS\SerializerBundle\Serializer\Handler\SerializationHandlerInterface;
 use JMS\SerializerBundle\Serializer\GenericDeserializationVisitor;
@@ -80,7 +79,7 @@ class AggregateRootHandler implements DeserializationHandlerInterface, Serializa
         }
 
         $handled = true;
+
         return $this->repository->find($data['aggregate_type'], $data['aggregate_id']);
     }
 }
-
