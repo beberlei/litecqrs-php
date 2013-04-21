@@ -2,6 +2,8 @@
 
 namespace LiteCQRS\Bus;
 
+use LiteCQRS\Exception\CommandFailedStackException;
+
 /**
  * Process Commands and pass them to their handlers in sequential order.
  *
@@ -23,6 +25,7 @@ abstract class SequentialCommandBus implements CommandBus
      */
     private $proxyFactories;
     private $commandStack = array();
+    private $exceptionStack = array();
     private $executing = false;
 
     public function __construct(array $proxyFactories = array())
@@ -58,16 +61,17 @@ abstract class SequentialCommandBus implements CommandBus
 
         $first = true;
 
+
         while ($command = array_shift($this->commandStack)) {
             try {
                 $this->executing = true;
-                $type    = get_class($command);
+                $type = get_class($command);
                 $service = $this->getService($type);
                 $handler = new CommandInvocationHandler($service);
                 $handler = $this->proxyHandler($handler);
 
                 $handler->handle($command);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->executing = false;
                 $this->handleException($e, $first);
             }
@@ -75,6 +79,12 @@ abstract class SequentialCommandBus implements CommandBus
             $this->executing = false;
             $first = false;
         }
+
+        if (!empty($this->commandStack)) return; // Execute other pending commands
+        if (empty($this->exceptionStack)) return;
+        $e = new CommandFailedStackException($this->exceptionStack);
+        $this->exceptionStack = array();
+        throw $e;
     }
 
     protected function handleException($e, $first)
@@ -82,6 +92,7 @@ abstract class SequentialCommandBus implements CommandBus
         if ($first) {
             throw $e;
         }
+        $this->exceptionStack[] = $e;
     }
 
     protected function proxyHandler($handler)
