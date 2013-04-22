@@ -10,9 +10,8 @@ class SequentialCommandBusTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
-     * @expectedException \LiteCQRS\Exception\CommandFailedStackException
      */
-    public function subcommandExceptionShouldBeThrown()
+    public function subcommandExceptionShouldNotBeThrown()
     {
         $command = new OuterCommand();
 
@@ -24,6 +23,8 @@ class SequentialCommandBusTest extends \PHPUnit_Framework_TestCase
         $direct->register('LiteCQRS\Tests\Bus\InnerCommand', $anotherServiceWhichThrowsAnException);
 
         $direct->handle($command);
+
+        // pass
     }
 }
 

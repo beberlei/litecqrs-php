@@ -2,8 +2,6 @@
 
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\Exception\CommandFailedStackException;
-
 /**
  * Process Commands and pass them to their handlers in sequential order.
  *
@@ -45,11 +43,10 @@ abstract class SequentialCommandBus implements CommandBus
     /**
      * Sequentially execute commands
      *
-     * If an exception occurs in any command it will be put on a stack
-     * of exceptions that is thrown only when all the commands are processed.
+     * Only exceptions occurring in the first command will be thrown.
      *
      * @param object $command
-     * @throws CommandFailedStackException
+     * @throws \Exception
      */
     public function handle($command)
     {
@@ -79,14 +76,13 @@ abstract class SequentialCommandBus implements CommandBus
             $this->executing = false;
             $first = false;
         }
-
-        if (!empty($this->commandStack)) return; // Execute other pending commands
-        if (empty($this->exceptionStack)) return;
-        $e = new CommandFailedStackException($this->exceptionStack);
-        $this->exceptionStack = array();
-        throw $e;
     }
 
+    /**
+     * @param \Exception $e
+     * @param boolean $first
+     * @throws \Exception
+     */
     protected function handleException($e, $first)
     {
         if ($first) {
@@ -103,4 +99,3 @@ abstract class SequentialCommandBus implements CommandBus
         return $handler;
     }
 }
-
