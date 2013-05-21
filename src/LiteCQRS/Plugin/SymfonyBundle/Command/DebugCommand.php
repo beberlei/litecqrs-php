@@ -28,9 +28,9 @@ class DebugCommand extends ContainerAwareCommand
     {
         $container = $this->getContainerBuilder();
 
-        $maxName        = 0;
-        $maxId          = 0;
-        $maxCommandType = 0;
+        $maxName        = strlen('Command-Handler Service');
+        $maxId          = strlen('Command');
+        $maxCommandType = strlen('Class');
         $commands       = array();
 
         foreach ($container->findTaggedServiceIds('lite_cqrs.command_handler') as $id => $attributes) {
@@ -51,16 +51,17 @@ class DebugCommand extends ContainerAwareCommand
 
                 $commandClass = $commandParam->getClass();
                 $commandType = $commandClass->getName();
-                $parts = explode("\\", $commandType);
-                $name = end($parts);
 
-                if (strtolower($method->getName()) !== strtolower($commandClass->getShortName())) {
+                $parts = explode("\\", $commandType);
+                $name = preg_replace('/Command/i', '', end($parts));
+
+                if (strtolower($method->getName()) !== strtolower($name)) {
                     continue;
                 }
 
-                $commands[$id][$commandType] = array('name' => $name, 'id'  => $id, 'class' => $class);
+                $commands[$id][$commandType] = array('name' => $commandClass->getShortName(), 'id'  => $id, 'class' => $class);
 
-                $maxName        = max(strlen($name), $maxName);
+                $maxName        = max(strlen($commandClass->getShortName()), $maxName);
                 $maxId          = max(strlen($id), $maxId);
                 $maxCommandType = max(strlen($commandType), $maxCommandType);
             }
@@ -84,9 +85,9 @@ class DebugCommand extends ContainerAwareCommand
         }
 
         $events         = array();
-        $maxName        = 0;
-        $maxId          = 0;
-        $maxEventName   = 0;
+        $maxName        = strlen("Event");
+        $maxId          = strlen('Event-Handler Service');
+        $maxEventName   = strlen('Class');
 
         foreach ($container->findTaggedServiceIds('lite_cqrs.event_handler') as $id => $attributes) {
             $definition = $container->findDefinition($id);
@@ -110,7 +111,7 @@ class DebugCommand extends ContainerAwareCommand
                 }
 
                 $events[$id][] = array('eventName' => $eventName, 'id' => $id, 'class' => $class);
-                $maxName       = max(strlen($name), $maxName);
+                $maxName       = max(strlen($eventName), $maxName);
                 $maxId         = max(strlen($id), $maxId);
                 $maxEventName  = max(strlen($eventName), $maxEventName);
             }
