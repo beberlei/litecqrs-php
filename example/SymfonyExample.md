@@ -3,8 +3,6 @@ Symfony Example
 
 This document shows an example of how to implement [example1.php](https://github.com/beberlei/litecqrs-php/blob/master/example/example1.php) as part of a Symfony project.
 
-Please note that there may be another way to do this, but as there currently wasn't any documentation, this was how I (@mbadolato) got the example properly working for me.
-
 Service Definition
 ------------------
 
