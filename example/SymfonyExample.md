@@ -146,6 +146,26 @@ class MyEventHandler
 Usage Example, via a Symfony Command
 ------------------------------------
 
+Defined commands and events can be displayed:
+
+```bash
+$ php app/console lite-cqrs:debug
+COMMANDS
+========
+
+Command-Handler Service            Command                 Class
+test.command.user_service_commands ChangeEmailCommand      Acme\DemoBundle\Model\Command\ChangeEmailCommand
+
+
+EVENTS
+======
+
+Event-Handler Service      Event       Class
+test.command.event_handler ChangeEmail Acme\DemoBundle\EventHandlers\MyEventHandler
+```
+
+Create a Symfony command to execute your ChangeEmailCommand
+
 ```php
 <?php
 
@@ -178,25 +198,8 @@ class TestCommand extends ContainerAwareCommand
     }
 }
 ```
-Defined commands and events can be displayed:
 
-```bash
-$ php app/console lite-cqrs:debug
-COMMANDS
-========
-
-Command-Handler Service            Command                 Class
-test.command.user_service_commands ChangeEmailCommand      Acme\DemoBundle\Model\Command\ChangeEmailCommand
-
-
-EVENTS
-======
-
-Event-Handler Service      Event       Class
-test.command.event_handler ChangeEmail Acme\DemoBundle\EventHandlers\MyEventHandler
-```
-
-Run the command:
+Run the Symfony command:
 
 ```bash
 $ php app/console acme:demo:change-email info@beberlei.de
