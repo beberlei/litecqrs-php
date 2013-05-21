@@ -6,4 +6,3 @@ interface MessageHandlerInterface
 {
     public function handle($message);
 }
-

@@ -31,6 +31,7 @@ class JMSSerializer implements SerializerInterface
         $this->aggregateHandler->enable();
         $data = $this->serializer->serialize($event, $format);
         $this->aggregateHandler->disable();
+
         return $data;
     }
 
@@ -39,7 +40,7 @@ class JMSSerializer implements SerializerInterface
         $this->aggregateHandler->enable();
         $data = $this->serializer->deserialize($eventClass, $data, $format);
         $this->aggregateHandler->disable();
+
         return $data;
     }
 }
-

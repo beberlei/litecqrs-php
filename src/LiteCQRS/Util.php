@@ -15,7 +15,7 @@ class Util
      *
      * @link http://stackoverflow.com/questions/169428/php-datetime-microseconds-always-returns-0#comment12220584_6604836
      */
-    static public function createMicrosecondsNow()
+    public static function createMicrosecondsNow()
     {
         return date_create_from_format('U.u', sprintf('%.f', microtime(true)));
     }
@@ -27,7 +27,7 @@ class Util
      * @link http://www.php.net/manual/en/function.uniqid.php#94959
      * @return string
      */
-    static public function generateUuid()
+    public static function generateUuid()
     {
         return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
@@ -50,4 +50,3 @@ class Util
         );
     }
 }
-

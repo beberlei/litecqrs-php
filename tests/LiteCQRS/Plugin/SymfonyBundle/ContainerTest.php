@@ -17,7 +17,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('LiteCQRS\Bus\CommandBus',      $container->get('command_bus'));
         $this->assertInstanceOf('LiteCQRS\Bus\EventMessageBus', $container->get('litecqrs.event_message_bus'));
-        $this->assertInstanceof('LiteCQRS\Plugin\Doctrine\ORMRepository', $container->get('litecqrs.repository'));
+        $this->assertInstanceof('LiteCQRS\Plugin\Doctrine\DoctrineRepository', $container->get('litecqrs.repository'));
         $this->assertInstanceOf('LiteCQRS\EventStore\SerializerInterface', $container->get('litecqrs.serializer'));
         $this->assertInstanceOf('LiteCQRS\Plugin\SymfonyBundle\Controller\CRUDHelper', $container->get('litecqrs.crud.helper'));
     }

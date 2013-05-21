@@ -1,9 +1,9 @@
 <?php
 
-namespace LiteCQRS\Plugin\DoctrineCouchDB;
+namespace LiteCQRS\Plugin\Doctrine\EventStore;
 
 use LiteCQRS\DomainObjectChanged;
-use LiteCQRS\Plugin\DoctrineCouchDB\EventStore\CouchDBEventStore;
+use LiteCQRS\Plugin\Doctrine\EventStore\CouchDBEventStore;
 use Doctrine\CouchDB\CouchDBClient;
 
 class CouchDBEventStoreTest extends \PHPUnit_Framework_TestCase

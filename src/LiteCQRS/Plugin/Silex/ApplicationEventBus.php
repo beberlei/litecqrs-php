@@ -16,7 +16,7 @@ class ApplicationEventBus extends AbstractEventMessageBus
 
     /**
      * @param Application $application
-     * @param array $proxyFactories
+     * @param array       $proxyFactories
      */
     public function __construct(Application $application, array $proxyFactories)
     {
@@ -34,7 +34,7 @@ class ApplicationEventBus extends AbstractEventMessageBus
     }
 
     /**
-     * @param string $eventName
+     * @param  string $eventName
      * @return array
      */
     protected function getHandlers(EventName $eventName)

@@ -4,35 +4,33 @@ namespace LiteCQRS\Plugin\Doctrine;
 
 use LiteCQRS\Bus\IdentityMap\IdentityMapInterface;
 use LiteCQRS\EventProviderInterface;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class DoctrineIdentityMap implements IdentityMapInterface
 {
-    private $entityManager;
+    private $objectManager;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(ObjectManager $objectManager)
     {
-        $this->entityManager = $entityManager;
+        $this->objectManager = $objectManager;
     }
 
     public function add(EventProviderInterface $object)
     {
-        $this->entityManager->persist($object);
+        $this->objectManager->persist($object);
     }
 
     public function all()
     {
         $aggregateRoots = array();
-        $uow            = $this->entityManager->getUnitOfWork();
+        $uow = $this->objectManager->getUnitOfWork();
 
-        foreach ($uow->getIdentityMap() as $class => $entities) {
-            foreach ($entities as $entity) {
-                if (!($entity instanceof EventProviderInterface)) {
-                    break;
-                }
-
-                $aggregateRoots[] = $entity;
+        foreach ($uow->getIdentityMap() as $entity) {
+            if (!($entity instanceof EventProviderInterface)) {
+                break;
             }
+
+            $aggregateRoots[] = $entity;
         }
 
         return $aggregateRoots;
@@ -40,13 +38,8 @@ class DoctrineIdentityMap implements IdentityMapInterface
 
     public function getAggregateId(EventProviderInterface $object)
     {
-        $class = $this->entityManager->getClassMetadata(get_class($object));
+        $class = $this->objectManager->getClassMetadata(get_class($object));
 
-        if ($class->isIdentifierComposite) {
-            return $class->getIdentifierValues($object);
-        }
-
-        return $class->getSingleIdReflectionProperty()->getValue($object);
+        return $class->getIdentifierValue($object);
     }
 }
-

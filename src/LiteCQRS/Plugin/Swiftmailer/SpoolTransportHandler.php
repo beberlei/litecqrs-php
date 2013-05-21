@@ -70,7 +70,7 @@ class SpoolTransportHandler implements MessageHandlerInterface
             $failedRecipients = null;
             $spool->flushQueue($this->realTransport, $failedRecipients);
             $this->handleFailedRecipients($failedRecipients);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $spool = new Swift_MemorySpool();
             $this->spoolTransport->setSpool($spool);
             throw $e;
@@ -81,4 +81,3 @@ class SpoolTransportHandler implements MessageHandlerInterface
     {
     }
 }
-

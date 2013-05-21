@@ -34,7 +34,7 @@ abstract class SequentialCommandBus implements CommandBus
      * Given a Command Type (ClassName) return an instance of
      * the service that is handling this command.
      *
-     * @param string $commandType A Command Class name
+     * @param  string $commandType A Command Class name
      * @return object
      */
     abstract protected function getService($commandType);
@@ -45,7 +45,7 @@ abstract class SequentialCommandBus implements CommandBus
      * If an exception occurs in any command it will be put on a stack
      * of exceptions that is thrown only when all the commands are processed.
      *
-     * @param object $command
+     * @param  object                      $command
      * @throws CommandFailedStackException
      */
     public function handle($command)
@@ -67,7 +67,7 @@ abstract class SequentialCommandBus implements CommandBus
                 $handler = $this->proxyHandler($handler);
 
                 $handler->handle($command);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->executing = false;
                 $this->handleException($e, $first);
             }
@@ -89,7 +89,7 @@ abstract class SequentialCommandBus implements CommandBus
         foreach (array_reverse($this->proxyFactories) as $proxyFactory) {
             $handler = $proxyFactory($handler);
         }
+
         return $handler;
     }
 }
-

@@ -7,7 +7,6 @@ use LiteCQRS\EventStore\EventStoreInterface;
 use LiteCQRS\EventStore\SerializerInterface;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Schema\Schema;
 
 /**
  * Store events in a database table using Doctrine DBAL.
@@ -43,4 +42,3 @@ class TableEventStore implements EventStoreInterface
         ));
     }
 }
-

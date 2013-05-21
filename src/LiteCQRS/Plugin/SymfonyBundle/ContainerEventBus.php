@@ -39,4 +39,3 @@ class ContainerEventBus extends AbstractEventMessageBus
         $this->services = $services;
     }
 }
-

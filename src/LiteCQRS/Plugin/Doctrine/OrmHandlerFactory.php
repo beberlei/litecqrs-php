@@ -19,4 +19,3 @@ class OrmHandlerFactory
         return new OrmTransactionalHandler($this->entityManager, $handler);
     }
 }
-

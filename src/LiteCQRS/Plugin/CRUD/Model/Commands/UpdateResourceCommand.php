@@ -10,4 +10,3 @@ class UpdateResourceCommand extends DefaultCommand
     public $id;
     public $data = array();
 }
-

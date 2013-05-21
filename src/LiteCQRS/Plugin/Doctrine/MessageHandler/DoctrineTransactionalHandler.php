@@ -1,12 +1,12 @@
 <?php
 
-namespace LiteCQRS\Plugin\DoctrineCouchDB;
+namespace LiteCQRS\Plugin\Doctrine\MessageHandler;
 
 use LiteCQRS\Bus\MessageHandlerInterface;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-class CouchDBTransactionalHandler implements MessageHandlerInterface
+class DoctrineTransactionalHandler implements MessageHandlerInterface
 {
     private $next;
     private $manager;
@@ -23,4 +23,3 @@ class CouchDBTransactionalHandler implements MessageHandlerInterface
         $this->manager->flush();
     }
 }
-

@@ -9,4 +9,3 @@ interface CommandBus
 {
     public function handle($command);
 }
-

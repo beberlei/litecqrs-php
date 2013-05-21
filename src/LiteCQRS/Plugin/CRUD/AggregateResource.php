@@ -80,4 +80,3 @@ abstract class AggregateResource extends AggregateRoot
     {
     }
 }
-

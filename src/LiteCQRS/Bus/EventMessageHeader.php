@@ -74,4 +74,3 @@ class EventMessageHeader
         return array('date', 'id', 'aggregateType', 'aggregateId', 'commandId', 'sessionId');
     }
 }
-

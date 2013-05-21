@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Plugin\DoctrineCouchDB\EventStore;
+namespace LiteCQRS\Plugin\Doctrine\EventStore;
 
 use LiteCQRS\EventStore\EventStoreInterface;
 use LiteCQRS\EventStore\SerializerInterface;
@@ -46,4 +46,3 @@ class CouchDBEventStore implements EventStoreInterface
         $this->couch->putDocument($data, $header->id);
     }
 }
-

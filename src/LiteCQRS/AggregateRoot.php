@@ -25,6 +25,7 @@ abstract class AggregateRoot implements AggregateRootInterface
     {
         $events = $this->appliedEvents;
         $this->appliedEvents = array();
+
         return $events;
     }
 
@@ -56,5 +57,3 @@ abstract class AggregateRoot implements AggregateRootInterface
         }
     }
 }
-
-

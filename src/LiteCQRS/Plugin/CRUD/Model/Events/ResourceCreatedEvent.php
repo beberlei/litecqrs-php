@@ -10,4 +10,3 @@ class ResourceCreatedEvent extends DefaultDomainEvent
     public $id;
     public $data = array();
 }
-

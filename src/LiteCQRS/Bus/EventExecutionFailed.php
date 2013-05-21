@@ -10,4 +10,3 @@ class EventExecutionFailed extends DefaultDomainEvent
     public $exception;
     public $event;
 }
-

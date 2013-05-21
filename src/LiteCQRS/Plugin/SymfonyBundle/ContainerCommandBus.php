@@ -37,4 +37,3 @@ class ContainerCommandBus extends SequentialCommandBus
         return $this->container->get($serviceId);
     }
 }
-

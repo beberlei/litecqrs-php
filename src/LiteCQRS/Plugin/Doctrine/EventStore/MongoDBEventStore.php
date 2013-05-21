@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Plugin\DoctrineMongoDB\EventStore;
+namespace LiteCQRS\Plugin\Doctrine\EventStore;
 
 use Doctrine\MongoDB\Connection;
 use LiteCQRS\EventStore\SerializerInterface;

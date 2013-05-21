@@ -9,4 +9,3 @@ class DeleteResourceCommand extends DefaultCommand
     public $class;
     public $id;
 }
-

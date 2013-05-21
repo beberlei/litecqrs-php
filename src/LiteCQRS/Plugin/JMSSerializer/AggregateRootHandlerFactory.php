@@ -28,4 +28,3 @@ class AggregateRootHandlerFactory implements HandlerFactoryInterface
         return 'litecqrs.serializer.aggregate_root_handler';
     }
 }
-

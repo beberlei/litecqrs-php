@@ -1,10 +1,10 @@
 <?php
 
-namespace LiteCQRS\Plugin\DoctrineMongoDB;
+namespace LiteCQRS\Plugin\Doctrine\EventStore;
 
 use Doctrine\MongoDB\Connection;
 use LiteCQRS\DomainObjectChanged;
-use LiteCQRS\Plugin\DoctrineMongoDB\EventStore\MongoDBEventStore;
+use LiteCQRS\Plugin\Doctrine\EventStore\MongoDBEventStore;
 
 class MongoDBEventStoreTest extends \PHPUnit_Framework_TestCase
 {

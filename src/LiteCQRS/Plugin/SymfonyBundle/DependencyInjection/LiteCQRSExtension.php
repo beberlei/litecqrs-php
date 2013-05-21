@@ -60,4 +60,3 @@ class LiteCQRSExtension extends Extension
         }
     }
 }
-

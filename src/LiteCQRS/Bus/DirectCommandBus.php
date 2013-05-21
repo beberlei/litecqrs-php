@@ -23,4 +23,3 @@ class DirectCommandBus extends SequentialCommandBus
         return $this->handlers[strtolower($commandType)];
     }
 }
-

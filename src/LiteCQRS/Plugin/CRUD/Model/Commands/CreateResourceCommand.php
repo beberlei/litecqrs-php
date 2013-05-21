@@ -9,4 +9,3 @@ class CreateResourceCommand extends DefaultCommand
     public $class;
     public $data = array();
 }
-

@@ -14,4 +14,3 @@ abstract class MessageHandlerProxyFactory
 
     abstract protected function proxyHandler(MessageHandlerInterface $handler);
 }
-

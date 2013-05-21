@@ -31,7 +31,7 @@ class MonologDebugLogger implements MessageHandlerInterface
             $log     = "Command[%s]: %s";
             $info    = end($parts);
             $context = array();
-        } else if ($message instanceof DomainEvent) {
+        } elseif ($message instanceof DomainEvent) {
             $header  = $message->getMessageHeader();
             $log     = "Event[%s]: %s";
             $info    = $message->getEventName() . " - " . $header->id;
@@ -47,10 +47,9 @@ class MonologDebugLogger implements MessageHandlerInterface
             $this->logger->debug(sprintf($log, 'STARTING', $info), $context);
             $this->next->handle($message);
             $this->logger->debug(sprintf($log, 'SUCCESS', $info), $context);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $this->logger->err(sprintf($log, 'FAIL', $info) . ' - ' . $e->getMessage(), $context);
             throw $e;
         }
     }
 }
-

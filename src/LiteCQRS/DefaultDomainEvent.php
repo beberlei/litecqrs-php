@@ -41,6 +41,7 @@ abstract class DefaultDomainEvent implements DomainEvent
         }
 
         $parts = explode("\\", $class);
+
         return end($parts);
     }
 
@@ -54,4 +55,3 @@ abstract class DefaultDomainEvent implements DomainEvent
         return $this->messageHeader->aggregateId;
     }
 }
-

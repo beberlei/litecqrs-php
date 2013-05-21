@@ -2,12 +2,9 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -159,4 +156,3 @@ class DebugCommand extends ContainerAwareCommand
         return $container;
     }
 }
-
