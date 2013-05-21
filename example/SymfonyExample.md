@@ -3,6 +3,8 @@ Symfony Example
 
 This document shows an example of how to implement [example1.php](https://github.com/beberlei/litecqrs-php/blob/master/example/example1.php) as part of a Symfony project.
 
+Please note that there may be another way to do this, but as there currently wasn't any documentation, this was how I (@mbadolato) got the example properly working for me.
+
 Service Definition
 ------------------
 
@@ -21,11 +23,11 @@ Service Definition
     </parameters>
 
     <services>
-        <service id="test.event_handler" class="%test.event_handler.class%">
+        <service id="test.command.event_handler" class="%test.event_handler.class%">
             <tag name="lite_cqrs.event_handler" />
         </service>
 
-        <service id="test.command.change_email" class="%test.user_service.class%">
+        <service id="test.command.user_service_commands" class="%test.user_service.class%">
             <argument type="service" id="litecqrs.identity_map" />
             <tag name="lite_cqrs.command_handler" />
         </service>
@@ -105,7 +107,6 @@ class UserService
 
     public function changeEmail(ChangeEmailCommand $command)
     {
-        /** @var User $user */
         $user = $this->findUserById($command->id);
         $user->changeEmail($command->email);
     }
@@ -179,8 +180,25 @@ class TestCommand extends ContainerAwareCommand
     }
 }
 ```
+Defined commands and events can be displayed:
 
-Run the command from your root Symfony directory:
+```bash
+$ php app/console lite-cqrs:debug
+COMMANDS
+========
+
+Command-Handler Service            Command                 Class
+test.command.user_service_commands ChangeEmailCommand      Acme\DemoBundle\Model\Command\ChangeEmailCommand
+
+
+EVENTS
+======
+
+Event-Handler Service      Event       Class
+test.command.event_handler ChangeEmail Acme\DemoBundle\EventHandlers\MyEventHandler
+```
+
+Run the command:
 
 ```bash
 $ php app/console acme:demo:change-email info@beberlei.de
