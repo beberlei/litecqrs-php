@@ -103,6 +103,7 @@ some examples:
 2. ``example2_event.php`` shows direct usage of the EventMessageBus inside a command
 3. ``example3_sequential_commands.php`` demonstrates how commands are processed sequentially.
 4. ``tictactoe.php`` implements a tic tac toe game with CQRS.
+5. ``SymfonyExample.md`` shows ``example1.php`` implemented within the scope of a Symfony2 project.
 
 ## Setup
 
@@ -337,6 +338,9 @@ You can enable/disable the different plugins by adding the following to your con
         dbal_event_store:       true
         couchdb_event_store:    true
         couchdb_odm:            true
+
+Please refer to the [SymfonyExample.md](https://github.com/beberlei/litecqrs-php/blob/master/example/SymfonyExample.md) 
+document for a full demonstration of using LiteCQRS from within a Symfony2 project.
 
 ### Swiftmailer
 
