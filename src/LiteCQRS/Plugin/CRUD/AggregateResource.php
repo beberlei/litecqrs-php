@@ -46,7 +46,7 @@ abstract class AggregateResource extends AggregateRoot
         $this->apply(new ResourceUpdatedEvent(array(
             'class' => get_class($this),
             'id'    => $this->id,
-            'data'  => data,
+            'data'  => $data,
         )));
     }
 
