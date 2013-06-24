@@ -30,13 +30,14 @@ abstract class AggregateResource extends AggregateRoot
      */
     protected function getAccessibleProperties()
     {
-        return array_keys(get_class_vars($this));
+        return array_keys(get_class_vars(get_class($this)));
     }
 
     public function create(array $data)
     {
         $this->apply(new ResourceCreatedEvent(array(
             'class' => get_class($this),
+            'id'    => $this->id,
             'data'  => $data,
         )));
     }
