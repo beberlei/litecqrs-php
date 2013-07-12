@@ -11,7 +11,7 @@ trait CrudCreatable
         $this->apply(new ResourceCreatedEvent(array(
             'class' => get_class($this),
             'id'    => $this->id,
-            'data'  => $this->data,
+            'data'  => $data,
         )));
     }
 

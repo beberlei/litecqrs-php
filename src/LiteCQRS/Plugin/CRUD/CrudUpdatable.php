@@ -11,7 +11,7 @@ trait CrudUpdatable
         $this->apply(new ResourceUpdatedEvent(array(
             'class' => get_class($this),
             'id'    => $this->id,
-            'data'  => $this->data,
+            'data'  => $data,
         )));
     }
 
