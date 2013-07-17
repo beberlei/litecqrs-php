@@ -3,6 +3,8 @@
 namespace LiteCQRS;
 
 /**
+ * @deprecated Use DomainEventProviderRepositoryInterface instead
+ *
  * Very simple aggregate repository that you can
  * use for reusable behaviors, independent of the underlying
  * persistence storage or event sourcing

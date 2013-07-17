@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Plugin\CRUD;
 
-use LiteCQRS\AggregateRepositoryInterface;
+use LiteCQRS\DomainEventProviderRepositoryInterface;
 use LiteCQRS\Plugin\CRUD\Model\Commands\CreateResourceCommand;
 use LiteCQRS\Plugin\CRUD\Model\Commands\UpdateResourceCommand;
 use LiteCQRS\Plugin\CRUD\Model\Commands\DeleteResourceCommand;
@@ -15,7 +15,7 @@ class CRUDCommandService
 {
     private $repository;
 
-    public function __construct(AggregateRepositoryInterface $repository)
+    public function __construct(DomainEventProviderRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }

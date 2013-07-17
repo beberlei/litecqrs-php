@@ -2,11 +2,11 @@
 
 namespace LiteCQRS\Plugin\Doctrine;
 
-use LiteCQRS\AggregateRepositoryInterface;
-use LiteCQRS\AggregateRootInterface;
+use LiteCQRS\DomainEventProviderRepositoryInterface;
+use LiteCQRS\EventProviderInterface;
 use Doctrine\ORM\EntityManager;
 
-class ORMRepository implements AggregateRepositoryInterface
+class ORMRepository implements DomainEventProviderRepositoryInterface
 {
     private $entityManager;
 
@@ -20,14 +20,13 @@ class ORMRepository implements AggregateRepositoryInterface
         return $this->entityManager->find($class, $id);
     }
 
-    public function add(AggregateRootInterface $object)
+    public function add(EventProviderInterface $object)
     {
         $this->entityManager->persist($object);
     }
 
-    public function remove(AggregateRootInterface $object)
+    public function remove(EventProviderInterface $object)
     {
         $this->entityManager->remove($object);
     }
 }
-

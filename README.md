@@ -258,7 +258,7 @@ Also to synchronize the events to event message bus you can use the DoctrineIden
 
 - ``LiteCQRS\Plugin\Doctrine\DoctrineIdentityMap``
 
-It also ships with an implementation of ``AggregateRepositoryInterface`` wrapping
+It also ships with an implementation of ``DomainEventProviderRepositoryInterface`` wrapping
 the EntityManager:
 
 - ``LiteCQRS\Plugin\Doctrine\ORMRepository``
@@ -339,7 +339,7 @@ You can enable/disable the different plugins by adding the following to your con
         couchdb_event_store:    true
         couchdb_odm:            true
 
-Please refer to the [SymfonyExample.md](https://github.com/beberlei/litecqrs-php/blob/master/example/SymfonyExample.md) 
+Please refer to the [SymfonyExample.md](https://github.com/beberlei/litecqrs-php/blob/master/example/SymfonyExample.md)
 document for a full demonstration of using LiteCQRS from within a Symfony2 project.
 
 ### Swiftmailer

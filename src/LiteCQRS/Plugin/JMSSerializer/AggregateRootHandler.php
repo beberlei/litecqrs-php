@@ -3,7 +3,7 @@
 namespace LiteCQRS\Plugin\JMSSerializer;
 
 use LiteCQRS\Bus\IdentityMap\IdentityMapInterface;
-use LiteCQRS\AggregateRepositoryInterface;
+use LiteCQRS\DomainEventProviderRepositoryInterface;
 
 use JMS\SerializerBundle\Serializer\VisitorInterface;
 use JMS\SerializerBundle\Metadata\ClassMetadata;
@@ -21,7 +21,7 @@ class AggregateRootHandler implements DeserializationHandlerInterface, Serializa
     private $enabled = false;
     private $identityMap;
 
-    public function __construct(IdentityMapInterface $identityMap, AggregateRepositoryInterface $repository)
+    public function __construct(IdentityMapInterface $identityMap, DomainEventProviderRepositoryInterface $repository)
     {
         $this->identityMap = $identityMap;
         $this->repository  = $repository;

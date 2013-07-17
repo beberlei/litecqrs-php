@@ -28,14 +28,14 @@ use LiteCQRS\Plugin\JMSSerializer\JMSSerializer;
 
 use LiteCQRS\DefaultDomainEvent;
 use LiteCQRS\AggregateRoot;
-use LiteCQRS\AggregateRepositoryInterface;
+use LiteCQRS\DomainEventProviderRepositoryInterface;
 
 class SerializerTest extends \PHPUnit_Framework_TestCase
 {
     public function testSerializeEvent()
     {
         $identityMap = $this->getMock('LiteCQRS\Bus\IdentityMap\IdentityMapInterface');
-        $repository = $this->getMock('LiteCQRS\AggregateRepositoryInterface');
+        $repository = $this->getMock('LiteCQRS\DomainEventProviderRepositoryInterface');
         $serializer = $this->createJmsSerializer($identityMap, $repository);
 
         $event = new SomeEvent(array("root" => new SomeAggregateRoot()));
@@ -49,7 +49,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $data = '{"root":{"aggregate_type":"LiteCQRS\\\\Plugin\\\\JMSSerializer\\\\SomeAggregateRoot","aggregate_id":1}}';
 
         $identityMap = $this->getMock('LiteCQRS\Bus\IdentityMap\IdentityMapInterface');
-        $repository = $this->getMock('LiteCQRS\AggregateRepositoryInterface');
+        $repository = $this->getMock('LiteCQRS\DomainEventProviderRepositoryInterface');
         $repository->expects($this->once())
                    ->method('find')
                    ->with($this->equalTo('LiteCQRS\Plugin\JMSSerializer\SomeAggregateRoot'), $this->equalTo(1))
