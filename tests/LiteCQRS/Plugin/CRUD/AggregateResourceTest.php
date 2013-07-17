@@ -1,9 +1,10 @@
 <?php
 
 namespace LiteCQRS\Plugin\CRUD;
-use LiteCQRS\AggregateRepositoryInterface;
-use LiteCQRS\AggregateRootInterface;
+
 use LiteCQRS\DomainEvent;
+use LiteCQRS\DomainEventProviderRepositoryInterface;
+use LiteCQRS\EventProviderInterface;
 use LiteCQRS\Plugin\CRUD\Model\Commands\CreateResourceCommand;
 use LiteCQRS\Plugin\CRUD\Model\Commands\UpdateResourceCommand;
 
@@ -62,7 +63,7 @@ class DummyObject extends AggregateResource
     }
 }
 
-class DummyRepo implements AggregateRepositoryInterface
+class DummyRepo implements DomainEventProviderRepositoryInterface
 {
     public $addObject;
 
@@ -79,12 +80,12 @@ class DummyRepo implements AggregateRepositoryInterface
         return $this->updateObject;
     }
 
-    public function add(AggregateRootInterface $object)
+    public function add(EventProviderInterface $object)
     {
         $this->addObject = $object;
     }
 
-    public function remove(AggregateRootInterface $object)
+    public function remove(EventProviderInterface $object)
     {
     }
 }
