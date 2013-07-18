@@ -15,6 +15,13 @@ trait CrudCreatable
         )));
     }
 
+    protected function apply(DomainEvent $event)
+    {
+        $this->applyResourceCreated($event);
+        $event->getMessageHeader()->setAggregate($this);
+        $this->appliedEvents[] = $event;
+    }
+
     protected function applyResourceCreated(ResourceCreatedEvent $event)
     {
         $properties = array_keys(get_class_vars($this));
@@ -26,4 +33,3 @@ trait CrudCreatable
         }
     }
 }
-

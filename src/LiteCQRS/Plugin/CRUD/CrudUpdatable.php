@@ -15,6 +15,13 @@ trait CrudUpdatable
         )));
     }
 
+    protected function apply(DomainEvent $event)
+    {
+        $this->applyResourceUpdated($event);
+        $event->getMessageHeader()->setAggregate($this);
+        $this->appliedEvents[] = $event;
+    }
+
     protected function applyResourceUpdated(ResourceUpdatedEvent $event)
     {
         $properties = array_keys(get_class_vars($this));
@@ -26,4 +33,3 @@ trait CrudUpdatable
         }
     }
 }
-
