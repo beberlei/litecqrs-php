@@ -2,6 +2,7 @@
 
 namespace LiteCQRS\Plugin\CRUD;
 
+use LiteCQRS\DomainEvent;
 use LiteCQRS\Plugin\CRUD\Model\Events\ResourceDeletedEvent;
 
 trait CrudDeletable
@@ -11,8 +12,14 @@ trait CrudDeletable
         $this->apply(new ResourceDeletedEvent());
     }
 
+    protected function apply(DomainEvent $event)
+    {
+        $this->applyResourceDeleted($event);
+        $event->getMessageHeader()->setAggregate($this);
+        $this->appliedEvents[] = $event;
+    }
+
     protected function applyResourceDeleted(ResourceDeletedEvent $event)
     {
     }
 }
-

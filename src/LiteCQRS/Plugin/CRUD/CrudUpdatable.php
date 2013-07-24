@@ -2,6 +2,7 @@
 
 namespace LiteCQRS\Plugin\CRUD;
 
+use LiteCQRS\DomainEvent;
 use LiteCQRS\Plugin\CRUD\Model\Events\ResourceUpdatedEvent;
 
 trait CrudUpdatable
@@ -15,9 +16,16 @@ trait CrudUpdatable
         )));
     }
 
+    protected function apply(DomainEvent $event)
+    {
+        $this->applyResourceUpdated($event);
+        $event->getMessageHeader()->setAggregate($this);
+        $this->appliedEvents[] = $event;
+    }
+
     protected function applyResourceUpdated(ResourceUpdatedEvent $event)
     {
-        $properties = array_keys(get_class_vars($this));
+        $properties = $this->getAccessibleProperties();
 
         foreach ($event->data as $key => $value) {
             if (in_array($key, $properties)) {
@@ -25,5 +33,15 @@ trait CrudUpdatable
             }
         }
     }
-}
 
+    /**
+     * Return an array of properties that are allowed to change
+     * through the create() and update() methods.
+     *
+     * @return array
+     */
+    protected function getAccessibleProperties()
+    {
+        return array_keys(get_class_vars(get_class($this)));
+    }
+}
