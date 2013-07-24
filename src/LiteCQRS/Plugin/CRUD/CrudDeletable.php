@@ -2,6 +2,7 @@
 
 namespace LiteCQRS\Plugin\CRUD;
 
+use LiteCQRS\DomainEvent;
 use LiteCQRS\Plugin\CRUD\Model\Events\ResourceDeletedEvent;
 
 trait CrudDeletable
