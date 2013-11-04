@@ -159,7 +159,7 @@ $commandBus = new DirectCommandBus(array(
 
 ### To implement a Use Case of your application
 
-1. Create a command object that receives all the necessary input values. Use public properties to and extend ``LiteCQRS\DefaultCommand`` simplify.
+1. Create a command object that receives all the necessary input values. Use public properties and extend ``LiteCQRS\DefaultCommand`` to simplify.
 2. Add a new method with the name of the command to any of your services (command handler)
 3. Register the command handler to handle the given command on the CommandBus.
 4. Have your entities implement ``LiteCQRS\AggregateRoot`` or ``LiteCQRS\DomainEventProvider``
@@ -237,7 +237,7 @@ $commandBus = new DirectCommandBus(array($loggerProxyFactory));
 
 The EventMessageBus prevents exceptions from bubbling up. To allow some debugging of failed event handler
 execution there is a special event "EventExecutionFailed" that you can listen to. You will get passed
-an instanceof ``LiteCQRS\Bus\EventExecutionFailed`` with properties ``$exception``, ``$service`` and
+an instance of ``LiteCQRS\Bus\EventExecutionFailed`` with properties ``$exception``, ``$service`` and
 ``$event`` to allow analysing failures in your application.
 
 ## Extension Points
