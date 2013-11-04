@@ -23,6 +23,7 @@ abstract class SequentialCommandBus implements CommandBus
      */
     private $proxyFactories;
     private $commandStack = array();
+    private $exceptionStack = array();
     private $executing = false;
 
     public function __construct(array $proxyFactories = array())
@@ -42,11 +43,10 @@ abstract class SequentialCommandBus implements CommandBus
     /**
      * Sequentially execute commands
      *
-     * If an exception occurs in any command it will be put on a stack
-     * of exceptions that is thrown only when all the commands are processed.
+     * Only exceptions occurring in the first command will be thrown.
      *
      * @param object $command
-     * @throws CommandFailedStackException
+     * @throws \Exception
      */
     public function handle($command)
     {
@@ -58,16 +58,17 @@ abstract class SequentialCommandBus implements CommandBus
 
         $first = true;
 
+
         while ($command = array_shift($this->commandStack)) {
             try {
                 $this->executing = true;
-                $type    = get_class($command);
+                $type = get_class($command);
                 $service = $this->getService($type);
                 $handler = new CommandInvocationHandler($service);
                 $handler = $this->proxyHandler($handler);
 
                 $handler->handle($command);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->executing = false;
                 $this->handleException($e, $first);
             }
@@ -77,11 +78,17 @@ abstract class SequentialCommandBus implements CommandBus
         }
     }
 
+    /**
+     * @param \Exception $e
+     * @param boolean $first
+     * @throws \Exception
+     */
     protected function handleException($e, $first)
     {
         if ($first) {
             throw $e;
         }
+        $this->exceptionStack[] = $e;
     }
 
     protected function proxyHandler($handler)
@@ -92,4 +99,3 @@ abstract class SequentialCommandBus implements CommandBus
         return $handler;
     }
 }
-
