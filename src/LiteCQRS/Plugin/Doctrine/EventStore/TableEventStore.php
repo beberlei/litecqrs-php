@@ -29,7 +29,7 @@ class TableEventStore implements EventStoreInterface
     {
         $header = $event->getMessageHeader();
 
-        $aggregateId = $header->aggregateId;
+        $aggregateId = !is_array($header->aggregateId) ? $header->aggregateId : json_encode($header->aggregateId);
 
         $this->conn->insert($this->table, array(
             'event_id'       => $header->id,
