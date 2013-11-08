@@ -8,3 +8,4 @@ php:
 before_script:
   - composer self-update
   - composer update
+  - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
