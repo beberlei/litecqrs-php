@@ -6,6 +6,7 @@
     <parameters>
         <parameter key="litecqrs.serializer.class">LiteCQRS\Plugin\JMSSerializer\JMSSerializer</parameter>
         <parameter key="litecqrs.serializer.aggregate_root_handler.class">LiteCQRS\Plugin\JMSSerializer\AggregateRootHandler</parameter>
+        <parameter key="litecqrs.serializer.metadata_driver.class">LiteCQRS\Plugin\JMSSerializer\LiteCQRSMetadataDriver</parameter>
     </parameters>
 
     <services>
@@ -17,6 +18,9 @@
         <service id="litecqrs.serializer.aggregate_root_handler" class="%litecqrs.serializer.aggregate_root_handler.class%" public="false">
             <argument type="service" id="litecqrs.identity_map" />
             <argument type="service" id="litecqrs.repository" />
+        </service>
+
+        <service id="litecqrs.serializer.metadata_driver" class="%litecqrs.serializer.metadata_driver.class%" public="false">
         </service>
     </services>
 </container>

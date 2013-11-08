@@ -2,13 +2,6 @@
 
 namespace LiteCQRS;
 
-// This is necessary, because JMS is very aggressive about parsing stuff and
-// then complaining.
-use JMS\SerializerBundle\Annotation\ExclusionPolicy;
-
-/**
- * @ExclusionPolicy("all")
- */
 class DomainEventProvider implements EventProviderInterface
 {
     /**

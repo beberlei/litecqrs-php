@@ -100,6 +100,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
     {
         $fileLocator = new \Metadata\Driver\FileLocator(array());
         $driver      = new \Metadata\Driver\DriverChain(array(
+            new \LiteCQRS\Plugin\JMSSerializer\LiteCQRSMetadataDriver(),
             new \JMS\SerializerBundle\Metadata\Driver\YamlDriver($fileLocator),
             new \JMS\SerializerBundle\Metadata\Driver\XmlDriver($fileLocator),
             new \JMS\SerializerBundle\Metadata\Driver\PhpDriver($fileLocator),
