@@ -4,6 +4,8 @@ Small naming-convention based CQRS library for PHP (loosely based on [LiteCQRS f
 C#](https://github.com/danielwertheim/LiteCQRS)) that relies on the Message Bus,
 Command, Event and Domain Event patterns.
 
+[![Build Status (Master)](https://travis-ci.org/beberlei/litecqrs-php.png?branch=master)](https://travis-ci.org/beberlei/litecqrs-php)
+
 ## Terminology
 
 CQS is Command-Query-Separation: A paradigm where read methods never change
