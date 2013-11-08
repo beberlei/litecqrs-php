@@ -9,7 +9,7 @@ use LiteCQRS\EventProviderInterface;
  *
  * The CommandBus uses the identity map to pass over all
  * the newly applied events of all the registered aggregate roots
- * to the {@see EventStoreInterface}
+ * to the {@see EventStore}
  */
 interface IdentityMapInterface
 {

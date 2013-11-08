@@ -3,7 +3,7 @@
 namespace LiteCQRS\Plugin\Doctrine\EventStore;
 
 use LiteCQRS\DomainEvent;
-use LiteCQRS\EventStore\EventStoreInterface;
+use LiteCQRS\EventStore\EventStore;
 use LiteCQRS\EventStore\SerializerInterface;
 
 use Doctrine\DBAL\Connection;
@@ -12,7 +12,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Store events in a database table using Doctrine DBAL.
  */
-class TableEventStore implements EventStoreInterface
+class TableEventStore implements EventStore
 {
     private $conn;
     private $table;

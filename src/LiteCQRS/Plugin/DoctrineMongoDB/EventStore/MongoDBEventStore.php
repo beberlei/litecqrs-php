@@ -6,7 +6,7 @@ use Doctrine\MongoDB\Connection;
 use LiteCQRS\EventStore\SerializerInterface;
 use LiteCQRS\DomainEvent;
 
-class MongoDBEventStore implements \LiteCQRS\EventStore\EventStoreInterface
+class MongoDBEventStore implements \LiteCQRS\EventStore\EventStore
 {
     private $connection;
     private $database;

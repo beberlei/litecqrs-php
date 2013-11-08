@@ -7,7 +7,7 @@ use LiteCQRS\DomainEvent;
 /**
  * Store events
  */
-interface EventStoreInterface
+interface EventStore
 {
     /**
      * Add Event

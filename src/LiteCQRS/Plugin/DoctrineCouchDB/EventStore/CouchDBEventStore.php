@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Plugin\DoctrineCouchDB\EventStore;
 
-use LiteCQRS\EventStore\EventStoreInterface;
+use LiteCQRS\EventStore\EventStore;
 use LiteCQRS\EventStore\SerializerInterface;
 use LiteCQRS\DomainEvent;
 
@@ -11,7 +11,7 @@ use Doctrine\CouchDB\CouchDBClient;
 /**
  * Event Store for CouchDB.
  */
-class CouchDBEventStore implements EventStoreInterface
+class CouchDBEventStore implements EventStore
 {
     /**
      * @var LiteCQRS\EventStore\SerializerInterface
