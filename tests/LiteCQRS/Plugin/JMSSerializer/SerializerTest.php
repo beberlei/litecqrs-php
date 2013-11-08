@@ -23,7 +23,6 @@ use JMS\SerializerBundle\Serializer\Serializer;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Metadata\MetadataFactory;
 
-use LiteCQRS\Plugin\JMSSerializer\AggregateRootHandler;
 use LiteCQRS\Plugin\JMSSerializer\JMSSerializer;
 
 use LiteCQRS\DefaultDomainEvent;
@@ -32,6 +31,13 @@ use LiteCQRS\DomainEventProviderRepositoryInterface;
 
 class SerializerTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        if (!class_exists('JMS\SerializerBundle\Serializer\Serializer')) {
+            $this->markTestSkipped('JMS Serializer test for 0.9 branch only.');
+        }
+    }
+
     public function testSerializeEvent()
     {
         $identityMap = $this->getMock('LiteCQRS\Bus\IdentityMap\IdentityMapInterface');
@@ -66,18 +72,15 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
     {
         $namingStrategy    = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
         $objectConstructor = new UnserializeObjectConstructor();
-        $arHandler = new AggregateRootHandler($identityMap, $repository);
 
         $customSerializationHandlers = array(
             new DateTimeHandler(),
             new DoctrineProxyHandler(),
-            $arHandler
         );
 
         $customDeserializationHandlers = array(
             new DateTimeHandler(),
             new ArrayCollectionHandler(),
-            $arHandler
         );
 
         $serializationVisitors = array(
@@ -91,8 +94,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
 
         $factory = $this->createJmsMetadataFactory();
         return new JMSSerializer(
-            new Serializer($factory, $serializationVisitors, $deserializationVisitors),
-            $arHandler
+            new Serializer($factory, $serializationVisitors, $deserializationVisitors)
         );
     }
 
