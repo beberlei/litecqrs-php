@@ -5,7 +5,11 @@
     "autoload": {
         "psr-0": {"LiteCQRS": "src/"}
     },
+    "require": {
+        "rhumsaa/uuid": "@stable"
+    },
     "require-dev": {
+        "phake/phake":"@stable",
         "doctrine/common": ">=2.0,<2.5",
         "doctrine/orm": ">=2.0,<2.5",
         "doctrine/couchdb": "dev-master",
