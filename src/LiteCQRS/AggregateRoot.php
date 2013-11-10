@@ -2,30 +2,49 @@
 
 namespace LiteCQRS;
 
-abstract class AggregateRoot implements AggregateRootInterface
+use LiteCQRS\EventStore\EventStream;
+use LiteCQRS\Exception\RuntimeException;
+use LiteCQRS\Exception\BadMethodCallException;
+
+use Rhumsaa\Uuid\Uuid;
+
+abstract class AggregateRoot
 {
     /**
-     * @var DomainEvent[]
+     * @var Rhumsaa\Uuid\Uuid
      */
-    private $appliedEvents = array();
+    private $id;
 
-    public function getAppliedEvents()
+    /**
+     * @var EventStream
+     */
+    private $eventStream;
+
+    protected function setId(Uuid $uuid)
     {
-        return $this->appliedEvents;
+        $this->id = $uuid;
     }
 
-    public function dequeueAppliedEvents()
+    /**
+     * @return Rhumsaa\Uuid\Uuid
+     */
+    final public function getId()
     {
-        $events = $this->appliedEvents;
-        $this->appliedEvents = array();
-        return $events;
+        return $this->id;
+    }
+
+    private  function initializeEventStream()
+    {
+        if ($this->eventStream === null) {
+            $this->eventStream = new EventStream($this->getId());
+        }
     }
 
     protected function apply(DomainEvent $event)
     {
+        $this->initializeEventStream();
         $this->executeEvent($event);
-        $event->getMessageHeader()->setAggregate($this);
-        $this->appliedEvents[] = $event;
+        $this->eventStream->addEvent($event);
     }
 
     private function executeEvent(DomainEvent $event)
@@ -33,7 +52,7 @@ abstract class AggregateRoot implements AggregateRootInterface
         $method = sprintf('apply%s', $event->getEventName());
 
         if (!method_exists($this, $method)) {
-            throw new \BadMethodCallException(
+            throw new BadMethodCallException(
                 "There is no event named '$method' that can be applied to '" . get_class($this) . "'. " .
                 "If you just want to emit an event without applying changes use the raise() method."
             );
@@ -42,11 +61,28 @@ abstract class AggregateRoot implements AggregateRootInterface
         $this->$method($event);
     }
 
-    public function loadFromHistory(array $events)
+    public function loadFromEventStream(EventStream $eventStream)
     {
-        foreach ($events as $event) {
+        if ($this->eventStream !== null) {
+            throw new RuntimeException("AggregateRoot was already created from event stream and cannot be hydrated again.");
+        }
+
+        $this->eventStream = $eventStream;
+        $this->setId($eventStream->getUuid());
+
+        foreach ($eventStream as $event) {
             $this->executeEvent($event);
         }
+    }
+
+    /**
+     * @return EventStream
+     */
+    public function getEventStream()
+    {
+        $this->initializeEventStream();
+
+        return $this->eventStream;
     }
 }
 

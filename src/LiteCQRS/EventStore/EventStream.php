@@ -28,10 +28,22 @@ class EventStream implements IteratorAggregate
      */
     private $newEvents = array();
 
-    public function __construct(Uuid $uuid, array $events = array())
+    /**
+     * @var array
+     */
+    private $metadata = array();
+
+    /**
+     * @var string
+     */
+    private $revision;
+
+    public function __construct(Uuid $uuid, array $events = array(), $revision = null, array $metadata = array())
     {
         $this->uuid = $uuid;
         $this->events = $events;
+        $this->revision = $revision;
+        $this->metadata = $metadata;
     }
 
     /**
@@ -40,6 +52,14 @@ class EventStream implements IteratorAggregate
     public function getUuid()
     {
         return $this->uuid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRevision()
+    {
+        return $this->revision;
     }
 
     public function addEvents(array $newEvents)
@@ -74,5 +94,15 @@ class EventStream implements IteratorAggregate
     public function markNewEventsProcessed()
     {
         $this->newEvents = array();
+    }
+
+    public function setMetadata($name, $value)
+    {
+        $this->metadata[$name] = $value;
+    }
+
+    public function getMetadata($name)
+    {
+        return $this->metadata[$name];
     }
 }

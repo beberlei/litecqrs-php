@@ -8,14 +8,16 @@ use LiteCQRS\Bus\IdentityMap\SimpleIdentityMap;
 use LiteCQRS\Bus\EventMessageHandlerFactory;
 use DateTime;
 
+use Rhumsaa\Uuid\Uuid;
+
 class CQRSTest extends \PHPUnit_Framework_TestCase
 {
     public function testAggregateRootApplyEvents()
     {
-        $user = new User();
+        $user = new User(Uuid::uuid4());
         $user->changeEmail("foo@example.com");
 
-        $events = $user->getAppliedEvents();
+        $events = iterator_to_array($user->getEventStream());
         $this->assertEquals(1, count($events));
         $this->assertEquals("foo@example.com", end($events)->email);
     }
@@ -24,7 +26,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException("BadMethodCallException", "There is no event named 'applyInvalid' that can be applied to 'LiteCQRS\User'");
 
-        $user = new User();
+        $user = new User(Uuid::uuid4());
         $user->changeInvalidEventName();
     }
 
@@ -222,52 +224,20 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $bus->publish($event);
         $bus->dispatchEvents();
     }
-
-    public function testEventsFromHistoryAreNotInTheAppliedEventsList()
-    {
-        $user = new User();
-        $user->changeEmail("foo@bar.com");
-
-        $events = $user->getAppliedEvents();
-
-        $newUser = new User();
-        $newUser->loadFromHistory($events);
-
-        $this->assertEquals(0, count($newUser->getAppliedEvents()));
-    }
-
-    public function testPopAppliedEventsOnlyOnce()
-    {
-        $user = new User();
-        $user->changeEmail("foo@bar.com");
-
-        $events = $user->dequeueAppliedEvents();
-        $this->assertEquals(1, count($events));
-
-        $events = $user->dequeueAppliedEvents();
-        $this->assertEquals(0, count($events));
-    }
-
-    public function testSimpleIdentityMapKeepsObjectUnique()
-    {
-        $ar = $this->getMock('LiteCQRS\AggregateRootInterface');
-
-        $im = new SimpleIdentityMap();
-        $im->add($ar);
-        $im->add($ar);
-
-        $this->assertEquals(array($ar), $im->all());
-    }
 }
 
 class User extends AggregateRoot
 {
-    private $id;
     private $email;
 
-    public function getId()
+    public function __construct(Uuid $uuid)
     {
-        return $this->id;
+        $this->setId($uuid);
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     public function changeEmail($email)
