@@ -6,6 +6,8 @@ Command, Event and Domain Event patterns.
 
 [![Build Status (Master)](https://travis-ci.org/beberlei/litecqrs-php.png?branch=master)](https://travis-ci.org/beberlei/litecqrs-php)
 
+Use the 1.1 branch, as the dev-master is currently in heavy refactoring.
+
 ## Terminology
 
 CQS is Command-Query-Separation: A paradigm where read methods never change
@@ -64,13 +66,15 @@ Examples:
 
 ## Installation & Requirements
 
+Use the 1.1 branch, as the dev-master is currently in heavy refactoring.
+
 The core library has no dependencies on other libraries. Plugins have dependencies on their specific libraries.
 
 Install with [Composer](http://getcomposer.org):
 
     {
         "require": {
-            "beberlei/lite-cqrs": "dev-master"
+            "beberlei/lite-cqrs": "1.1"
         }
     }
 

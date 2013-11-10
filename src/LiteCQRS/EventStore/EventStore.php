@@ -14,6 +14,7 @@ use LiteCQRS\EventStore\EventStream;
 interface EventStore
 {
     /**
+     * @throws EventStreamNotFoundException
      * @return EventStream
      */
     public function find(Uuid $uuid);
