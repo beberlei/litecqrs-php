@@ -70,4 +70,16 @@ class EventStreamTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, count($stream->newEvents()));
     }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_accessing_unknown_metadata()
+    {
+        $uuid = Uuid::uuid4();
+        $stream = new EventStream($uuid, array());
+
+        $this->setExpectedException('LiteCQRS\EventStore\UnknownMetadataException');
+        $stream->getMetadata('Foo');
+    }
 }

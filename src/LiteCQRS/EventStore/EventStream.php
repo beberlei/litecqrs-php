@@ -103,6 +103,10 @@ class EventStream implements IteratorAggregate
 
     public function getMetadata($name)
     {
+        if (!isset($this->metadata[$name])) {
+            throw new UnknownMetadataException(sprintf('No metadata "%s" on event stream "%s"', $name, $this->uuid));
+        }
+
         return $this->metadata[$name];
     }
 }
