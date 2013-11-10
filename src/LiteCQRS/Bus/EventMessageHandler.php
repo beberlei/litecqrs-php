@@ -3,7 +3,7 @@
 namespace LiteCQRS\Bus;
 
 use Exception;
-use LiteCQRS\EventStore\EventStore;
+use LiteCQRS\EventStore\EventStoreInterface;
 
 class EventMessageHandler implements MessageHandlerInterface
 {
@@ -12,7 +12,7 @@ class EventMessageHandler implements MessageHandlerInterface
     private $queue;
     private $eventStore;
 
-    public function __construct(MessageHandlerInterface $next, EventMessageBus $messageBus, EventQueue $queue = null, EventStore $eventStore = null)
+    public function __construct(MessageHandlerInterface $next, EventMessageBus $messageBus, EventQueue $queue = null, EventStoreInterface $eventStore = null)
     {
         $this->next        = $next;
         $this->messageBus  = $messageBus;

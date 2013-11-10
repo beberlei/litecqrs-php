@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\EventStore\EventStore;
+use LiteCQRS\EventStore\EventStoreInterface;
 
 class EventMessageHandlerFactory
 {
@@ -10,7 +10,7 @@ class EventMessageHandlerFactory
     private $queue;
     private $eventStore;
 
-    public function __construct(EventMessageBus $messageBus, EventQueue $queue = null, EventStore $eventStore = null)
+    public function __construct(EventMessageBus $messageBus, EventQueue $queue = null, EventStoreInterface $eventStore = null)
     {
         $this->messageBus  = $messageBus;
         $this->queue = $queue;
