@@ -73,6 +73,8 @@ class OptimisticLockingEventStore implements EventStore
 
         $this->storage->store($id, $stream->getClassName(), $eventData, $nextVersion, $currentVersion);
 
+        $stream->setVersion($nextVersion);
+
         return new Transaction($stream, $newEvents);
     }
 }
