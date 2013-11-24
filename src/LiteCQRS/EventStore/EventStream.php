@@ -64,6 +64,11 @@ class EventStream implements IteratorAggregate
         return $this->uuid;
     }
 
+    public function setVersion($version)
+    {
+        $this->version = $version;
+    }
+
     /**
      * @return string
      */
