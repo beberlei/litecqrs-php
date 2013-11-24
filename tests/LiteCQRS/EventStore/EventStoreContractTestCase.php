@@ -73,17 +73,43 @@ abstract class EventStoreContractTestCase extends \PHPUnit_Framework_TestCase
         $uuid = Uuid::uuid4();
 
         $fixtureStream = $this->givenFixtureStreamWith($uuid);
-        $fixtureStream->setVersion(10);
+        $fixtureStream->markNewEventsProcessed(10);
 
         $commitStream = $this->givenFixtureStreamWith($uuid);
+        $commitStream->markNewEventsProcessed(20);
         $commitStream->addEvent(new EventStoreTestEvent());
-        $commitStream->setVersion(20);
 
         $eventStore = $this->givenAnEventStore();
         $this->givenEventStoreContains($eventStore, $fixtureStream);
 
         $this->expectConcurrencyException();
         $this->whenCommittingEventStream($eventStore, $commitStream);
+    }
+
+    /**
+     * @test
+     */
+    public function it_manages_versions_such_that_multiple_commits_succeed()
+    {
+        $uuid = Uuid::uuid4();
+
+        $fixtureStream = $this->givenFixtureStreamWith($uuid);
+        $fixtureStream->addEvent(new EventStoreTestEvent());
+
+        $eventStore = $this->givenAnEventStore();
+
+        $this->whenCommittingEventStream($eventStore, $fixtureStream);
+
+        $nextEvent = new EventStoreTestEvent();
+        $fixtureStream->addEvent($nextEvent);
+
+        $transaction = $this->whenCommittingEventStream($eventStore, $fixtureStream);
+        $this->thenTransactionOnlyContainsNewEvents($transaction, array($nextEvent));
+    }
+
+    protected function thenTransactionOnlyContainsNewEvents(Transaction $transaction, array $newEvents)
+    {
+        $this->assertEquals($newEvents, $transaction->getCommittedEvents());
     }
 
     protected function expectConcurrencyException()

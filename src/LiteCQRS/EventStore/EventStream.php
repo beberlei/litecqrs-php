@@ -64,11 +64,6 @@ class EventStream implements IteratorAggregate
         return $this->uuid;
     }
 
-    public function setVersion($version)
-    {
-        $this->version = $version;
-    }
-
     /**
      * @return string
      */
@@ -99,8 +94,9 @@ class EventStream implements IteratorAggregate
         return $this->newEvents;
     }
 
-    public function markNewEventsProcessed()
+    public function markNewEventsProcessed($newVersion = null)
     {
+        $this->version = $newVersion;
         $this->newEvents = array();
     }
 }
