@@ -33,10 +33,13 @@ abstract class AggregateRoot
         return $this->id;
     }
 
-    private  function initializeEventStream()
+    private function initializeEventStream()
     {
         if ($this->eventStream === null) {
-            $this->eventStream = new EventStream($this->getId());
+            $this->eventStream = new EventStream(
+                get_class($this),
+                $this->getId()
+            );
         }
     }
 

@@ -12,7 +12,7 @@ class EventStreamTest extends \PHPUnit_Framework_TestCase
     public function it_requires_uuid()
     {
         $uuid = Uuid::uuid4();
-        $stream = new EventStream($uuid);
+        $stream = new EventStream('stdClass', $uuid);
 
         $this->assertSame($uuid, $stream->getUuid());
     }
@@ -25,7 +25,7 @@ class EventStreamTest extends \PHPUnit_Framework_TestCase
         $event = \Phake::mock('LiteCQRS\DomainEvent');
 
         $uuid = Uuid::uuid4();
-        $stream = new EventStream($uuid);
+        $stream = new EventStream('stdClass', $uuid);
         $stream->addEvent($event);
 
         $actualEvents = iterator_to_array($stream);
@@ -42,7 +42,7 @@ class EventStreamTest extends \PHPUnit_Framework_TestCase
         $newEvent = \Phake::mock('LiteCQRS\DomainEvent');
 
         $uuid = Uuid::uuid4();
-        $stream = new EventStream($uuid, array($oldEvent));
+        $stream = new EventStream('stdClass', $uuid, array($oldEvent));
         $stream->addEvent($newEvent);
 
         $actualEvents = iterator_to_array($stream);
@@ -63,23 +63,11 @@ class EventStreamTest extends \PHPUnit_Framework_TestCase
         $newEvent = \Phake::mock('LiteCQRS\DomainEvent');
 
         $uuid = Uuid::uuid4();
-        $stream = new EventStream($uuid, array());
+        $stream = new EventStream('stdClass', $uuid, array());
         $stream->addEvent($newEvent);
 
         $stream->markNewEventsProcessed();
 
         $this->assertEquals(0, count($stream->newEvents()));
-    }
-
-    /**
-     * @test
-     */
-    public function it_throws_exception_accessing_unknown_metadata()
-    {
-        $uuid = Uuid::uuid4();
-        $stream = new EventStream($uuid, array());
-
-        $this->setExpectedException('LiteCQRS\EventStore\UnknownMetadataException');
-        $stream->getMetadata('Foo');
     }
 }

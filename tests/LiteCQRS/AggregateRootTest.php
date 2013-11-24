@@ -40,7 +40,7 @@ class AggregateRootTest extends \PHPUnit_Framework_TestCase
         $reflClass = new \ReflectionClass('LiteCQRS\SampleAggregateRoot');
         $sample = $reflClass->newInstanceWithoutConstructor();
 
-        $eventStream = new EventStream($uuid, array(new SampleCreated(array('foo' => 'bar'))));
+        $eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, array(new SampleCreated(array('foo' => 'bar'))));
 
         $sample->loadFromEventStream($eventStream);
 
@@ -58,7 +58,7 @@ class AggregateRootTest extends \PHPUnit_Framework_TestCase
         $uuid = Uuid::uuid4();
         $sample = new SampleAggregateRoot($uuid);
 
-        $eventStream = new EventStream($uuid, array(new SampleCreated(array('foo' => 'bar'))));
+        $eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, array(new SampleCreated(array('foo' => 'bar'))));
 
         $this->setExpectedException('LiteCQRS\Exception\RuntimeException', 'AggregateRoot was already created from event stream and cannot be hydrated again.');
 

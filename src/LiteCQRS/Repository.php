@@ -7,9 +7,10 @@ use Rhumsaa\Uuid\Uuid;
 interface Repository
 {
     /**
+     * @param string $className
      * @return AggregateRoot
      */
-    public function find(Uuid $uuid);
+    public function find($className, Uuid $uuid);
 
     /**
      * @return void

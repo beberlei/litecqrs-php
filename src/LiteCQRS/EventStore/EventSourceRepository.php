@@ -20,17 +20,17 @@ class EventSourceRepository implements Repository
     /**
      * @return AggregateRoot
      */
-    public function find(Uuid $uuid)
+    public function find($className, Uuid $uuid)
     {
         try {
             $eventStream = $this->eventStore->find($uuid);
-        } catch(EventStreamNotFoundException $e) {
+        } catch (EventStreamNotFoundException $e) {
             throw new AggregateRootNotFoundException();
         }
 
         try {
-            $aggregateRootClass = $eventStream->getMetadata('aggregate_root_class');
-        } catch(UnknownMetadataException $e) {
+            $aggregateRootClass = $eventStream->getClassName();
+        } catch (UnknownMetadataException $e) {
             throw new AggregateRootNotFoundException();
         }
 
@@ -48,7 +48,6 @@ class EventSourceRepository implements Repository
     public function add(AggregateRoot $object)
     {
         $eventStream = $object->getEventStream();
-        $eventStream->setMetadata('aggregate_root_class', get_class($object));
 
         $this->eventStore->commit($eventStream);
     }

@@ -16,15 +16,14 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $uuid = Uuid::uuid4();
 
-        $eventStream = new EventStream($uuid, array(new TestEvent()));
-        $eventStream->setMetadata('aggregate_root_class', 'LiteCQRS\EventStore\EventSourcedAggregate');
+        $eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, array(new TestEvent()));
 
         $eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
         $repository = new EventSourceRepository($eventStore);
 
         \Phake::when($eventStore)->find($uuid)->thenReturn($eventStream);
 
-        $entity = $repository->find($uuid);
+        $entity = $repository->find('LiteCQRS\EventStore\EventSourcedAggregate', $uuid);
 
         $this->assertTrue($entity->eventApplied);
         $this->assertSame($uuid, $entity->getId());
@@ -44,7 +43,7 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
 
         \Phake::verify($eventStore)->commit($object->getEventStream());
 
-        $this->assertEquals('LiteCQRS\EventStore\EventSourcedAggregate', $object->getEventStream()->getMetadata('aggregate_root_class'));
+        $this->assertEquals('LiteCQRS\EventStore\EventSourcedAggregate', $object->getEventStream()->getClassName());
     }
 
     /**
