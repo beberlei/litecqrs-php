@@ -46,6 +46,11 @@ class EventStream implements IteratorAggregate
         $this->className = $className;
     }
 
+    /**
+     * Return class name
+     *
+     * @return string
+     */
     public function getClassName()
     {
         return $this->className;

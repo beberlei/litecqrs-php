@@ -10,6 +10,13 @@ use Rhumsaa\Uuid\Uuid;
 
 class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
 {
+    private $eventBus;
+
+    public function setUp()
+    {
+        $this->eventBus = \Phake::mock('LiteCQRS\Bus\EventMessageBus');
+    }
+
     /**
      * @test
      */
@@ -19,7 +26,7 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
         $eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, array(new TestEvent()));
 
         $eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
-        $repository = new EventSourceRepository($eventStore);
+        $repository = new EventSourceRepository($eventStore, $this->eventBus);
 
         $entity = $repository->find('LiteCQRS\EventStore\EventSourcedAggregate', $uuid);
 
@@ -36,7 +43,7 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
         $eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, array(new TestEvent()));
 
         $eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
-        $repository = new EventSourceRepository($eventStore);
+        $repository = new EventSourceRepository($eventStore, $this->eventBus);
 
         $this->setExpectedException('LiteCQRS\AggregateRootNotFoundException');
 
@@ -53,7 +60,7 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
         $eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
         \Phake::when($eventStore)->find($uuid)->thenThrow(new AggregateRootNotFoundException());
 
-        $repository = new EventSourceRepository($eventStore);
+        $repository = new EventSourceRepository($eventStore, $this->eventBus);
 
         $this->setExpectedException('LiteCQRS\AggregateRootNotFoundException');
 
@@ -75,31 +82,19 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
     public function it_commits_eventstream_when_adding_aggregate()
     {
         $object = new EventSourcedAggregate(Uuid::uuid4());
+        $event = new TestEvent();
 
         $eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
-        $repository = new EventSourceRepository($eventStore);
+        $repository = new EventSourceRepository($eventStore, $this->eventBus);
 
-        $repository->add($object);
+        \Phake::when($eventStore)
+            ->commit($object->getEventStream())
+            ->thenReturn(new Transaction($object->getEventStream(), array($event)));
 
-        \Phake::verify($eventStore)->commit($object->getEventStream());
+        $repository->save($object);
 
-        $this->assertEquals('LiteCQRS\EventStore\EventSourcedAggregate', $object->getEventStream()->getClassName());
+        \Phake::verify($this->eventBus)->publish($event);
     }
-
-    /**
-     * @test
-     */
-    public function it_deletes_eventstream_when_removing_aggregate()
-    {
-        $object = new EventSourcedAggregate(Uuid::uuid4());
-
-        $eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
-        $repository = new EventSourceRepository($eventStore);
-
-        $repository->remove($object);
-
-        \Phake::verify($eventStore)->delete($object->getEventStream());
-    } 
 }
 
 class EventSourcedAggregate extends AggregateRoot

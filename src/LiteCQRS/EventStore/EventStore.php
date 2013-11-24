@@ -21,8 +21,8 @@ interface EventStore
 
     /**
      * Commit the event stream to persistence.
+     *
+     * @return Transaction
      */
     public function commit(EventStream $stream);
-
-    public function delete(EventStream $stream);
 }

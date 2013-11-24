@@ -2,6 +2,7 @@
 
 namespace LiteCQRS\EventStore;
 
+use LiteCQRS\Bus\EventMessageBus;
 use LiteCQRS\AggregateRoot;
 use LiteCQRS\Repository;
 use LiteCQRS\AggregateRootNotFoundException;
@@ -11,10 +12,12 @@ use Rhumsaa\Uuid\Uuid;
 class EventSourceRepository implements Repository
 {
     private $eventStore;
+    private $eventBus;
 
-    public function __construct(EventStore $eventStore)
+    public function __construct(EventStore $eventStore, EventMessageBus $eventBus)
     {
         $this->eventStore = $eventStore;
+        $this->eventBus = $eventBus;
     }
 
     /**
@@ -45,19 +48,14 @@ class EventSourceRepository implements Repository
     /**
      * @return void
      */
-    public function add(AggregateRoot $object)
+    public function save(AggregateRoot $object)
     {
         $eventStream = $object->getEventStream();
 
-        $this->eventStore->commit($eventStream);
-    }
+        $transaction = $this->eventStore->commit($eventStream);
 
-    /**
-     * @return void
-     */
-    public function remove(AggregateRoot $object)
-    {
-        $eventStream = $object->getEventStream();
-        $this->eventStore->delete($eventStream);
+        foreach ($transaction->getCommittedEvents() as $event) {
+            $this->eventBus->publish($event);
+        }
     }
 }

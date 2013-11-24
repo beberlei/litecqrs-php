@@ -15,10 +15,5 @@ interface Repository
     /**
      * @return void
      */
-    public function add(AggregateRoot $object);
-
-    /**
-     * @return void
-     */
-    public function remove(AggregateRoot $object);
+    public function save(AggregateRoot $object);
 }
