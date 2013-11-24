@@ -32,4 +32,9 @@ class OptimimsticLockingEventStoreTest extends EventStoreContractTestCase
             null
         );
     }
+
+    protected function thenStorageContains(EventStream $stream)
+    {
+        $this->assertTrue($this->storage->contains((string)$stream->getUuid()));
+    }
 }

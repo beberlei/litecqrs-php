@@ -25,4 +25,9 @@ class MemoryStorage
 
         $this->streamData[$id] = new StreamData($id, $className, $eventData, $nextVersion);
     }
+
+    public function contains($id)
+    {
+        return isset($this->streamData[$id]);
+    }
 }
