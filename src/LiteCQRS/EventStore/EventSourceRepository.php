@@ -28,9 +28,9 @@ class EventSourceRepository implements Repository
             throw new AggregateRootNotFoundException();
         }
 
-        try {
-            $aggregateRootClass = $eventStream->getClassName();
-        } catch (UnknownMetadataException $e) {
+        $aggregateRootClass = $eventStream->getClassName();
+
+        if ($aggregateRootClass !== ltrim($className, '\\')) {
             throw new AggregateRootNotFoundException();
         }
 
