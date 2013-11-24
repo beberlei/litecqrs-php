@@ -26,10 +26,6 @@ class LiteCQRSExtension extends Extension
             $loader->load('jms_serializer.xml');
         }
 
-        if ($config['crud']) {
-            $loader->load('crud.xml');
-        }
-
         if ($config['monolog']) {
             $loader->load('monolog.xml');
         }

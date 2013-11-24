@@ -20,7 +20,6 @@ class Configuration implements ConfigurationInterface
                     ->booleanNode('orm')->defaultFalse()->end()
                     ->booleannode('jms_serializer')->defaultFalse()->end()
                     ->booleanNode('couchdb_odm')->defaultFalse()->end()
-                    ->booleanNode('crud')->defaultFalse()->end()
                 ->end();
 
         return $tb;

@@ -14,7 +14,6 @@ class LiteCQRSMetadataDriver implements DriverInterface
 {
     static private $handleClasses = array(
         'LiteCQRS\\DefaultDomainEvent' => true,
-        'LiteCQRS\\DomainEventProvider' => true,
         'LiteCQRS\\AggregateRoot' => true,
     );
 
