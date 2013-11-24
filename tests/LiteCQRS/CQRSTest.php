@@ -3,7 +3,6 @@ namespace LiteCQRS;
 
 use LiteCQRS\Bus\DirectCommandBus;
 use LiteCQRS\Bus\InMemoryEventMessageBus;
-use LiteCQRS\DomainObjectChanged;
 use LiteCQRS\Bus\IdentityMap\SimpleIdentityMap;
 use LiteCQRS\Bus\EventMessageHandlerFactory;
 use DateTime;
@@ -89,7 +88,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleWithIdentityMapWillPassEventsToStoreAfterSuccess()
     {
-        $event = new DomainObjectChanged("Foo", array());
+        $event = new FooEvent(array());
 
         $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
         $messageBus->expects($this->exactly(2))->method('publish');
@@ -108,7 +107,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleEventOnInMemoryEventMessageBus()
     {
-        $event = new DomainObjectChanged("Foo", array());
+        $event = new FooEvent(array());
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
         $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
 
@@ -120,8 +119,8 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testDispatchEventsReSortedByDate()
     {
-        $event1 = new DomainObjectChanged("Foo", array());
-        $event2 = new DomainObjectChanged("Foo", array());
+        $event1 = new FooEvent(array());
+        $event2 = new FooEvent(array());
 
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
         $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event1));
@@ -136,8 +135,8 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testDispatchEventsInOrder()
     {
-        $event1 = new DomainObjectChanged("Foo", array());
-        $event2 = new DomainObjectChanged("Foo", array());
+        $event1 = new FooEvent(array());
+        $event2 = new FooEvent(array());
 
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
         $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event1));
@@ -152,11 +151,11 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testDispatchEventsInDifferentSeconds()
     {
-        $event1 = new DomainObjectChanged("Foo", array());
+        $event1 = new FooEvent(array());
         $event1->getMessageHeader()->date = new DateTime("2012-08-18 14:20:00");
-        $event2 = new DomainObjectChanged("Foo", array());
+        $event2 = new FooEvent(array());
         $event2->getMessageHeader()->date = new DateTime("2012-08-18 14:21:00");
-        $event3 = new DomainObjectChanged("Foo", array());
+        $event3 = new FooEvent(array());
         $event3->getMessageHeader()->date = new DateTime("2012-08-18 14:11:00");
 
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
@@ -174,7 +173,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testPublishSameEventTwiceIsOnlyTriggeringOnce()
     {
-        $event = new DomainObjectChanged("Foo", array());
+        $event = new FooEvent(array());
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
         $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
 
@@ -187,7 +186,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testPublishEventWithFailureTriggersFailureEventHandler()
     {
-        $event = new DomainObjectChanged("Foo", array());
+        $event = new FooEvent(array());
         $eventHandler = $this->getMock('EventHandler', array('onFoo', 'onEventExecutionFailed'));
         $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event))->will($this->throwException(new \Exception));
         $eventHandler->expects($this->once())->method('onEventExecutionFailed');
@@ -200,7 +199,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testPublishSameEventAfterDispatchingAgainIsIgnored()
     {
-        $event = new DomainObjectChanged("Foo", array());
+        $event = new FooEvent(array());
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
         $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
 
@@ -215,7 +214,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleEventOnInMemoryEventMessageBusThrowsExceptionIsSwallowed()
     {
-        $event = new DomainObjectChanged("Foo", array());
+        $event = new FooEvent(array());
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
         $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event))->will($this->throwException(new \Exception));
 
@@ -242,7 +241,7 @@ class User extends AggregateRoot
 
     public function changeEmail($email)
     {
-        $this->apply(new DomainObjectChanged("ChangeEmail", array("email" => $email)));
+        $this->apply(new ChangeEmailEvent(array("email" => $email)));
     }
 
     protected function applyChangeEmail($event)
@@ -252,7 +251,7 @@ class User extends AggregateRoot
 
     public function changeInvalidEventName()
     {
-        $this->apply(new DomainObjectChanged("Invalid", array()));
+        $this->apply(new InvalidEvent(array()));
     }
 }
 
@@ -264,4 +263,17 @@ class ChangeEmailCommand implements Command
     {
         $this->email = $email;
     }
+}
+
+class InvalidEvent extends DefaultDomainEvent
+{
+}
+
+class ChangeEmailEvent extends DefaultDomainEvent
+{
+    public $email;
+}
+
+class FooEvent extends DefaultDomainEvent
+{
 }
