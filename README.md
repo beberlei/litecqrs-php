@@ -6,7 +6,7 @@ Command, Event and Domain Event patterns.
 
 [![Build Status (Master)](https://travis-ci.org/beberlei/litecqrs-php.png?branch=master)](https://travis-ci.org/beberlei/litecqrs-php)
 
-Use the 1.1 branch, as the dev-master is currently in heavy refactoring.
+**NOTE** Use the 1.1 branch, as the dev-master is currently in heavy refactoring.
 
 ## Terminology
 
