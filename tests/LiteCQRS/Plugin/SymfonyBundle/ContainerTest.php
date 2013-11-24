@@ -45,7 +45,6 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
             "jms_serializer"   => true,
             "crud"             => true,
             "swift_mailer"     => true,
-            "dbal_event_store" => true,
         )), $container);
 
         $container->getCompilerPassConfig()->setAfterRemovingPasses(array(new HandlerPass()));

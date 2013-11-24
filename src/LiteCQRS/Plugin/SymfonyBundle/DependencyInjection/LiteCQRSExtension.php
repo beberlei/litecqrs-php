@@ -38,25 +38,10 @@ class LiteCQRSExtension extends Extension
             $loader->load('swiftmailer.xml');
         }
 
-        if ($config['dbal_event_store']) {
-            $loader->load('dbal_event_store.xml');
-            $container->setAlias('litecqrs.event_store', 'litecqrs.doctrine.event_store');
-        }
-
         if ($config['couchdb_odm']) {
             $loader->load('couchdb_odm.xml');
             $container->setAlias('litecqrs.identity_map', 'litecqrs.identity_map.couchdb');
             $container->setAlias('litecqrs.repository', 'litecqrs.repository.couchdb');
-        }
-
-        if ($config['couchdb_event_store']) {
-            $loader->load('couchdb_event_store.xml');
-            $container->setAlias('litecqrs.event_store', 'litecqrs.couchdb.event_store');
-        }
-
-        if (isset($config['mongodb_event_store'])) {
-            $loader->load('mongodb_event_store.xml');
-            $container->setAlias('litecqrs.event_store', 'litecqrs.mongodb.event_store');
         }
     }
 }
