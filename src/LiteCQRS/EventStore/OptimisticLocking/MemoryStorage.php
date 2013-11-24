@@ -4,7 +4,7 @@ namespace LiteCQRS\EventStore\OptimisticLocking;
 
 use LiteCQRS\EventStore\ConcurrencyException;
 
-class MemoryStorage
+class MemoryStorage implements Storage
 {
     private $streamData = array();
 

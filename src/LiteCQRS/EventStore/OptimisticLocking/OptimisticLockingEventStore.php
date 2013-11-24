@@ -14,7 +14,7 @@ class OptimisticLockingEventStore implements EventStore
     private $serializer;
     private $eventsData = array();
 
-    public function __construct($storage, $serializer)
+    public function __construct(Storage $storage, $serializer)
     {
         $this->storage = $storage;
         $this->serializer = $serializer;
