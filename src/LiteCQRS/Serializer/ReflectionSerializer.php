@@ -10,7 +10,7 @@ use DateTimeInterface;
 use DateTimeImmutable;
 use DateTimeZone;
 
-class ReflectionSerializer
+class ReflectionSerializer implements Serializer
 {
     /**
      * @var array

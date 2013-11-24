@@ -27,7 +27,7 @@ class OptimimsticLockingEventStoreTest extends EventStoreContractTestCase
         $this->storage->store(
             (string)$eventStream->getUuid(),
             $eventStream->getClassName(),
-            iterator_to_array($eventStream),
+            array_map(array($this->serializer, 'toArray'), iterator_to_array($eventStream)),
             $eventStream->getVersion(),
             null
         );

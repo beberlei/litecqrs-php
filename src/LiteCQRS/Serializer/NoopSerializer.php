@@ -2,15 +2,15 @@
 
 namespace LiteCQRS\Serializer;
 
-class NoopSerializer
+class NoopSerializer implements Serializer
 {
-    public function serialize($data)
+    public function toArray($data)
     {
-        return $data;
+        return array('php_class' => get_class($data));
     }
 
-    public function unserialize($data)
+    public function fromArray(array $data)
     {
-        return $data;
+        return new $data['php_class'];
     }
 }

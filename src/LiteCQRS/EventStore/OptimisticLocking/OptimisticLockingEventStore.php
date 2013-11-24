@@ -7,6 +7,7 @@ use LiteCQRS\EventStore\EventStream;
 use LiteCQRS\EventStore\Transaction;
 use LiteCQRS\EventStore\EventStreamNotFoundException;
 use LiteCQRS\EventStore\EventStore;
+use LiteCQRS\Serializer\Serializer;
 
 class OptimisticLockingEventStore implements EventStore
 {
@@ -14,7 +15,7 @@ class OptimisticLockingEventStore implements EventStore
     private $serializer;
     private $eventsData = array();
 
-    public function __construct(Storage $storage, $serializer)
+    public function __construct(Storage $storage, Serializer $serializer)
     {
         $this->storage = $storage;
         $this->serializer = $serializer;
@@ -35,7 +36,7 @@ class OptimisticLockingEventStore implements EventStore
         $events = array();
 
         foreach ($streamData->getEventData() as $eventData) {
-            $events[] = $this->serializer->unserialize($eventData);
+            $events[] = $this->serializer->fromArray($eventData);
         }
 
         return new EventStream(
@@ -68,7 +69,7 @@ class OptimisticLockingEventStore implements EventStore
             : array();
 
         foreach ($newEvents as $newEvent) {
-            $eventData[] = $this->serializer->serialize($newEvent);
+            $eventData[] = $this->serializer->toArray($newEvent);
         }
 
         $this->storage->store($id, $stream->getClassName(), $eventData, $nextVersion, $currentVersion);
