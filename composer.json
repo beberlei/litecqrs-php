@@ -6,7 +6,8 @@
         "psr-0": {"LiteCQRS": "src/"}
     },
     "require": {
-        "rhumsaa/uuid": "@stable"
+        "rhumsaa/uuid": "@stable",
+        "php": ">=5.4"
     },
     "require-dev": {
         "phake/phake":"@stable",
