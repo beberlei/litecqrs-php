@@ -36,13 +36,13 @@ class EventStream implements IteratorAggregate
     /**
      * @var string
      */
-    private $revision;
+    private $version;
 
-    public function __construct($className, Uuid $uuid, array $events = array(), $revision = null)
+    public function __construct($className, Uuid $uuid, array $events = array(), $version = null)
     {
         $this->uuid = $uuid;
         $this->events = $events;
-        $this->revision = $revision;
+        $this->version = $version;
         $this->className = $className;
     }
 
@@ -67,16 +67,9 @@ class EventStream implements IteratorAggregate
     /**
      * @return string
      */
-    public function getRevision()
+    public function getVersion()
     {
-        return $this->revision;
-    }
-
-    public function addEvents(array $newEvents)
-    {
-        foreach ($newEvents as $newEvent) {
-            $this->addEvent($newEvent);
-        }
+        return $this->version;
     }
 
     public function addEvent(DomainEvent $event)

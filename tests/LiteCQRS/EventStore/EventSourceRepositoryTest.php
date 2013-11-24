@@ -95,6 +95,22 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
 
         \Phake::verify($this->eventBus)->publish($event);
     }
+
+    /**
+     * @test
+     */
+    public function it_throws_concurrency_exception_when_versions_missmatch()
+    {
+        $uuid = Uuid::uuid4();
+        $eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid);
+
+        $eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
+
+        $this->setExpectedException('LiteCQRS\EventStore\ConcurrencyException');
+
+        $repository = new EventSourceRepository($eventStore, $this->eventBus);
+        $repository->find('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, 1337);
+    }
 }
 
 class EventSourcedAggregate extends AggregateRoot

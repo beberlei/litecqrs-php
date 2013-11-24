@@ -23,7 +23,7 @@ class EventSourceRepository implements Repository
     /**
      * @return AggregateRoot
      */
-    public function find($className, Uuid $uuid)
+    public function find($className, Uuid $uuid, $expectedVersion = null)
     {
         try {
             $eventStream = $this->eventStore->find($uuid);
@@ -35,6 +35,10 @@ class EventSourceRepository implements Repository
 
         if ($aggregateRootClass !== ltrim($className, '\\')) {
             throw new AggregateRootNotFoundException();
+        }
+
+        if ($expectedVersion && $eventStream->getVersion() !== $expectedVersion) {
+            throw new ConcurrencyException();
         }
 
         $reflClass = new \ReflectionClass($aggregateRootClass);
