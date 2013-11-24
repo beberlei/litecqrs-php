@@ -34,14 +34,6 @@ abstract class EventStoreContractTestCase extends \PHPUnit_Framework_TestCase
         $this->thenStoredEventStreamEqualsFixtureStream($eventStream, $fixtureStream);
     }
 
-    protected function givenFixtureStreamWith($uuid)
-    {
-        $testEvent = new EventStoreTestEvent();
-        $fixtureStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, array($testEvent), 1337);
-
-        return $fixtureStream;
-    }
-
     /**
      * @test
      */
@@ -58,6 +50,47 @@ abstract class EventStoreContractTestCase extends \PHPUnit_Framework_TestCase
         $this->thenStorageContains($fixtureStream);
     }
 
+    /**
+     * @test
+     */
+    public function it_ignores_empty_event_streams()
+    {
+        $uuid = Uuid::uuid4();
+        $fixtureStream = $this->givenFixtureStreamWith($uuid);
+
+        $eventStore = $this->givenAnEventStore();
+        $transaction = $this->whenCommittingEventStream($eventStore, $fixtureStream);
+
+        $this->expectEventStreamNotFoundException();
+        $this->whenFindingStreamWith($eventStore, $uuid);
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_concurrency_exception_when_committing_wrong_current_version()
+    {
+        $uuid = Uuid::uuid4();
+
+        $fixtureStream = $this->givenFixtureStreamWith($uuid);
+        $fixtureStream->setVersion(10);
+
+        $commitStream = $this->givenFixtureStreamWith($uuid);
+        $commitStream->addEvent(new EventStoreTestEvent());
+        $commitStream->setVersion(20);
+
+        $eventStore = $this->givenAnEventStore();
+        $this->givenEventStoreContains($eventStore, $fixtureStream);
+
+        $this->expectConcurrencyException();
+        $this->whenCommittingEventStream($eventStore, $commitStream);
+    }
+
+    protected function expectConcurrencyException()
+    {
+        $this->setExpectedException('LiteCQRS\EventStore\ConcurrencyException');
+    }
+
     protected function thenReturnedTransactionContains(Transaction $transaction, EventStream $eventStream)
     {
         $this->assertInstanceOf('LiteCQRS\EventStore\Transaction', $transaction);
@@ -65,6 +98,10 @@ abstract class EventStoreContractTestCase extends \PHPUnit_Framework_TestCase
     }
 
     abstract protected function thenStorageContains(EventStream $stream);
+
+    abstract protected function givenAnEventStore();
+
+    abstract protected function givenEventStoreContains(EventStore $eventStore, EventStream $eventStream);
 
     protected function whenCommittingEventStream(EventStore $eventStore, EventStream $fixtureStream)
     {
@@ -77,10 +114,6 @@ abstract class EventStoreContractTestCase extends \PHPUnit_Framework_TestCase
         $this->assertEquals($fixtureStream, $eventStream);
     }
 
-    abstract protected function givenAnEventStore();
-
-    abstract protected function givenEventStoreContains(EventStore $eventStore, EventStream $eventStream);
-
     protected function expectEventStreamNotFoundException()
     {
         $this->setExpectedException('LiteCQRS\EventStore\EventStreamNotFoundException');
@@ -89,6 +122,14 @@ abstract class EventStoreContractTestCase extends \PHPUnit_Framework_TestCase
     protected function whenFindingStreamWith(EventStore $eventStore, $uuid)
     {
         return $eventStore->find($uuid);
+    }
+
+    protected function givenFixtureStreamWith($uuid)
+    {
+        $testEvent = new EventStoreTestEvent();
+        $fixtureStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, array($testEvent), 1337);
+
+        return $fixtureStream;
     }
 }
 
