@@ -4,7 +4,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="litecqrs.identity_map.class">LiteCQRS\Plugin\Doctrine\DoctrineIdentityMap</parameter>
         <parameter key="litecqrs.repository.class">LiteCQRS\Plugin\Doctrine\ORMRepository</parameter>
     </parameters>
 
@@ -15,10 +14,6 @@
         </service>
 
         <service id="litecqrs.repository.orm" class="%litecqrs.repository.class%">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-        </service>
-
-        <service id="litecqrs.identity_map.orm" class="%litecqrs.identity_map.class%" public="false">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
         </service>
     </services>
