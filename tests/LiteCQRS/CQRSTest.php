@@ -86,25 +86,6 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $direct->handle($command);
     }
 
-    public function testHandleWithIdentityMapWillPassEventsToStoreAfterSuccess()
-    {
-        $event = new FooEvent(array());
-
-        $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
-        $messageBus->expects($this->exactly(2))->method('publish');
-
-        $queue = $this->getMock('LiteCQRS\Bus\EventQueue');
-        $queue->expects($this->once())->method('dequeueAllEvents')->will($this->returnValue(array($event, $event)));
-
-        $userService = $this->getMock('UserService', array('changeEmail'));
-        $userService->expects($this->once())->method('changeEmail');
-
-        $direct = new DirectCommandBus(array(new EventMessageHandlerFactory($messageBus, $queue)));
-        $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
-
-        $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
-    }
-
     public function testHandleEventOnInMemoryEventMessageBus()
     {
         $event = new FooEvent(array());

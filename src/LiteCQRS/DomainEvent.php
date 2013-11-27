@@ -25,6 +25,7 @@ interface DomainEvent extends MessageInterface
 {
     public function getEventName();
     public function getMessageHeader();
+    public function getDate();
     public function getAggregateId();
 }
 
