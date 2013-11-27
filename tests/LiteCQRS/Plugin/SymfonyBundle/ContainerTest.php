@@ -17,7 +17,6 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('LiteCQRS\Bus\CommandBus',      $container->get('command_bus'));
         $this->assertInstanceOf('LiteCQRS\Bus\EventMessageBus', $container->get('litecqrs.event_message_bus'));
-        $this->assertInstanceOf('LiteCQRS\EventStore\SerializerInterface', $container->get('litecqrs.serializer'));
     }
 
     public function createTestContainer()
@@ -34,10 +33,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $container->set('logger', $this->getMock('Monolog\Logger'));
         $container->set('swiftmailer.transport', $this->getMock('Swift_Transport_SpoolTransport', array(), array(), '', false));
         $container->set('swiftmailer.transport.real', $this->getMock('Swift_Transport', array(), array(), '', false));
-        $container->set('serializer', $this->getMock('JMS\SerializerBundle\Serializer\SerializerInterface'));
         $container->set('form.factory', $this->getMock('Symfony\Component\Form\FormFactoryInterface'));
         $loader->load(array(array(
-            "jms_serializer"   => true,
             "swift_mailer"     => true,
         )), $container);
 

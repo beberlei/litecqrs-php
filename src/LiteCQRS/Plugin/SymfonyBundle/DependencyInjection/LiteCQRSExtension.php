@@ -16,22 +16,12 @@ class LiteCQRSExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        if ($config['jms_serializer']) {
-            $loader->load('jms_serializer.xml');
-        }
-
         if ($config['monolog']) {
             $loader->load('monolog.xml');
         }
 
         if ($config['swift_mailer']) {
             $loader->load('swiftmailer.xml');
-        }
-
-        if ($config['couchdb_odm']) {
-            $loader->load('couchdb_odm.xml');
-            $container->setAlias('litecqrs.identity_map', 'litecqrs.identity_map.couchdb');
-            $container->setAlias('litecqrs.repository', 'litecqrs.repository.couchdb');
         }
     }
 }
