@@ -22,7 +22,13 @@ use LiteCQRS\Bus\MessageInterface;
  */
 interface DomainEvent extends MessageInterface
 {
+    /**
+     * @return string
+     */
     public function getEventName();
-    public function getDate();
+    /**
+     * @return \DateTime
+     */
+    public function getEventDate();
 }
 

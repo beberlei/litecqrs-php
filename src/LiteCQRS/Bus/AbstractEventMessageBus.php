@@ -47,8 +47,8 @@ abstract class AbstractEventMessageBus implements EventMessageBus
     protected function sort($events)
     {
         usort($events, function($a, $b) {
-            $ad = $a->getDate();
-            $bd = $b->getDate();
+            $ad = $a->getEventDate();
+            $bd = $b->getEventDate();
 
             if ($ad == $bd) {
                 return $ad->format('u') > $bd->format('u') ? 1 : -1;

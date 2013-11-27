@@ -5,11 +5,6 @@ use LiteCQRS\Util;
 
 abstract class DefaultDomainEvent implements DomainEvent
 {
-    /**
-     * @var MessageHeader
-     */
-    private $messageHeader;
-
     public function __construct(array $data = array())
     {
         foreach ($data as $key => $value) {
@@ -39,9 +34,8 @@ abstract class DefaultDomainEvent implements DomainEvent
         return end($parts);
     }
 
-    public function getDate()
+    public function getEventDate()
     {
         return $this->date;
     }
 }
-
