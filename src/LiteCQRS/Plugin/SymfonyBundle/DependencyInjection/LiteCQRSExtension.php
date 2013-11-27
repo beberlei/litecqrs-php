@@ -16,12 +16,6 @@ class LiteCQRSExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        if ($config['orm']) {
-            $loader->load('orm.xml');
-            $container->setAlias('litecqrs.identity_map', 'litecqrs.identity_map.orm');
-            $container->setAlias('litecqrs.repository', 'litecqrs.repository.orm');
-        }
-
         if ($config['jms_serializer']) {
             $loader->load('jms_serializer.xml');
         }
