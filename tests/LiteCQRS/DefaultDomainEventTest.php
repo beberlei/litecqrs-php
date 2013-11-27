@@ -23,19 +23,6 @@ class DefaultDomainEventTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("Test", $event->getEventName());
     }
-
-    public function testGetMessageHeader()
-    {
-        $event = new TestEvent(array("test" => "value"));
-
-        $this->assertInstanceOf('LiteCQRS\Bus\EventMessageHeader', $event->getMessageHeader());
-    }
-
-    public function testGetAggregateIdIsNullAfterCreation()
-    {
-        $event = new TestEvent(array("test" => "value"));
-        $this->assertNull($event->getAggregateId());
-    }
 }
 
 class TestEvent extends DefaultDomainEvent

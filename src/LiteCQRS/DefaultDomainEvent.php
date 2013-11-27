@@ -1,7 +1,7 @@
 <?php
 namespace LiteCQRS;
 
-use LiteCQRS\Bus\EventMessageHeader;
+use LiteCQRS\Util;
 
 abstract class DefaultDomainEvent implements DomainEvent
 {
@@ -19,7 +19,8 @@ abstract class DefaultDomainEvent implements DomainEvent
 
             $this->$key = $value;
         }
-        $this->messageHeader = new EventMessageHeader();
+
+        $this->date = Util::createMicrosecondsNow();
     }
 
     public function getEventName()
@@ -38,19 +39,9 @@ abstract class DefaultDomainEvent implements DomainEvent
         return end($parts);
     }
 
-    public function getMessageHeader()
-    {
-        return $this->messageHeader;
-    }
-
     public function getDate()
     {
-        return $this->messageHeader->date;
-    }
-
-    public function getAggregateId()
-    {
-        return $this->messageHeader->aggregateId;
+        return $this->date;
     }
 }
 

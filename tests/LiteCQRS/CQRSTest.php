@@ -132,12 +132,16 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testDispatchEventsInDifferentSeconds()
     {
+        $reflClass = new \ReflectionClass(__NAMESPACE__ . '\\FooEvent');
+        $dateProperty = $reflClass->getProperty('date');
+        $dateProperty->setAccessible(true);
+
         $event1 = new FooEvent(array());
-        $event1->getMessageHeader()->date = new DateTime("2012-08-18 14:20:00");
         $event2 = new FooEvent(array());
-        $event2->getMessageHeader()->date = new DateTime("2012-08-18 14:21:00");
         $event3 = new FooEvent(array());
-        $event3->getMessageHeader()->date = new DateTime("2012-08-18 14:11:00");
+        $dateProperty->setValue($event1, new DateTime("2012-08-18 14:20:00"));
+        $dateProperty->setValue($event2, new DateTime("2012-08-18 14:21:00"));
+        $dateProperty->setValue($event3, new DateTime("2012-08-18 14:11:00"));
 
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
         $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event3));

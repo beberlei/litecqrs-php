@@ -26,20 +26,23 @@ class MonologDebugLogger implements MessageHandlerInterface
 
     public function handle($message)
     {
+        $context = array();
+
+        if (method_exists($message, '__toString')) {
+            $context['tostring'] = (string)$message;
+        }
+
         if ($message instanceof Command) {
             $parts   = explode("\\", get_class($message));
             $log     = "Command[%s]: %s";
             $info    = end($parts);
-            $context = array();
         } else if ($message instanceof DomainEvent) {
             $log     = "Event[%s]: %s";
             $info    = $message->getEventName();
-            $context = array('aggregate_id' => $message->getAggregateId());
         } else {
             $parts   = explode("\\", get_class($message));
             $log = "Message[%s]: %s";
             $info    = end($parts);
-            $context = array();
         }
 
         try {
