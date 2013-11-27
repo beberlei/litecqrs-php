@@ -12,12 +12,8 @@
     "require-dev": {
         "phake/phake":"@stable",
         "doctrine/common": ">=2.0,<2.5",
-        "doctrine/orm": ">=2.0,<2.5",
-        "doctrine/couchdb": "dev-master",
-        "doctrine/mongodb": "dev-master",
         "symfony/framework-bundle": ">=2.0,<2.2",
         "symfony/console": ">=2.0,<2.2",
-        "swiftmailer/swiftmailer": "4.*",
-        "jms/serializer-bundle": "@stable"
+        "swiftmailer/swiftmailer": "4.*"
     }
 }
