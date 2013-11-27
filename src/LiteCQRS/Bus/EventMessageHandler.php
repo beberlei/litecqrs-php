@@ -18,13 +18,7 @@ class EventMessageHandler implements MessageHandlerInterface
 
     public function handle($command)
     {
-        try {
-            $this->next->handle($command);
-            $this->messageBus->dispatchEvents();
-        } catch(Exception $e) {
-            $this->messageBus->clear();
-            throw $e;
-        }
+        $this->next->handle($command);
     }
 }
 

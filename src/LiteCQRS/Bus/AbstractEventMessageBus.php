@@ -21,45 +21,7 @@ abstract class AbstractEventMessageBus implements EventMessageBus
 
     public function publish($event)
     {
-        if ($this->events->contains($event)) {
-            return;
-        }
-
-        $this->scheduledEvents->attach($event);
-    }
-
-    public function clear()
-    {
-        $this->events->addAll($this->scheduledEvents);
-        $this->scheduledEvents = new SplObjectStorage();
-    }
-
-    public function dispatchEvents()
-    {
-        $events = $this->sort(iterator_to_array($this->scheduledEvents));
-        $this->clear();
-
-        foreach ($events as $event) {
-            $this->handle($event);
-        }
-    }
-
-    protected function sort($events)
-    {
-        usort($events, function($a, $b) {
-            $ad = $a->getEventDate();
-            $bd = $b->getEventDate();
-
-            if ($ad == $bd) {
-                return $ad->format('u') > $bd->format('u') ? 1 : -1;
-            } else if ($ad > $bd) {
-                return 1;
-            } else {
-                return -1;
-            }
-        });
-
-        return $events;
+        $this->handle($event);
     }
 
     protected function handle($event)

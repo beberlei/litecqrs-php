@@ -44,28 +44,10 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testWhenSuccessfulCommandThenTriggersEventStoreCommit()
     {
-        $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
-        $messageBus->expects($this->once())->method('dispatchEvents');
-
         $userService = $this->getMock('UserService', array('changeEmail'));
-        $direct = new DirectCommandBus(array(new EventMessageHandlerFactory($messageBus)));
+        $direct = new DirectCommandBus();
         $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
 
-        $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
-    }
-
-    public function testWhenFailingCommandThenTriggerEventStoreRollback()
-    {
-        $messageBus = $this->getMock('LiteCQRS\Bus\EventMessageBus');
-        $messageBus->expects($this->once())->method('clear');
-
-        $userService = $this->getMock('UserService', array('changeEmail'));
-        $userService->expects($this->once())->method('changeEmail')->will($this->throwException(new \RuntimeException("DomainFail")));
-
-        $direct = new DirectCommandBus(array(new EventMessageHandlerFactory($messageBus)));
-        $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
-
-        $this->setExpectedException('RuntimeException', 'DomainFail');
         $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
     }
 
@@ -95,23 +77,6 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $bus = new InMemoryEventMessageBus();
         $bus->register($eventHandler);
         $bus->publish($event);
-        $bus->dispatchEvents();
-    }
-
-    public function testDispatchEventsReSortedByDate()
-    {
-        $event1 = new FooEvent(array());
-        $event2 = new FooEvent(array());
-
-        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
-        $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event1));
-        $eventHandler->expects($this->at(1))->method('onFoo')->with($this->equalTo($event2));
-
-        $bus = new InMemoryEventMessageBus();
-        $bus->register($eventHandler);
-        $bus->publish($event2);
-        $bus->publish($event1);
-        $bus->dispatchEvents();
     }
 
     public function testDispatchEventsInOrder()
@@ -127,74 +92,6 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $bus->register($eventHandler);
         $bus->publish($event1);
         $bus->publish($event2);
-        $bus->dispatchEvents();
-    }
-
-    public function testDispatchEventsInDifferentSeconds()
-    {
-        $reflClass = new \ReflectionClass('LiteCQRS\DefaultDomainEvent');
-        $dateProperty = $reflClass->getProperty('date');
-        $dateProperty->setAccessible(true);
-
-        $event1 = new FooEvent(array());
-        $event2 = new FooEvent(array());
-        $event3 = new FooEvent(array());
-        $dateProperty->setValue($event1, new DateTime("2012-08-18 14:20:00"));
-        $dateProperty->setValue($event2, new DateTime("2012-08-18 14:21:00"));
-        $dateProperty->setValue($event3, new DateTime("2012-08-18 14:11:00"));
-
-        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
-        $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event3));
-        $eventHandler->expects($this->at(1))->method('onFoo')->with($this->equalTo($event1));
-        $eventHandler->expects($this->at(2))->method('onFoo')->with($this->equalTo($event2));
-
-        $bus = new InMemoryEventMessageBus();
-        $bus->register($eventHandler);
-        $bus->publish($event1);
-        $bus->publish($event2);
-        $bus->publish($event3);
-        $bus->dispatchEvents();
-    }
-
-    public function testPublishSameEventTwiceIsOnlyTriggeringOnce()
-    {
-        $event = new FooEvent(array());
-        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
-        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
-
-        $bus = new InMemoryEventMessageBus();
-        $bus->register($eventHandler);
-        $bus->publish($event);
-        $bus->publish($event);
-        $bus->dispatchEvents();
-    }
-
-    public function testPublishEventWithFailureTriggersFailureEventHandler()
-    {
-        $event = new FooEvent(array());
-        $eventHandler = $this->getMock('EventHandler', array('onFoo', 'onEventExecutionFailed'));
-        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event))->will($this->throwException(new \Exception));
-        $eventHandler->expects($this->once())->method('onEventExecutionFailed');
-
-        $bus = new InMemoryEventMessageBus();
-        $bus->register($eventHandler);
-        $bus->publish($event);
-        $bus->dispatchEvents();
-    }
-
-    public function testPublishSameEventAfterDispatchingAgainIsIgnored()
-    {
-        $event = new FooEvent(array());
-        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
-        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
-
-        $bus = new InMemoryEventMessageBus();
-        $bus->register($eventHandler);
-        $bus->publish($event);
-        $bus->dispatchEvents();
-
-        $bus->publish($event);
-        $bus->dispatchEvents();
     }
 
     public function testHandleEventOnInMemoryEventMessageBusThrowsExceptionIsSwallowed()
@@ -206,7 +103,6 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $bus = new InMemoryEventMessageBus();
         $bus->register($eventHandler);
         $bus->publish($event);
-        $bus->dispatchEvents();
     }
 }
 
