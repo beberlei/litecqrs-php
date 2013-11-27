@@ -18,17 +18,8 @@ namespace LiteCQRS\Bus;
  */
 abstract class SequentialCommandBus implements CommandBus
 {
-    /**
-     * @var callable[]
-     */
-    private $proxyFactories;
     private $commandStack = array();
     private $executing = false;
-
-    public function __construct(array $proxyFactories = array())
-    {
-        $this->proxyFactories = $proxyFactories;
-    }
 
     /**
      * Given a Command Type (ClassName) return an instance of
@@ -64,7 +55,6 @@ abstract class SequentialCommandBus implements CommandBus
                 $type    = get_class($command);
                 $service = $this->getService($type);
                 $handler = new CommandInvocationHandler($service);
-                $handler = $this->proxyHandler($handler);
 
                 $handler->handle($command);
             } catch(\Exception $e) {
@@ -82,14 +72,6 @@ abstract class SequentialCommandBus implements CommandBus
         if ($first) {
             throw $e;
         }
-    }
-
-    protected function proxyHandler($handler)
-    {
-        foreach (array_reverse($this->proxyFactories) as $proxyFactory) {
-            $handler = $proxyFactory($handler);
-        }
-        return $handler;
     }
 }
 

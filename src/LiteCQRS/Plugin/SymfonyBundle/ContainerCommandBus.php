@@ -11,9 +11,8 @@ class ContainerCommandBus extends SequentialCommandBus
     private $container;
     private $commandServices;
 
-    public function __construct(ContainerInterface $container, array $proxyFactories = array())
+    public function __construct(ContainerInterface $container)
     {
-        parent::__construct($proxyFactories);
         $this->container = $container;
     }
 

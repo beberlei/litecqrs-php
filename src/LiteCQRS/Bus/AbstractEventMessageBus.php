@@ -10,11 +10,9 @@ abstract class AbstractEventMessageBus implements EventMessageBus
 {
     private $events;
     private $scheduledEvents;
-    private $proxyFactories;
 
-    public function __construct(array $proxyFactories = array())
+    public function __construct()
     {
-        $this->proxyFactories  = $proxyFactories;
         $this->events          = new SplObjectStorage();
         $this->scheduledEvents = new SplObjectStorage();
     }
@@ -38,11 +36,6 @@ abstract class AbstractEventMessageBus implements EventMessageBus
     {
         try {
             $handler = new EventInvocationHandler($service);
-
-            foreach (array_reverse($this->proxyFactories) as $proxyFactory) {
-                $handler = $proxyFactory($handler);
-            }
-
             $handler->handle($event);
         } catch(Exception $e) {
             $this->handle(new EventExecutionFailed(array(

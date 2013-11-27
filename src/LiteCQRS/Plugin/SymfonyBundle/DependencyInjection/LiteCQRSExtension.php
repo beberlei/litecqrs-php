@@ -15,14 +15,6 @@ class LiteCQRSExtension extends Extension
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
-
-        if ($config['monolog']) {
-            $loader->load('monolog.xml');
-        }
-
-        if ($config['swift_mailer']) {
-            $loader->load('swiftmailer.xml');
-        }
     }
 }
 
