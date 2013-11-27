@@ -63,6 +63,7 @@ class EventSourceRepository implements Repository
         );
 
         foreach ($transaction->getCommittedEvents() as $event) {
+            $event->setAggregateId($object->getId());
             $this->eventBus->publish($event);
         }
     }

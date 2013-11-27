@@ -81,9 +81,10 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function it_commits_eventstream_when_adding_aggregate()
     {
-        $object = new EventSourcedAggregate(Uuid::uuid4());
-        $event = new TestEvent();
-        $tx = new Transaction(new EventStream('foo', $object->getId()), array($event));
+        $id     = Uuid::uuid4();
+        $object = new EventSourcedAggregate($id);
+        $event  = new TestEvent();
+        $tx     = new Transaction(new EventStream('foo', $object->getId()), array($event));
 
         $eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
         $repository = new EventSourceRepository($eventStore, $this->eventBus);
@@ -95,6 +96,8 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
         $repository->save($object);
 
         \Phake::verify($this->eventBus)->publish($event);
+
+        $this->assertEquals($id, $event->getAggregateId());
     }
 
     /**

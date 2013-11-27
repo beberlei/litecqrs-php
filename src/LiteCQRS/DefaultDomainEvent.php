@@ -10,6 +10,11 @@ abstract class DefaultDomainEvent implements DomainEvent
      */
     private $date;
 
+    /**
+     * @var mixed
+     */
+    private $aggregateId;
+
     public function __construct(array $data = array())
     {
         foreach ($data as $key => $value) {
@@ -42,5 +47,15 @@ abstract class DefaultDomainEvent implements DomainEvent
     public function getEventDate()
     {
         return $this->date;
+    }
+
+    public function setAggregateId($aggregateId)
+    {
+        $this->aggregateId = $aggregateId;
+    }
+
+    public function getAggregateId()
+    {
+        return $this->aggregateId;
     }
 }

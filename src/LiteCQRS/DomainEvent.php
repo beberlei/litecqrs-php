@@ -26,9 +26,22 @@ interface DomainEvent extends MessageInterface
      * @return string
      */
     public function getEventName();
+
     /**
      * @return \DateTime
      */
     public function getEventDate();
+
+    /**
+     * @throws RuntimeException When setting an aggregate id where one already exists.
+     * @param mixed $aggregateId
+     * @return void
+     */
+    public function setAggregateId($aggregateId);
+
+    /**
+     * @return mixed
+     */
+    public function getAggregateId();
 }
 
