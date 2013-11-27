@@ -6,7 +6,6 @@ use LiteCQRS\Plugin\Silex\ApplicationEventBus;
 use LiteCQRS\Plugin\Silex\ApplicationCommandBus;
 use LiteCQRS\Bus\IdentityMap\EventProviderQueue;
 use LiteCQRS\Bus\IdentityMap\SimpleIdentityMap;
-use LiteCQRS\Bus\EventMessageHandlerFactory;
 use Silex\Application;
 
 /**
@@ -38,10 +37,6 @@ class LiteCQRSServiceProvider implements \Silex\ServiceProviderInterface
 
         $app['lite_cqrs.identity_map'] = $app->share(function () {
             return new SimpleIdentityMap();
-        });
-
-        $app['lite_cqrs.event_message_handler'] = $app->share(function (Application $app) {
-            return new EventMessageHandlerFactory($app['event_message_bus'], $app['lite_cqrs.event_queue']);
         });
 
         $app['lite_cqrs.command_proxy_factories'] = $app->share(function (Application $app) {

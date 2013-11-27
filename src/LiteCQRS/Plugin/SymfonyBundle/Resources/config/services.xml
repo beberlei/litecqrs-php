@@ -6,7 +6,6 @@
     <parameters>
         <parameter key="litecqrs.command_bus.class">LiteCQRS\Plugin\SymfonyBundle\ContainerCommandBus</parameter>
         <parameter key="litecqrs.event_message_bus.class">LiteCQRS\Plugin\SymfonyBundle\ContainerEventBus</parameter>
-        <parameter key="litecqrs.event_message_handler_factory.class">LiteCQRS\Bus\EventMessageHandlerFactory</parameter>
     </parameters>
 
     <services>
@@ -14,12 +13,6 @@
         <service id="litecqrs.event_message_bus" class="%litecqrs.event_message_bus.class%" public="true">
             <argument type="service" id="service_container" />
             <argument type="collection" />
-        </service>
-
-        <service id="litecqrs.event_message_handler_factory" class="%litecqrs.event_message_handler_factory.class%">
-            <argument type="service" id="litecqrs.event_message_bus" />
-
-            <tag name="lite_cqrs.command_proxy_factory" priority="255" />
         </service>
 
         <service id="command_bus" class="%litecqrs.command_bus.class%">
