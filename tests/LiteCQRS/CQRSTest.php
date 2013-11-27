@@ -132,7 +132,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
 
     public function testDispatchEventsInDifferentSeconds()
     {
-        $reflClass = new \ReflectionClass(__NAMESPACE__ . '\\FooEvent');
+        $reflClass = new \ReflectionClass('LiteCQRS\DefaultDomainEvent');
         $dateProperty = $reflClass->getProperty('date');
         $dateProperty->setAccessible(true);
 

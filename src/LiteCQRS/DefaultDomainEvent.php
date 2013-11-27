@@ -5,6 +5,11 @@ use LiteCQRS\Util;
 
 abstract class DefaultDomainEvent implements DomainEvent
 {
+    /**
+     * @var \DateTime
+     */
+    private $date;
+
     public function __construct(array $data = array())
     {
         foreach ($data as $key => $value) {
