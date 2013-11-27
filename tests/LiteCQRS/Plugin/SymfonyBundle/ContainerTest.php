@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Compiler\ResolveDefinitionTemplatesPass;
 
 use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\LiteCQRSExtension;
-use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\Compiler\HandlerPass;
 
 class ContainerTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +37,6 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
             "swift_mailer"     => true,
         )), $container);
 
-        $container->getCompilerPassConfig()->setAfterRemovingPasses(array(new HandlerPass()));
         $container->getCompilerPassConfig()->setRemovingPasses(array());
         $container->compile();
 
