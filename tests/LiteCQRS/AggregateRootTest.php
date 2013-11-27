@@ -40,11 +40,13 @@ class AggregateRootTest extends \PHPUnit_Framework_TestCase
         $reflClass = new \ReflectionClass('LiteCQRS\SampleAggregateRoot');
         $sample = $reflClass->newInstanceWithoutConstructor();
 
-        $eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, array(new SampleCreated(array('foo' => 'bar'))));
+        $events = array(new SampleCreated(array('foo' => 'bar')));
+
+        $eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, $events);
 
         $sample->loadFromEventStream($eventStream);
 
-        $this->assertSame($eventStream, $sample->getEventStream());
+        $this->assertSame($events, $sample->pullDomainEvents());
         $this->assertSame($uuid, $sample->getId());
         $this->assertTrue($sample->loadedFromEvents);
         $this->assertEquals('bar', $sample->foo);

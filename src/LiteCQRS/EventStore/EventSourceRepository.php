@@ -54,9 +54,13 @@ class EventSourceRepository implements Repository
      */
     public function save(AggregateRoot $object)
     {
-        $eventStream = $object->getEventStream();
-
-        $transaction = $this->eventStore->commit($eventStream);
+        $transaction = $this->eventStore->commit(
+            new EventStream(
+                get_class($object),
+                $object->getId(),
+                $object->pullDomainEvents()
+            )
+        );
 
         foreach ($transaction->getCommittedEvents() as $event) {
             $this->eventBus->publish($event);

@@ -83,13 +83,14 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $object = new EventSourcedAggregate(Uuid::uuid4());
         $event = new TestEvent();
+        $tx = new Transaction(new EventStream('foo', $object->getId()), array($event));
 
         $eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
         $repository = new EventSourceRepository($eventStore, $this->eventBus);
 
         \Phake::when($eventStore)
-            ->commit($object->getEventStream())
-            ->thenReturn(new Transaction($object->getEventStream(), array($event)));
+            ->commit($this->isInstanceOf('LiteCQRS\EventStore\EventStream'))
+            ->thenReturn($tx);
 
         $repository->save($object);
 

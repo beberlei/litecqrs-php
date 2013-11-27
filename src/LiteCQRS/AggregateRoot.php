@@ -16,9 +16,9 @@ abstract class AggregateRoot
     private $id;
 
     /**
-     * @var EventStream
+     * @var array<DomainEvent>
      */
-    private $eventStream;
+    private $events = array();
 
     protected function setId(Uuid $uuid)
     {
@@ -33,21 +33,10 @@ abstract class AggregateRoot
         return $this->id;
     }
 
-    private function initializeEventStream()
-    {
-        if ($this->eventStream === null) {
-            $this->eventStream = new EventStream(
-                get_class($this),
-                $this->getId()
-            );
-        }
-    }
-
     protected function apply(DomainEvent $event)
     {
-        $this->initializeEventStream();
         $this->executeEvent($event);
-        $this->eventStream->addEvent($event);
+        $this->events[] = $event;
     }
 
     private function executeEvent(DomainEvent $event)
@@ -66,26 +55,23 @@ abstract class AggregateRoot
 
     public function loadFromEventStream(EventStream $eventStream)
     {
-        if ($this->eventStream !== null) {
+        if ($this->events) {
             throw new RuntimeException("AggregateRoot was already created from event stream and cannot be hydrated again.");
         }
 
-        $this->eventStream = $eventStream;
         $this->setId($eventStream->getUuid());
 
         foreach ($eventStream as $event) {
-            $this->executeEvent($event);
+            $this->apply($event);
         }
     }
 
-    /**
-     * @return EventStream
-     */
-    public function getEventStream()
+    public function pullDomainEvents()
     {
-        $this->initializeEventStream();
+        $events = $this->events;
+        $this->events = array();
 
-        return $this->eventStream;
+        return $events;
     }
 }
 

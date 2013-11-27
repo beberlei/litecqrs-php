@@ -16,7 +16,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $user = new User(Uuid::uuid4());
         $user->changeEmail("foo@example.com");
 
-        $events = iterator_to_array($user->getEventStream());
+        $events = $user->pullDomainEvents();
         $this->assertEquals(1, count($events));
         $this->assertEquals("foo@example.com", end($events)->email);
     }
