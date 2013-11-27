@@ -50,21 +50,38 @@ abstract class SequentialCommandBus implements CommandBus
         $first = true;
 
         while ($command = array_shift($this->commandStack)) {
-            try {
-                $this->executing = true;
-                $type    = get_class($command);
-                $service = $this->getService($type);
-                $handler = new CommandInvocationHandler($service);
-
-                $handler->handle($command);
-            } catch(\Exception $e) {
-                $this->executing = false;
-                $this->handleException($e, $first);
-            }
-
-            $this->executing = false;
+            $this->invokeHandler($command, $first);
             $first = false;
         }
+    }
+
+    protected function invokeHandler($command, $first)
+    {
+        try {
+            $this->executing = true;
+            $type    = get_class($command);
+
+            $service = $this->getService($type);
+            $method  = $this->getHandlerMethodName($command);
+
+            if (!method_exists($service, $method)) {
+                throw new \RuntimeException("Service " . get_class($service) . " has no method " . $method . " to handle command.");
+            }
+
+            $service->$method($command);
+        } catch (\Exception $e) {
+            $this->executing = false;
+            $this->handleException($e, $first);
+        }
+
+        $this->executing = false;
+    }
+
+    protected function getHandlerMethodName($command)
+    {
+        $parts = explode("\\", get_class($command));
+
+        return str_replace("Command", "", lcfirst(end($parts)));
     }
 
     protected function handleException($e, $first)
