@@ -23,11 +23,6 @@ use LiteCQRS\Eventing\MessageInterface;
 interface DomainEvent extends MessageInterface
 {
     /**
-     * @return string
-     */
-    public function getEventName();
-
-    /**
      * @return \DateTime
      */
     public function getEventDate();

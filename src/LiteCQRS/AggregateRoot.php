@@ -2,6 +2,7 @@
 
 namespace LiteCQRS;
 
+use LiteCQRS\Eventing\EventName;
 use LiteCQRS\EventStore\EventStream;
 use LiteCQRS\Exception\RuntimeException;
 use LiteCQRS\Exception\BadMethodCallException;
@@ -41,7 +42,8 @@ abstract class AggregateRoot
 
     private function executeEvent(DomainEvent $event)
     {
-        $method = sprintf('apply%s', $event->getEventName());
+        $eventName = new EventName($event);
+        $method = sprintf('apply%s', (string)$eventName);
 
         if (!method_exists($this, $method)) {
             throw new BadMethodCallException(

@@ -9,7 +9,7 @@ class EventName
     private $event;
     private $name;
 
-    public function __construct($event)
+    public function __construct(DomainEvent $event)
     {
         $this->event = $event;
     }
@@ -25,10 +25,6 @@ class EventName
 
     private function parseName()
     {
-        if ($this->event instanceof DomainEvent) {
-            return $this->event->getEventName();
-        }
-
         $class = get_class($this->event);
 
         if (substr($class, -5) === "Event") {

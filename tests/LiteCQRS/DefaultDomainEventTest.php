@@ -16,13 +16,6 @@ class DefaultDomainEventTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException("RuntimeException", "Property unknown is not a valid property on event Test");
         $event = new TestEvent(array("unknown" => "value"));
     }
-
-    public function testGetEventName()
-    {
-        $event = new TestEvent(array("test" => "value"));
-
-        $this->assertEquals("Test", $event->getEventName());
-    }
 }
 
 class TestEvent extends DefaultDomainEvent

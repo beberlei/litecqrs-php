@@ -2,6 +2,7 @@
 namespace LiteCQRS;
 
 use LiteCQRS\Util;
+use LiteCQRS\Eventing\EventName;
 
 abstract class DefaultDomainEvent implements DomainEvent
 {
@@ -19,29 +20,14 @@ abstract class DefaultDomainEvent implements DomainEvent
     {
         foreach ($data as $key => $value) {
             if (!property_exists($this, $key )) {
-                throw new \RuntimeException("Property " . $key . " is not a valid property on event " . $this->getEventName());
+                $eventName = new EventName($this);
+                throw new \RuntimeException("Property " . $key . " is not a valid property on event " . $eventName);
             }
 
             $this->$key = $value;
         }
 
         $this->date = Util::createMicrosecondsNow();
-    }
-
-    public function getEventName()
-    {
-        $class = get_class($this);
-
-        if (substr($class, -5) === "Event") {
-            $class = substr($class, 0, -5);
-        }
-
-        if (strpos($class, "\\") === false) {
-            return $class;
-        }
-
-        $parts = explode("\\", $class);
-        return end($parts);
     }
 
     public function getEventDate()
