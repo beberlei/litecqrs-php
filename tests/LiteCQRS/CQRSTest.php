@@ -1,9 +1,11 @@
 <?php
 namespace LiteCQRS;
 
-use LiteCQRS\Bus\MemoryEventHandlerLocator;
 use LiteCQRS\Bus\LocatingEventBus;
-use LiteCQRS\Bus\DirectCommandBus;
+use LiteCQRS\Bus\SequentialCommandBus;
+use LiteCQRS\Bus\MemoryCommandHandlerLocator;
+use LiteCQRS\Bus\MemoryEventHandlerLocator;
+
 use DateTime;
 
 use Rhumsaa\Uuid\Uuid;
@@ -35,36 +37,25 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $userService = $this->getMock('UserService', array('changeEmail'));
         $userService->expects($this->once())->method('changeEmail')->with($this->equalTo($command));
 
-        $direct = new DirectCommandBus();
-        $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
+        $bus = $this->newSequentialCommandBusWith('LiteCQRS\ChangeEmailCommand', $userService);
 
-        $direct->handle($command);
+        $bus->handle($command);
+    }
+
+    private function newSequentialCommandBusWith($commandType, $service)
+    {
+        $locator = new MemoryCommandHandlerLocator();
+        $locator->register($commandType, $service);
+
+        return new SequentialCommandBus($locator);
     }
 
     public function testWhenSuccessfulCommandThenTriggersEventStoreCommit()
     {
         $userService = $this->getMock('UserService', array('changeEmail'));
-        $direct = new DirectCommandBus();
-        $direct->register('LiteCQRS\ChangeEmailCommand', $userService);
+        $bus = $this->newSequentialCommandBusWith('LiteCQRS\ChangeEmailCommand', $userService);
 
-        $direct->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
-    }
-
-    public function testDirectCommandBusInvalidService()
-    {
-        $direct = new DirectCommandBus();
-
-        $this->setExpectedException("RuntimeException", "No valid service given for command type 'ChangeEmailCommand'");
-        $direct->register('ChangeEmailCommand', null);
-    }
-
-    public function testHandleUnregisteredCommand()
-    {
-        $command = new ChangeEmailCommand('kontakt@beberlei.de');
-        $direct = new DirectCommandBus();
-
-        $this->setExpectedException("RuntimeException", "No service registered for command type 'LiteCQRS\ChangeEmailCommand'");
-        $direct->handle($command);
+        $bus->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
     }
 
     public function testHandleEventOnInMemoryEventMessageBus()

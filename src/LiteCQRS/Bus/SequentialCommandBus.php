@@ -16,19 +16,16 @@ namespace LiteCQRS\Bus;
  * responsibility. That means the proxy factory registered FIRST is the one
  * that wraps itself around the previous handlers LAST.
  */
-abstract class SequentialCommandBus implements CommandBus
+class SequentialCommandBus implements CommandBus
 {
+    private $locator;
     private $commandStack = array();
     private $executing = false;
 
-    /**
-     * Given a Command Type (ClassName) return an instance of
-     * the service that is handling this command.
-     *
-     * @param string $commandType A Command Class name
-     * @return object
-     */
-    abstract protected function getService($commandType);
+    public function __construct(CommandHandlerLocator $locator)
+    {
+        $this->locator = $locator;
+    }
 
     /**
      * Sequentially execute commands
@@ -59,9 +56,8 @@ abstract class SequentialCommandBus implements CommandBus
     {
         try {
             $this->executing = true;
-            $type    = get_class($command);
 
-            $service = $this->getService($type);
+            $service = $this->locator->getCommandHandler($command);
             $method  = $this->getHandlerMethodName($command);
 
             if (!method_exists($service, $method)) {
