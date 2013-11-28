@@ -20,11 +20,19 @@ class InventoryItem extends AggregateRoot
 
     public function changeName($name)
     {
+        if (!$name) {
+            throw new \RuntimeException("Setting empty name is not allowed.");
+        }
+
         $this->apply(new InventoryItemRenamed($this->getId(), $name));
     }
 
     public function deactivate()
     {
+        if (!$this->activated) {
+            throw new \RuntimeException("Cannot deactivate item again.");
+        }
+
         $this->apply(new InventoryItemDeactivated($this->getId()));
     }
 
