@@ -19,14 +19,13 @@ abstract class AbstractEventMessageBus implements EventMessageBus
         $services   = $this->getHandlers($eventName);
 
         foreach ($services as $service) {
-            $this->invokeEventHandler($service, $event);
+            $this->invokeEventHandler($service, $eventName, $event);
         }
     }
 
-    protected function invokeEventHandler($service, $event)
+    protected function invokeEventHandler($service, $eventName, $event)
     {
         try {
-            $eventName = new EventName($event);
             $methodName = "on" . $eventName;
 
             $service->$methodName($event);
