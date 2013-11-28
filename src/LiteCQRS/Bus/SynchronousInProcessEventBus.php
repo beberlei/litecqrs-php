@@ -5,7 +5,7 @@ namespace LiteCQRS\Bus;
 use LiteCQRS\DomainEvent;
 use Exception;
 
-class LocatingEventBus implements EventMessageBus
+class SynchronousInProcessEventBus implements EventMessageBus
 {
     /**
      * @var EventHandlerLocator

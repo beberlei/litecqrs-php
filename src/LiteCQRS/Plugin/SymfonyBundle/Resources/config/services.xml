@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="litecqrs.command_bus.class">LiteCQRS\Bus\SequentialCommandBus</parameter>
-        <parameter key="litecqrs.event_message_bus.class">LiteCQRS\Bus\LocatingEventBus</parameter>
+        <parameter key="litecqrs.event_message_bus.class">LiteCQRS\Bus\SynchronousInProcessEventBus</parameter>
         <parameter key="litecqrs.container_handler_locator.class">LiteCQRS\Plugin\SymfonyBundle\ContainerHandlerLocator</parameter>
     </parameters>
 

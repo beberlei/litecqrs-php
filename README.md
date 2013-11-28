@@ -1,8 +1,8 @@
 # LiteCQRS for PHP
 
 Small naming-convention based CQRS library for PHP (loosely based on [LiteCQRS for
-C#](https://github.com/danielwertheim/LiteCQRS)) that relies on the Message Bus,
-Command, Event and Domain Event patterns.
+C#](https://github.com/danielwertheim/LiteCQRS)) that relies on the MessageBus,
+Command, EventSourcing and Domain Event patterns.
 
 [![Build Status (Master)](https://travis-ci.org/beberlei/litecqrs-php.png?branch=master)](https://travis-ci.org/beberlei/litecqrs-php)
 
@@ -197,52 +197,6 @@ There are two ways to publish events to the outside world.
 
 If you don't use event sourcing then you are fine just using ``raise()`` and ignoring ``apply()`` altogether.
 
-### Automatic Event Publishing from IdentityMap
-
-You have to implement a mechanism to fill the ```IdentityMapInterface```.
-All aggregate root objects in this Identity Map will have their
-Events stored and published through EventMessageBus. All other events
-will be forgotten!
-
-Example: The Doctrine ORM Plugin has an implementation of the `IdentityMapInterface``.
-
-### Command/Event Handler Proxies
-
-If you want to wrap the command/event handling inside custom logic, you have to extend the ``MessageHandlerInterface``
-and pass a proxy factory closure/invokable object into the ```MessageHandlerInterface```.
-
-If you want to log all commands:
-
-```php
-<?php
-use LiteCQRS\Bus\MessageHandlerInterface;
-
-class CommandLogger implements MessageHandlerInterface
-{
-    private $next;
-
-    public function __construct(MessageHandlerInterface $next)
-    {
-        $this->next = $next;
-    }
-
-    public function handle($command)
-    {
-        syslog(LOG_INFO, "Executing: " . get_class($command));
-        $this->next->handle($command);
-    }
-}
-```
-
-And register:
-
-```php
-<?php
-$loggerProxyFactory = function($handler) {
-    return new CommandLogger($handler);
-};
-$commandBus = new DirectCommandBus(array($loggerProxyFactory));
-```
 
 ### Failing Events
 
@@ -258,79 +212,14 @@ exactly as you need it to work.
 
 ## Plugins
 
-### Doctrine
-
-Doctrine Plugin ships with transactional wrapper handlers for Commands and Events:
-
-- ``LiteCQRS\Plugin\Doctrine\MessageHandler\DbalTransactionalHandler``
-- ``LiteCQRS\Plugin\Doctrine\MessageHandler\OrmTransactionalHandler``
-
-Also to synchronize the events to event message bus you can use the DoctrineIdentityMap:
-
-- ``LiteCQRS\Plugin\Doctrine\DoctrineIdentityMap``
-
-It also ships with an implementation of ``DomainEventProviderRepositoryInterface`` wrapping
-the EntityManager:
-
-- ``LiteCQRS\Plugin\Doctrine\ORMRepository``
-
-### Silex
-
-Silex plugin ships with a CommandBus and a EventMessageBus that knows how to get services out of
-your Silex application as well as a ServiceProvider. The ServiceProvider adds the most basic services
-to get LiteCQRS to run.
-
-To enable the service provider register it on your application:
-
-``` php
-<?php
-$app->register(new LiteCQRS\Plugin\Silex\Provider\LiteCQRSServiceProvider());
-```
-
-`lite_cqrs.commands` is automatically injected into the `ApplicationCommandBus`. So to add Commands to
-the bus extend the service with:
-
-``` php
-<?php
-
-$app['lite_cqrs.commands'] = array_merge($app['lite_cqrs.commands'], array(
-    'MyCustom\\SearchCommand' => 'search_handler',
-));
-```
-
-Remember that the key have to be the Command class and the value must be the service id that have the right
-handler method implemented.
-
-To add a EventHandler for a specific event it is needed to call `registerServices` on the `lite_cqrs.event_bus`
-service.
-
-The array given to `registerServices` must look like:
-
-``` php
-<?php
-
-$eventServices = array(
-    'EventName' => 'service_id_id', // or
-    'AnotherEvent => array(
-        'service_id_1',
-        'service_id_2',
-    ),
-);
-```
-
-
 ### Symfony
 
 Inside symfony you can use LiteCQRS by registering services with
 ``lite_cqrs.command_handler`` or the ``lite_cqrs.event_handler`` tag. These
-services are then autodiscovered for commands and events. You can also add
-proxy message handler factories for tags. For both commands and events the tags
-are ``lite_cqrs.event_proxy_factory`` and ``lite_cqrs.command_proxy_factory``
-respectively.
+services are then autodiscovered for commands and events.
 
-Container Aware implementations of ``CommandBus`` and ``EventMessageBus``
-implement lazy loading of all command- and event handlers for better
-performance.
+Command- and Event-Handlers are lazily loaded from the Symfony Dependency
+Injection Container.
 
 To enable the bundle put the following in your Kernel:
 
@@ -338,31 +227,12 @@ To enable the bundle put the following in your Kernel:
 new \LiteCQRS\Plugin\SymfonyBundle\LiteCQRSBundle(),
 ```
 
-You can enable/disable the different plugins by adding the following to your config.yml:
+You can enable/disable the bundle by adding the following to your config.yml:
 
-    lite_cqrs:
-        orm:                    true
-        swift_mailer:           true
-        monolog:                true
-        jms_serializer:         true
-        crud:                   true
-        dbal_event_store:       true
-        couchdb_event_store:    true
-        couchdb_odm:            true
+    lite_cqrs: ~
 
 Please refer to the [SymfonyExample.md](https://github.com/beberlei/litecqrs-php/blob/master/example/SymfonyExample.md)
 document for a full demonstration of using LiteCQRS from within a Symfony2 project.
-
-### Swiftmailer
-
-The Swiftmailer Plugin allows you to defer the sending of mails until after a command or event
-handler has actually finished successfully.
-
-- ``LiteCQRS\Plugin\Swiftmailer\SpoolTransportHandler``
-
-You need a spool transport and a real transport instance for this. The Spool transport queues
-all messages and the transport handler sends all messages through the real transport, if the
-command/event handler was executed successfully.
 
 ### Monolog
 
@@ -375,43 +245,4 @@ which you can configure differently from the default channels in Symfony.  See
 [the Symfony
 cookbook](http://symfony.com/doc/master/cookbook/logging/channels_handlers.html)
 for more information.
-
-### JMS Serializer
-
-WARNING: This plugin does not work with JMS Serializer 0.10 and up, disable
-it with ``serializer: false`` in Symfony.
-
-A plugin that uses JMS Serializer to serialize events to JSON. This is necessary
-for advanced logging of your events. It uses a custom type handler to convert
-aggregate root objects in the events into references and fetches them again
-on reconstruction. This way you don't serialize graphs of data into the event store.
-
-### Doctrine CouchDB
-
-A plugin that contains a CouchDB EventStore and Transactional Handler for
-Doctrine CouchDB ODM.
-
-### CRUD
-
-While normally CRUD and CQRS don't match, if you use Doctrine as a primary data-source in the
-write model then with PHPs dynamic capabilities, you can decently do CRUD with LiteCQRS and
-this plugin.
-
-Using ``AggregateResource`` abstract class or the ``CrudCreatable``, ``CrudUpdatable`` and
-``CrudDeletable`` traits you can implement CRUD functionality. This is possible to three commands:
-
-- ``LiteCQRS\Plugin\CRUD\Model\Commands\CreateResourceCommand``
-- ``LiteCQRS\Plugin\CRUD\Model\Commands\UpdateResourceCommand``
-- ``LiteCQRS\Plugin\CRUD\Model\Commands\DeleteResourceCommand``
-
-They have ``$class``, ``$id`` and ``$data`` properties. On the Create and Update commands,
-the ```$data`` is applied to the model using mass assignment. You have to make sure
-this is a safe operation for your models by implementing the ``apply*()`` methods yourself
-instead of relying on the mass assignment.
-
-After processing one of the following three domain events is emitted:
-
-- ``LiteCQRS\Plugin\CRUD\Model\Events\ResourceCreatedEvent``
-- ``LiteCQRS\Plugin\CRUD\Model\Events\ResourceUpdatedEvent``
-- ``LiteCQRS\Plugin\CRUD\Model\Events\ResourceDeletedEvent``
 

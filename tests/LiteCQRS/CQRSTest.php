@@ -1,7 +1,7 @@
 <?php
 namespace LiteCQRS;
 
-use LiteCQRS\Bus\LocatingEventBus;
+use LiteCQRS\Bus\SynchronousInProcessEventBus;
 use LiteCQRS\Bus\SequentialCommandBus;
 use LiteCQRS\Bus\MemoryCommandHandlerLocator;
 use LiteCQRS\Bus\MemoryEventHandlerLocator;
@@ -97,7 +97,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $locator = new MemoryEventHandlerLocator();
         $locator->register($eventHandler);
 
-        return new LocatingEventBus($locator);
+        return new SynchronousInProcessEventBus($locator);
     }
 }
 
