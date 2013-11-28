@@ -12,10 +12,9 @@ class ContainerEventBus extends AbstractEventMessageBus
     private $container;
     private $services;
 
-    public function __construct(ContainerInterface $container, array $proxyFactories = array())
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        parent::__construct($proxyFactories);
     }
 
     protected function getHandlers(EventName $eventName)

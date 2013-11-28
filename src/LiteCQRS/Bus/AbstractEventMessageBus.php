@@ -8,15 +8,6 @@ use Exception;
 
 abstract class AbstractEventMessageBus implements EventMessageBus
 {
-    private $events;
-    private $scheduledEvents;
-
-    public function __construct()
-    {
-        $this->events          = new SplObjectStorage();
-        $this->scheduledEvents = new SplObjectStorage();
-    }
-
     public function publish($event)
     {
         $this->handle($event);
@@ -35,8 +26,10 @@ abstract class AbstractEventMessageBus implements EventMessageBus
     protected function invokeEventHandler($service, $event)
     {
         try {
-            $handler = new EventInvocationHandler($service);
-            $handler->handle($event);
+            $eventName = new EventName($event);
+            $methodName = "on" . $eventName;
+
+            $service->$methodName($event);
         } catch(Exception $e) {
             $this->handle(new EventExecutionFailed(array(
                 "service"   => get_class($service),
