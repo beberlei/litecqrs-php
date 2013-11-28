@@ -14,12 +14,17 @@ abstract class DefaultDomainEvent implements DomainEvent
     public function __construct(array $data = array())
     {
         foreach ($data as $key => $value) {
-            if (!property_exists($this, $key )) {
-                $eventName = new EventName($this);
-                throw new \RuntimeException("Property " . $key . " is not a valid property on event " . $eventName);
-            }
+            $this->assertPropertyExists($key);
 
             $this->$key = $value;
+        }
+    }
+
+    private function assertPropertyExists($name)
+    {
+        if (!property_exists($this, $name)) {
+            $eventName = new EventName($this);
+            throw new \RuntimeException("Property " . $name . " is not a valid property on event " . $eventName);
         }
     }
 
@@ -31,5 +36,12 @@ abstract class DefaultDomainEvent implements DomainEvent
     public function getAggregateId()
     {
         return $this->aggregateId;
+    }
+
+    public function __get($name)
+    {
+        $this->assertPropertyExists($name);
+
+        return $this->$name;
     }
 }
