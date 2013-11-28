@@ -3,12 +3,11 @@
 namespace LiteCQRS\Bus;
 
 use LiteCQRS\DomainEvent;
-use SplObjectStorage;
 use Exception;
 
 abstract class AbstractEventMessageBus implements EventMessageBus
 {
-    public function publish($event)
+    public function publish(DomainEvent $event)
     {
         $this->handle($event);
     }
@@ -30,6 +29,10 @@ abstract class AbstractEventMessageBus implements EventMessageBus
 
             $service->$methodName($event);
         } catch(Exception $e) {
+            if ($event instanceof EventExecutionFailed) {
+                return;
+            }
+
             $this->handle(new EventExecutionFailed(array(
                 "service"   => get_class($service),
                 "exception" => $e,
@@ -40,5 +43,4 @@ abstract class AbstractEventMessageBus implements EventMessageBus
 
     abstract protected function getHandlers(EventName $eventName);
 }
-
 

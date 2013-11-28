@@ -19,6 +19,6 @@ interface EventMessageBus
      * @param DomainEvent $event
      * @return void
      */
-    public function publish($event);
+    public function publish(DomainEvent $event);
 }
 
