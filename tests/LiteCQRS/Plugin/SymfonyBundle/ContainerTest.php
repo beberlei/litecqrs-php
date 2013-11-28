@@ -16,7 +16,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->createTestContainer();
 
-        $this->assertInstanceOf('LiteCQRS\Bus\CommandBus',      $container->get('command_bus'));
+        $this->assertInstanceOf('LiteCQRS\Commanding\CommandBus',      $container->get('command_bus'));
         $this->assertInstanceOf('LiteCQRS\Bus\EventMessageBus', $container->get('litecqrs.event_message_bus'));
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Bus;
+namespace LiteCQRS\Commanding;
 
 /**
  * Process Commands and pass them to their handlers in sequential order.

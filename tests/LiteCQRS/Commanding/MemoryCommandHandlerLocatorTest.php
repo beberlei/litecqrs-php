@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Bus;
+namespace LiteCQRS\Commanding;
 
 class MemoryCommandHandlerLocatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,7 @@ class MemoryCommandHandlerLocatorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_throws_exception_when_no_handler_is_registered_for_command()
     {
-        $this->setExpectedException("RuntimeException", "No service registered for command type 'LiteCQRS\Bus\NoHandlerCommand'");
+        $this->setExpectedException("RuntimeException", "No service registered for command type 'LiteCQRS\\Commanding\\NoHandlerCommand'");
 
         $locator = new MemoryCommandHandlerLocator();
         $locator->getCommandHandler(new NoHandlerCommand());

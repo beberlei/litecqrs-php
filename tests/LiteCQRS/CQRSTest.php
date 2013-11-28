@@ -2,9 +2,9 @@
 namespace LiteCQRS;
 
 use LiteCQRS\Bus\SynchronousInProcessEventBus;
-use LiteCQRS\Bus\SequentialCommandBus;
-use LiteCQRS\Bus\MemoryCommandHandlerLocator;
 use LiteCQRS\Bus\MemoryEventHandlerLocator;
+use LiteCQRS\Commanding\SequentialCommandBus;
+use LiteCQRS\Commanding\MemoryCommandHandlerLocator;
 
 use DateTime;
 

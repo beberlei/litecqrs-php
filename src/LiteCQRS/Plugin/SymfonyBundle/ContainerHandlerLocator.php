@@ -3,7 +3,7 @@
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
 use LiteCQRS\Bus\EventHandlerLocator;
-use LiteCQRS\Bus\CommandHandlerLocator;
+use LiteCQRS\Commanding\CommandHandlerLocator;
 use LiteCQRS\Bus\EventName;
 use LiteCQRS\Command;
 
