@@ -1,10 +1,9 @@
 <?php
 namespace LiteCQRS;
 
+use LiteCQRS\Bus\MemoryEventHandlerLocator;
+use LiteCQRS\Bus\LocatingEventBus;
 use LiteCQRS\Bus\DirectCommandBus;
-use LiteCQRS\Bus\InMemoryEventMessageBus;
-use LiteCQRS\Bus\IdentityMap\SimpleIdentityMap;
-use LiteCQRS\Bus\EventMessageHandlerFactory;
 use DateTime;
 
 use Rhumsaa\Uuid\Uuid;
@@ -74,8 +73,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
         $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
 
-        $bus = new InMemoryEventMessageBus();
-        $bus->register($eventHandler);
+        $bus = $this->createInMemoryEventBusWith($eventHandler);
         $bus->publish($event);
     }
 
@@ -88,8 +86,7 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event1));
         $eventHandler->expects($this->at(1))->method('onFoo')->with($this->equalTo($event2));
 
-        $bus = new InMemoryEventMessageBus();
-        $bus->register($eventHandler);
+        $bus = $this->createInMemoryEventBusWith($eventHandler);
         $bus->publish($event1);
         $bus->publish($event2);
     }
@@ -100,9 +97,16 @@ class CQRSTest extends \PHPUnit_Framework_TestCase
         $eventHandler = $this->getMock('EventHandler', array('onFoo'));
         $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event))->will($this->throwException(new \Exception));
 
-        $bus = new InMemoryEventMessageBus();
-        $bus->register($eventHandler);
+        $bus = $this->createInMemoryEventBusWith($eventHandler);
         $bus->publish($event);
+    }
+
+    private function createInMemoryEventBusWith($eventHandler)
+    {
+        $locator = new MemoryEventHandlerLocator();
+        $locator->register($eventHandler);
+
+        return new LocatingEventBus($locator);
     }
 }
 

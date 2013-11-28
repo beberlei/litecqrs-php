@@ -2,22 +2,22 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
-use LiteCQRS\Bus\AbstractEventMessageBus;
+use LiteCQRS\Bus\EventHandlerLocator;
 use LiteCQRS\Bus\EventName;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ContainerEventBus extends AbstractEventMessageBus
+class ContainerHandlerLocator implements EventHandlerLocator
 {
     private $container;
-    private $services;
+    private $services = array();
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
-    protected function getHandlers(EventName $eventName)
+    public function getHandlersFor(EventName $eventName)
     {
         $eventName = strtolower($eventName);
 

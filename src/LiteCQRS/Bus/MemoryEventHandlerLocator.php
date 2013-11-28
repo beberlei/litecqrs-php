@@ -1,26 +1,32 @@
 <?php
+
 namespace LiteCQRS\Bus;
 
-use LiteCQRS\DomainEvent;
-
-use Exception;
+use LiteCQRS\Bus\EventName;
 
 /**
- * In Memory Event Message Bus
+ * In Memory Event Handler Locator
  *
  * You can register Event handlers and every method starting
  * with "on" will be registered as handling an event.
  *
  * By convention the part after the "on" matches the event name.
  * Comparisons are done in lower-case.
- *
- * Exceptions by event handlers are swallowed, no mechanism exists
- * to report event failure back to the developer. This is a rather
- * simple approach and you should see if it works for you.
  */
-class InMemoryEventMessageBus extends AbstractEventMessageBus
+class MemoryEventHandlerLocator implements EventHandlerLocator
 {
     private $handlers = array();
+
+    public function getHandlersFor(EventName $eventName)
+    {
+        $eventName = strtolower($eventName);
+
+        if (!isset($this->handlers[$eventName])) {
+            return array();
+        }
+
+        return $this->handlers[$eventName];
+    }
 
     public function register($handler)
     {
@@ -38,16 +44,4 @@ class InMemoryEventMessageBus extends AbstractEventMessageBus
             $this->handlers[$eventName][] = $handler;
         }
     }
-
-    protected function getHandlers(EventName $eventName)
-    {
-        $eventName = strtolower($eventName);
-
-        if (!isset($this->handlers[$eventName])) {
-            return array();
-        }
-
-        return $this->handlers[$eventName];
-    }
 }
-

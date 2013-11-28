@@ -5,12 +5,22 @@ namespace LiteCQRS\Bus;
 use LiteCQRS\DomainEvent;
 use Exception;
 
-abstract class AbstractEventMessageBus implements EventMessageBus
+class LocatingEventBus implements EventMessageBus
 {
+    /**
+     * @var EventHandlerLocator
+     */
+    private $locator;
+
+    public function __construct(EventHandlerLocator $locator)
+    {
+        $this->locator = $locator;
+    }
+
     public function publish(DomainEvent $event)
     {
         $eventName  = new EventName($event);
-        $services   = $this->getHandlers($eventName);
+        $services   = $this->locator->getHandlersFor($eventName);
 
         foreach ($services as $service) {
             $this->invokeEventHandler($service, $eventName, $event);
@@ -35,7 +45,5 @@ abstract class AbstractEventMessageBus implements EventMessageBus
             )));
         }
     }
-
-    abstract protected function getHandlers(EventName $eventName);
 }
 
