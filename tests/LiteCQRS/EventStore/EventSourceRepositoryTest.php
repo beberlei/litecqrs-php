@@ -14,7 +14,7 @@ class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->eventBus = \Phake::mock('LiteCQRS\Bus\EventMessageBus');
+        $this->eventBus = \Phake::mock('LiteCQRS\Eventing\EventMessageBus');
     }
 
     /**

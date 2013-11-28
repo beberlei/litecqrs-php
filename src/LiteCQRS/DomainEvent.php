@@ -1,7 +1,7 @@
 <?php
 namespace LiteCQRS;
 
-use LiteCQRS\Bus\MessageInterface;
+use LiteCQRS\Eventing\MessageInterface;
 
 /**
  * Domain Events happen during command execution/handling.

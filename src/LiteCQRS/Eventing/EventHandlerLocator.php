@@ -1,8 +1,8 @@
 <?php
 
-namespace LiteCQRS\Bus;
+namespace LiteCQRS\Eventing;
 
-use LiteCQRS\Bus\EventName;
+use LiteCQRS\Eventing\EventName;
 
 interface EventHandlerLocator
 {

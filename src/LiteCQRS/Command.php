@@ -2,7 +2,7 @@
 
 namespace LiteCQRS;
 
-use LiteCQRS\Bus\MessageInterface;
+use LiteCQRS\Eventing\MessageInterface;
 
 interface Command extends MessageInterface
 {

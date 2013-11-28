@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Bus;
+namespace LiteCQRS\Eventing;
 
 interface MessageInterface
 {

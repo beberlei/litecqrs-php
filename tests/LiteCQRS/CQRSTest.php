@@ -1,8 +1,8 @@
 <?php
 namespace LiteCQRS;
 
-use LiteCQRS\Bus\SynchronousInProcessEventBus;
-use LiteCQRS\Bus\MemoryEventHandlerLocator;
+use LiteCQRS\Eventing\SynchronousInProcessEventBus;
+use LiteCQRS\Eventing\MemoryEventHandlerLocator;
 use LiteCQRS\Commanding\SequentialCommandBus;
 use LiteCQRS\Commanding\MemoryCommandHandlerLocator;
 

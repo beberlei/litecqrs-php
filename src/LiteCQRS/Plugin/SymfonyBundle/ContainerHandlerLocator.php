@@ -2,9 +2,9 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
-use LiteCQRS\Bus\EventHandlerLocator;
+use LiteCQRS\Eventing\EventHandlerLocator;
 use LiteCQRS\Commanding\CommandHandlerLocator;
-use LiteCQRS\Bus\EventName;
+use LiteCQRS\Eventing\EventName;
 use LiteCQRS\Command;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;

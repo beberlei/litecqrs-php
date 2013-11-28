@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\EventStore;
 
-use LiteCQRS\Bus\EventMessageBus;
+use LiteCQRS\Eventing\EventMessageBus;
 use LiteCQRS\AggregateRoot;
 use LiteCQRS\Repository;
 use LiteCQRS\AggregateRootNotFoundException;
