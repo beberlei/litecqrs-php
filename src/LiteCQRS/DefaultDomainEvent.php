@@ -7,11 +7,6 @@ use LiteCQRS\Eventing\EventName;
 abstract class DefaultDomainEvent implements DomainEvent
 {
     /**
-     * @var \DateTime
-     */
-    private $date;
-
-    /**
      * @var mixed
      */
     private $aggregateId;
@@ -26,13 +21,6 @@ abstract class DefaultDomainEvent implements DomainEvent
 
             $this->$key = $value;
         }
-
-        $this->date = Util::createMicrosecondsNow();
-    }
-
-    public function getEventDate()
-    {
-        return $this->date;
     }
 
     public function setAggregateId($aggregateId)

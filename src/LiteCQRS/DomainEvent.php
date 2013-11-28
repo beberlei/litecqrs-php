@@ -1,8 +1,6 @@
 <?php
 namespace LiteCQRS;
 
-use LiteCQRS\Eventing\MessageInterface;
-
 /**
  * Domain Events happen during command execution/handling.
  *
@@ -20,13 +18,8 @@ use LiteCQRS\Eventing\MessageInterface;
  * You should hook this into your preferred persistence solution, for
  * example Doctrine, Propel or what you are going to use as primary storage.
  */
-interface DomainEvent extends MessageInterface
+interface DomainEvent
 {
-    /**
-     * @return \DateTime
-     */
-    public function getEventDate();
-
     /**
      * @throws RuntimeException When setting an aggregate id where one already exists.
      * @param mixed $aggregateId
