@@ -9,11 +9,6 @@ abstract class AbstractEventMessageBus implements EventMessageBus
 {
     public function publish(DomainEvent $event)
     {
-        $this->handle($event);
-    }
-
-    protected function handle($event)
-    {
         $eventName  = new EventName($event);
         $services   = $this->getHandlers($eventName);
 
@@ -33,7 +28,7 @@ abstract class AbstractEventMessageBus implements EventMessageBus
                 return;
             }
 
-            $this->handle(new EventExecutionFailed(array(
+            $this->publish(new EventExecutionFailed(array(
                 "service"   => get_class($service),
                 "exception" => $e,
                 "event"     => $event,
