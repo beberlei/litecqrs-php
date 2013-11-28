@@ -5,8 +5,10 @@ namespace LiteCQRS\Plugin\SymfonyBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Compiler\ResolveDefinitionTemplatesPass;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
 use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\LiteCQRSExtension;
+use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\Compiler\HandlerPass;
 
 class ContainerTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,14 +32,9 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $loader = new LiteCQRSExtension();
         $container->registerExtension($loader);
         $container->set('logger', $this->getMock('Monolog\Logger'));
-        $container->set('swiftmailer.transport', $this->getMock('Swift_Transport_SpoolTransport', array(), array(), '', false));
-        $container->set('swiftmailer.transport.real', $this->getMock('Swift_Transport', array(), array(), '', false));
-        $container->set('form.factory', $this->getMock('Symfony\Component\Form\FormFactoryInterface'));
-        $loader->load(array(array(
-            "swift_mailer"     => true,
-        )), $container);
+        $loader->load(array(array()), $container);
 
-        $container->getCompilerPassConfig()->setRemovingPasses(array());
+        $container->addCompilerPass(new HandlerPass(), PassConfig::TYPE_AFTER_REMOVING);
         $container->compile();
 
         return $container;

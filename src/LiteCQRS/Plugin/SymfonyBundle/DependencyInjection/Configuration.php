@@ -16,10 +16,6 @@ class Configuration implements ConfigurationInterface
             ->root('lite_cqrs')
                 ->children()
                     ->booleanNode('monolog')->defaultTrue()->end()
-                    ->booleanNode('swift_mailer')->defaultFalse()->end()
-                    ->booleanNode('orm')->defaultFalse()->end()
-                    ->booleannode('jms_serializer')->defaultFalse()->end()
-                    ->booleanNode('couchdb_odm')->defaultFalse()->end()
                 ->end();
 
         return $tb;
