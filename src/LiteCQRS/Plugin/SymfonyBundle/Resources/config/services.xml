@@ -4,23 +4,22 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="litecqrs.command_bus.class">LiteCQRS\Plugin\SymfonyBundle\ContainerCommandBus</parameter>
+        <parameter key="litecqrs.command_bus.class">LiteCQRS\Bus\SequentialCommandBus</parameter>
         <parameter key="litecqrs.event_message_bus.class">LiteCQRS\Bus\LocatingEventBus</parameter>
         <parameter key="litecqrs.container_handler_locator.class">LiteCQRS\Plugin\SymfonyBundle\ContainerHandlerLocator</parameter>
     </parameters>
 
     <services>
+        <service id="command_bus" class="%litecqrs.command_bus.class%">
+            <argument type="service" id="litecqrs.container_handler_locator" />
+        </service>
+
         <service id="litecqrs.event_message_bus" class="%litecqrs.event_message_bus.class%" public="true">
             <argument type="service" id="litecqrs.container_handler_locator" />
         </service>
 
         <service id="litecqrs.container_handler_locator" class="%litecqrs.container_handler_locator.class%">
             <argument type="service" id="service_container" />
-        </service>
-
-        <service id="command_bus" class="%litecqrs.command_bus.class%">
-            <argument type="service" id="service_container" />
-            <argument type="collection" />
         </service>
     </services>
 </container>

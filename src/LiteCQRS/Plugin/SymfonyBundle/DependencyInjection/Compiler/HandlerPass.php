@@ -51,8 +51,8 @@ class HandlerPass implements CompilerPassInterface
             }
         }
 
-        $commandBus = $container->findDefinition('command_bus');
-        $commandBus->addMethodCall('registerServices', array($services));
+        $locatorDefinition = $container->findDefinition('litecqrs.container_handler_locator');
+        $locatorDefinition->addMethodCall('registerCommandHandlers', array($services));
     }
 
     private function registerEventHandlers($container)
@@ -84,7 +84,7 @@ class HandlerPass implements CompilerPassInterface
         }
 
         $locatorDefinition = $container->findDefinition('litecqrs.container_handler_locator');
-        $locatorDefinition->addMethodCall('registerServices', array($services));
+        $locatorDefinition->addMethodCall('registerEventHandlers', array($services));
     }
 }
 

@@ -3,14 +3,17 @@
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
 use LiteCQRS\Bus\EventHandlerLocator;
+use LiteCQRS\Bus\CommandHandlerLocator;
 use LiteCQRS\Bus\EventName;
+use LiteCQRS\Command;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ContainerHandlerLocator implements EventHandlerLocator
+class ContainerHandlerLocator implements EventHandlerLocator, CommandHandlerLocator
 {
     private $container;
-    private $services = array();
+    private $eventHandlers = array();
+    private $commandHandlers = array();
 
     public function __construct(ContainerInterface $container)
     {
@@ -21,21 +24,31 @@ class ContainerHandlerLocator implements EventHandlerLocator
     {
         $eventName = strtolower($eventName);
 
-        if (!isset($this->services[$eventName])) {
+        if (!isset($this->eventHandlers[$eventName])) {
             return array();
         }
 
-        $services = array();
-        foreach ($this->services[$eventName] as $id) {
-            $services[] = $this->container->get($id);
+        $eventHandlers = array();
+        foreach ($this->eventHandlers[$eventName] as $id) {
+            $eventHandlers[] = $this->container->get($id);
         }
 
-        return $services;
+        return $eventHandlers;
     }
 
-    public function registerServices($services)
+    public function getCommandHandler(Command $command)
     {
-        $this->services = $services;
+        return $this->container->get($this->commandHandlers[get_class($command)]);
+    }
+
+    public function registerEventHandlers($eventHandlers)
+    {
+        $this->eventHandlers = $eventHandlers;
+    }
+
+    public function registerCommandHandlers($commandHandlers)
+    {
+        $this->commandHandlers = $commandHandlers;
     }
 }
 
