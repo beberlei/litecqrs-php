@@ -9,7 +9,7 @@ use LiteCQRS\DomainEvent;
  * The Event Message Bus finds all event handles that listen to a certain
  * event, and then triggers these handlers one after another. Exceptions in
  * event handlers should be swallowed. Intelligent Event Systems should know
- * how to retry failing events until they are successful.
+ * how to retry failing events until they are successful or failed too often.
  */
 interface EventMessageBus
 {

@@ -23,7 +23,7 @@ abstract class AbstractEventMessageBus implements EventMessageBus
             $methodName = "on" . $eventName;
 
             $service->$methodName($event);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             if ($event instanceof EventExecutionFailed) {
                 return;
             }
