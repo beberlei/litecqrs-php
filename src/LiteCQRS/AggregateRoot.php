@@ -64,7 +64,7 @@ abstract class AggregateRoot
         $this->setId($eventStream->getUuid());
 
         foreach ($eventStream as $event) {
-            $this->apply($event);
+            $this->executeEvent($event);
         }
     }
 
