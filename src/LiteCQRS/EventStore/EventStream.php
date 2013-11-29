@@ -72,6 +72,13 @@ class EventStream implements IteratorAggregate
         return $this->version;
     }
 
+    public function addEvents(array $events)
+    {
+        foreach ($events as $event) {
+            $this->addEvent($event);
+        }
+    }
+
     public function addEvent(DomainEvent $event)
     {
         $this->events[] = $event;

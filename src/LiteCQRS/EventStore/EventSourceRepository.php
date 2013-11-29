@@ -13,6 +13,7 @@ class EventSourceRepository implements Repository
 {
     private $eventStore;
     private $eventBus;
+    private $streams = array();
 
     public function __construct(EventStore $eventStore, EventMessageBus $eventBus)
     {
@@ -30,6 +31,8 @@ class EventSourceRepository implements Repository
         } catch (EventStreamNotFoundException $e) {
             throw new AggregateRootNotFoundException();
         }
+
+        $this->streams[(string)$uuid] = $eventStream;
 
         $aggregateRootClass = $eventStream->getClassName();
 
@@ -54,13 +57,19 @@ class EventSourceRepository implements Repository
      */
     public function save(AggregateRoot $object)
     {
-        $transaction = $this->eventStore->commit(
-            new EventStream(
+        $id = (string)$object->getId();
+
+        if (!isset($this->streams[$id])) {
+            $this->streams[$id] = new EventStream(
                 get_class($object),
-                $object->getId(),
-                $object->pullDomainEvents()
-            )
-        );
+                $object->getId()
+            );
+        }
+
+        $eventStream = $this->streams[$id];
+        $eventStream->addEvents($object->pullDomainEvents());
+
+        $transaction = $this->eventStore->commit($eventStream);
 
         foreach ($transaction->getCommittedEvents() as $event) {
             $event->setAggregateId($object->getId());

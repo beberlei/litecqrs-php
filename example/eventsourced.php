@@ -63,7 +63,7 @@ class InventoryItemCreated extends DefaultDomainEvent
 {
     protected $id;
 
-    public function __construct($id)
+    public function __construct(Uuid $id)
     {
         $this->id = $id;
     }
@@ -74,7 +74,7 @@ class InventoryItemRenamed extends DefaultDomainEvent
     protected $id;
     protected $name;
 
-    public function __construct($id, $name)
+    public function __construct(Uuid $id, $name)
     {
         $this->id = $id;
         $this->name = $name;
@@ -85,7 +85,7 @@ class InventoryItemDeactivated extends DefaultDomainEvent
 {
     protected $id;
 
-    public function __construct($id)
+    public function __construct(Uuid $id)
     {
         $this->id = $id;
     }
@@ -144,7 +144,7 @@ class InventoryConsoleOutputListener
 {
     public function onInventoryItemCreated(InventoryItemCreated $event)
     {
-        echo $event->id;
+        echo "Creating: " . $event->id . "\n";
     }
 }
 
@@ -171,4 +171,4 @@ $id = Uuid::uuid4();
 
 $commandBus->handle(new CreateInventoryItem(array('id' => $id)));
 $commandBus->handle(new ChangeInventoryName(array('id' => $id, 'newName' => 'test')));
-$commandBus->handle(new DeactivateInventoryItem(arraY('id' => $id)));
+$commandBus->handle(new DeactivateInventoryItem(array('id' => $id)));
