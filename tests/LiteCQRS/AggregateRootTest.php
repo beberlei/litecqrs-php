@@ -46,7 +46,7 @@ class AggregateRootTest extends \PHPUnit_Framework_TestCase
 
         $sample->loadFromEventStream($eventStream);
 
-        $this->assertSame($events, $sample->pullDomainEvents());
+        $this->assertSame(array(), $sample->pullDomainEvents());
         $this->assertSame($uuid, $sample->getId());
         $this->assertTrue($sample->loadedFromEvents);
         $this->assertEquals('bar', $sample->foo);
