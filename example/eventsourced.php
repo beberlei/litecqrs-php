@@ -146,6 +146,16 @@ class InventoryConsoleOutputListener
     {
         echo "Creating: " . $event->id . "\n";
     }
+
+    public function onInventoryItemRenamed(InventoryItemRenamed $event)
+    {
+        echo "new name for " . $event->id . ": " . $event->name . "\n";
+    }
+
+    public function onInventoryItemDeactivated(InventoryItemDeactivated $event)
+    {
+        echo "Deactivated " . $event->id . "\n";
+    }
 }
 
 $listener = new InventoryConsoleOutputListener();
