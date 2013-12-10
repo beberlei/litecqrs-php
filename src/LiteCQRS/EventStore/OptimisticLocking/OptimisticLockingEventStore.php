@@ -34,6 +34,7 @@ class OptimisticLockingEventStore implements EventStore
         }
 
         $events = array();
+        $this->eventsData[$streamData->getId()] = $streamData->getEventData();
 
         foreach ($streamData->getEventData() as $eventData) {
             $events[] = $this->serializer->fromArray($eventData);
