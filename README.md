@@ -174,7 +174,7 @@ $commandBus = new DirectCommandBus(array(
 2. Add a new method with the name of the command to any of your services (command handler)
 3. Register the command handler to handle the given command on the CommandBus.
 4. Have your entities implement ``LiteCQRS\AggregateRoot`` or ``LiteCQRS\DomainEventProvider``
-5. Use protected method ``raise(DomainEvent $event)`` or apply(DomainEvent $event)`` to attach
+5. Use protected method ``raise(DomainEvent $event)`` or ``apply(DomainEvent $event)`` to attach
    events to your aggregate root objects.
 
 That is all there is for simple use-cases.
