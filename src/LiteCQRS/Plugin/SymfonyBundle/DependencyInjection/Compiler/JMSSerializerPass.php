@@ -17,7 +17,7 @@ class JMSSerializerPass implements CompilerPassInterface
         $definition = $container->getDefinition('jms_serializer.metadata.chain_driver');
         $arguments = $definition->getArguments();
 
-        array_unshift(new Reference('litecqrs.serializer.metadata_driver'), $arguments[0]);
+        array_unshift($arguments[0], new Reference('litecqrs.serializer.metadata_driver'));
 
         $definition->setArguments($arguments);
     }
