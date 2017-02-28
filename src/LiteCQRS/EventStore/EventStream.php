@@ -14,7 +14,7 @@ use ArrayIterator;
 class EventStream implements IteratorAggregate
 {
     /**
-     * @var Rhumsaa\Uuid\Uuid
+     * @var Uuid
      */
     private $uuid;
 
@@ -57,7 +57,7 @@ class EventStream implements IteratorAggregate
     }
 
     /**
-     * @return Rhumsaa\Uuid\Uuid
+     * @return Uuid
      */
     public function getUuid()
     {

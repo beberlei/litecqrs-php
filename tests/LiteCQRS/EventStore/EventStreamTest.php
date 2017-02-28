@@ -2,72 +2,74 @@
 
 namespace LiteCQRS\EventStore;
 
+use PHPUnit\Framework\TestCase;
 use Rhumsaa\Uuid\Uuid;
 
-class EventStreamTest extends \PHPUnit_Framework_TestCase
+class EventStreamTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function it_requires_uuid()
-    {
-        $uuid = Uuid::uuid4();
-        $stream = new EventStream('stdClass', $uuid);
 
-        $this->assertSame($uuid, $stream->getUuid());
-    }
+	/**
+	 * @test
+	 */
+	public function it_requires_uuid()
+	{
+		$uuid   = Uuid::uuid4();
+		$stream = new EventStream('stdClass', $uuid);
 
-    /**
-     * @test
-     */
-    public function it_allows_adding_events()
-    {
-        $event = \Phake::mock('LiteCQRS\DomainEvent');
+		$this->assertSame($uuid, $stream->getUuid());
+	}
 
-        $uuid = Uuid::uuid4();
-        $stream = new EventStream('stdClass', $uuid);
-        $stream->addEvent($event);
+	/**
+	 * @test
+	 */
+	public function it_allows_adding_events()
+	{
+		$event = \Phake::mock('LiteCQRS\DomainEvent');
 
-        $actualEvents = iterator_to_array($stream);
+		$uuid   = Uuid::uuid4();
+		$stream = new EventStream('stdClass', $uuid);
+		$stream->addEvent($event);
 
-        $this->assertSame($event, $actualEvents[0]);
-    }
+		$actualEvents = iterator_to_array($stream);
 
-    /**
-     * @test
-     */
-    public function it_keeps_new_events_seperate_from_known_events()
-    {
-        $oldEvent = \Phake::mock('LiteCQRS\DomainEvent');
-        $newEvent = \Phake::mock('LiteCQRS\DomainEvent');
+		$this->assertSame($event, $actualEvents[0]);
+	}
 
-        $uuid = Uuid::uuid4();
-        $stream = new EventStream('stdClass', $uuid, array($oldEvent));
-        $stream->addEvent($newEvent);
+	/**
+	 * @test
+	 */
+	public function it_keeps_new_events_seperate_from_known_events()
+	{
+		$oldEvent = \Phake::mock('LiteCQRS\DomainEvent');
+		$newEvent = \Phake::mock('LiteCQRS\DomainEvent');
 
-        $actualEvents = iterator_to_array($stream);
+		$uuid   = Uuid::uuid4();
+		$stream = new EventStream('stdClass', $uuid, [ $oldEvent ]);
+		$stream->addEvent($newEvent);
 
-        $this->assertSame($oldEvent, $actualEvents[0]);
-        $this->assertSame($newEvent, $actualEvents[1]);
+		$actualEvents = iterator_to_array($stream);
 
-        $actualNewEvents = $stream->newEvents();
+		$this->assertSame($oldEvent, $actualEvents[0]);
+		$this->assertSame($newEvent, $actualEvents[1]);
 
-        $this->assertEquals(1, count($actualNewEvents));
-    }
+		$actualNewEvents = $stream->newEvents();
 
-    /**
-     * @test
-     */
-    public function it_can_mark_new_events_as_processed()
-    {
-        $newEvent = \Phake::mock('LiteCQRS\DomainEvent');
+		$this->assertEquals(1, count($actualNewEvents));
+	}
 
-        $uuid = Uuid::uuid4();
-        $stream = new EventStream('stdClass', $uuid, array());
-        $stream->addEvent($newEvent);
+	/**
+	 * @test
+	 */
+	public function it_can_mark_new_events_as_processed()
+	{
+		$newEvent = \Phake::mock('LiteCQRS\DomainEvent');
 
-        $stream->markNewEventsProcessed();
+		$uuid   = Uuid::uuid4();
+		$stream = new EventStream('stdClass', $uuid, []);
+		$stream->addEvent($newEvent);
 
-        $this->assertEquals(0, count($stream->newEvents()));
-    }
+		$stream->markNewEventsProcessed();
+
+		$this->assertEquals(0, count($stream->newEvents()));
+	}
 }

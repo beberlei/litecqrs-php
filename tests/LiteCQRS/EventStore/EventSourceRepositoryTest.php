@@ -3,135 +3,113 @@
 namespace LiteCQRS\EventStore;
 
 use LiteCQRS\AggregateRootNotFoundException;
-use LiteCQRS\AggregateRoot;
-use LiteCQRS\DefaultDomainEvent;
-
+use PHPUnit\Framework\TestCase;
 use Rhumsaa\Uuid\Uuid;
 
-class EventSourceRepositoryTest extends \PHPUnit_Framework_TestCase
+class EventSourceRepositoryTest extends TestCase
 {
-    private $eventBus;
 
-    public function setUp()
-    {
-        $this->eventBus = \Phake::mock('LiteCQRS\Eventing\EventMessageBus');
-    }
+	private $eventBus;
 
-    /**
-     * @test
-     */
-    public function it_returns_aggregate_root_loaded_from_event_stream()
-    {
-        $uuid = Uuid::uuid4();
-        $eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, array(new TestEvent()));
+	public function setUp()
+	{
+		$this->eventBus = \Phake::mock('LiteCQRS\Eventing\EventMessageBus');
+	}
 
-        $eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
-        $repository = new EventSourceRepository($eventStore, $this->eventBus);
+	/**
+	 * @test
+	 */
+	public function it_returns_aggregate_root_loaded_from_event_stream()
+	{
+		$uuid        = Uuid::uuid4();
+		$eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, [ new TestEvent() ]);
 
-        $entity = $repository->find('LiteCQRS\EventStore\EventSourcedAggregate', $uuid);
+		$eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
+		$repository = new EventSourceRepository($eventStore, $this->eventBus);
 
-        $this->assertTrue($entity->eventApplied);
-        $this->assertSame($uuid, $entity->getId());
-    }
+		$entity = $repository->find('LiteCQRS\EventStore\EventSourcedAggregate', $uuid);
 
-    /**
-     * @test
-     */
-    public function it_throws_not_found_exception_when_classnames_missmatch()
-    {
-        $uuid = Uuid::uuid4();
-        $eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, array(new TestEvent()));
+		self::assertTrue($entity->eventApplied);
+		self::assertSame($uuid, $entity->getId());
+	}
 
-        $eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
-        $repository = new EventSourceRepository($eventStore, $this->eventBus);
+	/**
+	 * @test
+	 */
+	public function it_throws_not_found_exception_when_classnames_missmatch()
+	{
+		$uuid        = Uuid::uuid4();
+		$eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, [ new TestEvent() ]);
 
-        $this->setExpectedException('LiteCQRS\AggregateRootNotFoundException');
+		$eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
+		$repository = new EventSourceRepository($eventStore, $this->eventBus);
 
-        $entity = $repository->find('stdClass', $uuid);
-    }
+		self::expectException('LiteCQRS\AggregateRootNotFoundException');
 
-    /**
-     * @test
-     */
-    public function it_throws_not_found_exception_when_no_eventstream_found()
-    {
-        $uuid = Uuid::uuid4();
+		$entity = $repository->find('stdClass', $uuid);
+	}
 
-        $eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
-        \Phake::when($eventStore)->find($uuid)->thenThrow(new AggregateRootNotFoundException());
+	/**
+	 * @test
+	 */
+	public function it_throws_not_found_exception_when_no_eventstream_found()
+	{
+		$uuid = Uuid::uuid4();
 
-        $repository = new EventSourceRepository($eventStore, $this->eventBus);
+		$eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
+		\Phake::when($eventStore)->find($uuid)->thenThrow(new AggregateRootNotFoundException());
 
-        $this->setExpectedException('LiteCQRS\AggregateRootNotFoundException');
+		$repository = new EventSourceRepository($eventStore, $this->eventBus);
 
-        $repository->find('stdClass', $uuid);
-    }
+		self::expectException('LiteCQRS\AggregateRootNotFoundException');
 
-    protected function mockEventStoreReturning($uuid, $eventStream)
-    {
-        $eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
+		$repository->find('stdClass', $uuid);
+	}
 
-        \Phake::when($eventStore)->find($uuid)->thenReturn($eventStream);
+	protected function mockEventStoreReturning($uuid, $eventStream)
+	{
+		$eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
 
-        return $eventStore;
-    }
+		\Phake::when($eventStore)->find($uuid)->thenReturn($eventStream);
 
-    /**
-     * @test
-     */
-    public function it_commits_eventstream_when_adding_aggregate()
-    {
-        $id     = Uuid::uuid4();
-        $object = new EventSourcedAggregate($id);
-        $event  = new TestEvent();
-        $tx     = new Transaction(new EventStream('foo', $object->getId()), array($event));
+		return $eventStore;
+	}
 
-        $eventStore = \Phake::mock('LiteCQRS\EventStore\EventStore');
-        $repository = new EventSourceRepository($eventStore, $this->eventBus);
+	/**
+	 * @test
+	 */
+	public function it_commits_eventstream_when_adding_aggregate()
+	{
+		$id     = Uuid::uuid4();
+		$object = new EventSourcedAggregate($id);
+		$event  = new TestEvent();
+		$tx     = new Transaction(new EventStream('foo', $object->getId()), [ $event ]);
 
-        \Phake::when($eventStore)
-            ->commit($this->isInstanceOf('LiteCQRS\EventStore\EventStream'))
-            ->thenReturn($tx);
+		$eventStore = self::getMockBuilder('LiteCQRS\EventStore\EventStore')->setMethods([ 'commit', 'find' ])->getMock();
+		$repository = new EventSourceRepository($eventStore, $this->eventBus);
 
-        $repository->save($object);
+		$eventStore->expects(self::once())->method('commit')->with(self::isInstanceOf(EventStream::class))->willReturn($tx);
 
-        \Phake::verify($this->eventBus)->publish($event);
+		$repository->save($object);
 
-        $this->assertEquals($id, $event->getAggregateId());
-    }
+		\Phake::verify($this->eventBus)->publish($event);
 
-    /**
-     * @test
-     */
-    public function it_throws_concurrency_exception_when_versions_missmatch()
-    {
-        $uuid = Uuid::uuid4();
-        $eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid);
+		$this->assertEquals($id, $event->getAggregateId());
+	}
 
-        $eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
+	/**
+	 * @test
+	 */
+	public function it_throws_concurrency_exception_when_versions_missmatch()
+	{
+		$uuid        = Uuid::uuid4();
+		$eventStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid);
 
-        $this->setExpectedException('LiteCQRS\EventStore\ConcurrencyException');
+		$eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
 
-        $repository = new EventSourceRepository($eventStore, $this->eventBus);
-        $repository->find('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, 1337);
-    }
-}
+		self::expectException('LiteCQRS\EventStore\ConcurrencyException');
 
-class EventSourcedAggregate extends AggregateRoot
-{
-    public $eventApplied = false;
-
-    public function __construct(Uuid $uuid)
-    {
-        $this->setId($uuid);
-    }
-
-    protected function applyTest(TestEvent $event)
-    {
-        $this->eventApplied = true;
-    }
-}
-
-class TestEvent extends DefaultDomainEvent
-{
+		$repository = new EventSourceRepository($eventStore, $this->eventBus);
+		$repository->find('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, 1337);
+	}
 }

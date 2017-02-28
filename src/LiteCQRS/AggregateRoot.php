@@ -6,13 +6,12 @@ use LiteCQRS\Eventing\EventName;
 use LiteCQRS\EventStore\EventStream;
 use LiteCQRS\Exception\RuntimeException;
 use LiteCQRS\Exception\BadMethodCallException;
-
 use Rhumsaa\Uuid\Uuid;
 
 abstract class AggregateRoot
 {
     /**
-     * @var Rhumsaa\Uuid\Uuid
+	 * @var Uuid
      */
     private $id;
 
@@ -27,7 +26,7 @@ abstract class AggregateRoot
     }
 
     /**
-     * @return Rhumsaa\Uuid\Uuid
+     * @return Uuid
      */
     final public function getId()
     {

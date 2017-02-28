@@ -2,39 +2,43 @@
 
 namespace LiteCQRS\EventStore\OptimisticLocking;
 
-use LiteCQRS\EventStore\EventStoreContractTestCase;
 use LiteCQRS\EventStore\EventStore;
+use LiteCQRS\EventStore\EventStoreContractTestCase;
 use LiteCQRS\EventStore\EventStream;
 use LiteCQRS\Serializer\NoopSerializer;
 
 class OptimimsticLockingEventStoreTest extends EventStoreContractTestCase
 {
-    protected $storage;
-    protected $serializer;
 
-    protected function givenAnEventStore()
-    {
-        $this->storage = new MemoryStorage();
-        $this->serializer = new NoopSerializer();
+	/** @var MemoryStorage */
+	protected $storage;
 
-        return new OptimisticLockingEventStore(
-            $this->storage, $this->serializer
-        );
-    }
+	/** @var NoopSerializer */
+	protected $serializer;
 
-    protected function givenEventStoreContains(EventStore $eventStore, EventStream $eventStream)
-    {
-        $this->storage->store(
-            (string)$eventStream->getUuid(),
-            $eventStream->getClassName(),
-            array_map(array($this->serializer, 'toArray'), iterator_to_array($eventStream)),
-            $eventStream->getVersion(),
-            null
-        );
-    }
+	protected function givenAnEventStore()
+	{
+		$this->storage    = new MemoryStorage();
+		$this->serializer = new NoopSerializer();
 
-    protected function thenStorageContains(EventStream $stream)
-    {
-        $this->assertTrue($this->storage->contains((string)$stream->getUuid()));
-    }
+		return new OptimisticLockingEventStore(
+			$this->storage, $this->serializer
+		);
+	}
+
+	protected function givenEventStoreContains(EventStore $eventStore, EventStream $eventStream)
+	{
+		$this->storage->store(
+			(string) $eventStream->getUuid(),
+			$eventStream->getClassName(),
+			array_map([ $this->serializer, 'toArray' ], iterator_to_array($eventStream)),
+			$eventStream->getVersion(),
+			null
+		);
+	}
+
+	protected function thenStorageContains(EventStream $stream)
+	{
+		self::assertTrue($this->storage->contains((string) $stream->getUuid()));
+	}
 }

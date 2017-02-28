@@ -2,92 +2,71 @@
 
 namespace LiteCQRS;
 
-use Rhumsaa\Uuid\Uuid;
 use LiteCQRS\EventStore\EventStream;
+use PHPUnit\Framework\TestCase;
+use Rhumsaa\Uuid\Uuid;
 
-class AggregateRootTest extends \PHPUnit_Framework_TestCase
+class AggregateRootTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function it_manages_id()
-    {
-        $uuid = Uuid::uuid4();
-        $sample = new SampleAggregateRoot($uuid);
 
-        $this->assertSame($uuid, $sample->getId());
-    }
+	/**
+	 * @test
+	 */
+	public function it_manages_id()
+	{
+		$uuid   = Uuid::uuid4();
+		$sample = new SampleAggregateRoot($uuid);
 
-    /**
-     * @test
-     */
-    public function it_calls_apply_methods_for_events()
-    {
-        $uuid = Uuid::uuid4();
-        $sample = new SampleAggregateRoot($uuid);
+		self::assertSame($uuid, $sample->getId());
+	}
 
-        $this->assertTrue($sample->loadedFromEvents);
-        $this->assertEquals('bar', $sample->foo);
-    }
+	/**
+	 * @test
+	 */
+	public function it_calls_apply_methods_for_events()
+	{
+		$uuid   = Uuid::uuid4();
+		$sample = new SampleAggregateRoot($uuid);
 
-    /**
-     * @test
-     */
-    public function it_hydrates_from_eventstream()
-    {
-        $uuid = Uuid::uuid4();
+		self::assertTrue($sample->loadedFromEvents);
+		self::assertEquals('bar', $sample->foo);
+	}
 
-        $reflClass = new \ReflectionClass('LiteCQRS\SampleAggregateRoot');
-        $sample = $reflClass->newInstanceWithoutConstructor();
+	/**
+	 * @test
+	 */
+	public function it_hydrates_from_eventstream()
+	{
+		$uuid = Uuid::uuid4();
 
-        $events = array(new SampleCreated(array('foo' => 'bar')));
+		$reflClass = new \ReflectionClass('LiteCQRS\SampleAggregateRoot');
+		$sample    = $reflClass->newInstanceWithoutConstructor();
 
-        $eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, $events);
+		$events = [ new SampleCreated([ 'foo' => 'bar' ]) ];
 
-        $sample->loadFromEventStream($eventStream);
+		$eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, $events);
 
-        $this->assertSame(array(), $sample->pullDomainEvents());
-        $this->assertSame($uuid, $sample->getId());
-        $this->assertTrue($sample->loadedFromEvents);
-        $this->assertEquals('bar', $sample->foo);
-    }
+		$sample->loadFromEventStream($eventStream);
 
-    /**
-     * @test
-     */
-    public function it_cannot_rehydrate_with_eventstream()
-    {
-        $uuid = Uuid::uuid4();
-        $sample = new SampleAggregateRoot($uuid);
+		self::assertSame([], $sample->pullDomainEvents());
+		self::assertSame($uuid, $sample->getId());
+		self::assertTrue($sample->loadedFromEvents);
+		self::assertEquals('bar', $sample->foo);
+	}
 
-        $eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, array(new SampleCreated(array('foo' => 'bar'))));
+	/**
+	 * @test
+	 */
+	public function it_cannot_rehydrate_with_eventstream()
+	{
+		$uuid   = Uuid::uuid4();
+		$sample = new SampleAggregateRoot($uuid);
 
-        $this->setExpectedException('LiteCQRS\Exception\RuntimeException', 'AggregateRoot was already created from event stream and cannot be hydrated again.');
+		$eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, [ new SampleCreated([ 'foo' => 'bar' ]) ]);
 
-        $sample->loadFromEventStream($eventStream);
-    }
-}
+		self::expectException('LiteCQRS\Exception\RuntimeException');
+		self::expectExceptionMessage('AggregateRoot was already created from event stream and cannot be hydrated again.');
 
-class SampleAggregateRoot extends AggregateRoot
-{
-    public $loadedFromEvents = false;
-    public $foo;
-
-    public function __construct(Uuid $uuid)
-    {
-        $this->setId($uuid);
-
-        $this->apply(new SampleCreated(array('foo' => 'bar')));
-    }
-
-    public function applySampleCreated(SampleCreated $event)
-    {
-        $this->foo = $event->foo;
-        $this->loadedFromEvents = true;
-    }
-}
-
-class SampleCreated extends DefaultDomainEvent
-{
-    public $foo;
+		$sample->loadFromEventStream($eventStream);
+	}
 }

@@ -2,163 +2,161 @@
 
 namespace LiteCQRS\EventStore;
 
+use PHPUnit\Framework\TestCase;
 use Rhumsaa\Uuid\Uuid;
 
-abstract class EventStoreContractTestCase extends \PHPUnit_Framework_TestCase
+abstract class EventStoreContractTestCase extends TestCase
 {
-    /**
-     * @test
-     */
-    public function it_throws_not_found_exception_when_no_stream_exists()
-    {
-        $uuid = Uuid::uuid4();
 
-        $eventStore = $this->givenAnEventStore();
-        $this->expectEventStreamNotFoundException();
-        $this->whenFindingStreamWith($eventStore, $uuid);
-    }
+	/**
+	 * @test
+	 */
+	public function it_throws_not_found_exception_when_no_stream_exists()
+	{
+		$uuid = Uuid::uuid4();
 
-    /**
-     * @test
-     */
-    public function it_constructs_event_stream_when_data_exists()
-    {
-        $uuid = Uuid::uuid4();
+		$eventStore = $this->givenAnEventStore();
+		$this->expectEventStreamNotFoundException();
+		$this->whenFindingStreamWith($eventStore, $uuid);
+	}
 
-        $fixtureStream = $this->givenFixtureStreamWith($uuid);
+	/**
+	 * @test
+	 */
+	public function it_constructs_event_stream_when_data_exists()
+	{
+		$uuid = Uuid::uuid4();
 
-        $eventStore = $this->givenAnEventStore();
-        $this->givenEventStoreContains($eventStore, $fixtureStream);
-        $eventStream = $this->whenFindingStreamWith($eventStore, $uuid);
+		$fixtureStream = $this->givenFixtureStreamWith($uuid);
 
-        $this->thenStoredEventStreamEqualsFixtureStream($eventStream, $fixtureStream);
-    }
+		$eventStore = $this->givenAnEventStore();
+		$this->givenEventStoreContains($eventStore, $fixtureStream);
+		$eventStream = $this->whenFindingStreamWith($eventStore, $uuid);
 
-    /**
-     * @test
-     */
-    public function it_stores_events_when_commiting_event_stream()
-    {
-        $uuid = Uuid::uuid4();
-        $fixtureStream = $this->givenFixtureStreamWith($uuid);
-        $fixtureStream->addEvent(new EventStoreTestEvent());
+		$this->thenStoredEventStreamEqualsFixtureStream($eventStream, $fixtureStream);
+	}
 
-        $eventStore = $this->givenAnEventStore();
-        $transaction = $this->whenCommittingEventStream($eventStore, $fixtureStream);
+	/**
+	 * @test
+	 */
+	public function it_stores_events_when_commiting_event_stream()
+	{
+		$uuid          = Uuid::uuid4();
+		$fixtureStream = $this->givenFixtureStreamWith($uuid);
+		$fixtureStream->addEvent(new EventStoreTestEvent());
 
-        $this->thenReturnedTransactionContains($transaction, $fixtureStream);
-        $this->thenStorageContains($fixtureStream);
-    }
+		$eventStore  = $this->givenAnEventStore();
+		$transaction = $this->whenCommittingEventStream($eventStore, $fixtureStream);
 
-    /**
-     * @test
-     */
-    public function it_ignores_empty_event_streams()
-    {
-        $uuid = Uuid::uuid4();
-        $fixtureStream = $this->givenFixtureStreamWith($uuid);
+		$this->thenReturnedTransactionContains($transaction, $fixtureStream);
+		$this->thenStorageContains($fixtureStream);
+	}
 
-        $eventStore = $this->givenAnEventStore();
-        $transaction = $this->whenCommittingEventStream($eventStore, $fixtureStream);
+	/**
+	 * @test
+	 */
+	public function it_ignores_empty_event_streams()
+	{
+		$uuid          = Uuid::uuid4();
+		$fixtureStream = $this->givenFixtureStreamWith($uuid);
 
-        $this->expectEventStreamNotFoundException();
-        $this->whenFindingStreamWith($eventStore, $uuid);
-    }
+		$eventStore  = $this->givenAnEventStore();
+		$transaction = $this->whenCommittingEventStream($eventStore, $fixtureStream);
 
-    /**
-     * @test
-     */
-    public function it_throws_concurrency_exception_when_committing_wrong_current_version()
-    {
-        $uuid = Uuid::uuid4();
+		$this->expectEventStreamNotFoundException();
+		$this->whenFindingStreamWith($eventStore, $uuid);
+	}
 
-        $fixtureStream = $this->givenFixtureStreamWith($uuid);
-        $fixtureStream->markNewEventsProcessed(10);
+	/**
+	 * @test
+	 */
+	public function it_throws_concurrency_exception_when_committing_wrong_current_version()
+	{
+		$uuid = Uuid::uuid4();
 
-        $commitStream = $this->givenFixtureStreamWith($uuid);
-        $commitStream->markNewEventsProcessed(20);
-        $commitStream->addEvent(new EventStoreTestEvent());
+		$fixtureStream = $this->givenFixtureStreamWith($uuid);
+		$fixtureStream->markNewEventsProcessed(10);
 
-        $eventStore = $this->givenAnEventStore();
-        $this->givenEventStoreContains($eventStore, $fixtureStream);
+		$commitStream = $this->givenFixtureStreamWith($uuid);
+		$commitStream->markNewEventsProcessed(20);
+		$commitStream->addEvent(new EventStoreTestEvent());
 
-        $this->expectConcurrencyException();
-        $this->whenCommittingEventStream($eventStore, $commitStream);
-    }
+		$eventStore = $this->givenAnEventStore();
+		$this->givenEventStoreContains($eventStore, $fixtureStream);
 
-    /**
-     * @test
-     */
-    public function it_manages_versions_such_that_multiple_commits_succeed()
-    {
-        $uuid = Uuid::uuid4();
+		$this->expectConcurrencyException();
+		$this->whenCommittingEventStream($eventStore, $commitStream);
+	}
 
-        $fixtureStream = $this->givenFixtureStreamWith($uuid);
-        $fixtureStream->addEvent(new EventStoreTestEvent());
+	/**
+	 * @test
+	 */
+	public function it_manages_versions_such_that_multiple_commits_succeed()
+	{
+		$uuid = Uuid::uuid4();
 
-        $eventStore = $this->givenAnEventStore();
+		$fixtureStream = $this->givenFixtureStreamWith($uuid);
+		$fixtureStream->addEvent(new EventStoreTestEvent());
 
-        $this->whenCommittingEventStream($eventStore, $fixtureStream);
+		$eventStore = $this->givenAnEventStore();
 
-        $nextEvent = new EventStoreTestEvent();
-        $fixtureStream->addEvent($nextEvent);
+		$this->whenCommittingEventStream($eventStore, $fixtureStream);
 
-        $transaction = $this->whenCommittingEventStream($eventStore, $fixtureStream);
-        $this->thenTransactionOnlyContainsNewEvents($transaction, array($nextEvent));
-    }
+		$nextEvent = new EventStoreTestEvent();
+		$fixtureStream->addEvent($nextEvent);
 
-    protected function thenTransactionOnlyContainsNewEvents(Transaction $transaction, array $newEvents)
-    {
-        $this->assertEquals($newEvents, $transaction->getCommittedEvents());
-    }
+		$transaction = $this->whenCommittingEventStream($eventStore, $fixtureStream);
+		$this->thenTransactionOnlyContainsNewEvents($transaction, [ $nextEvent ]);
+	}
 
-    protected function expectConcurrencyException()
-    {
-        $this->setExpectedException('LiteCQRS\EventStore\ConcurrencyException');
-    }
+	protected function thenTransactionOnlyContainsNewEvents(Transaction $transaction, array $newEvents)
+	{
+		self::assertEquals($newEvents, $transaction->getCommittedEvents());
+	}
 
-    protected function thenReturnedTransactionContains(Transaction $transaction, EventStream $eventStream)
-    {
-        $this->assertInstanceOf('LiteCQRS\EventStore\Transaction', $transaction);
-        $this->assertSame($eventStream, $transaction->getEventStream());
-    }
+	protected function expectConcurrencyException()
+	{
+		self::expectException('LiteCQRS\EventStore\ConcurrencyException');
+	}
 
-    abstract protected function thenStorageContains(EventStream $stream);
+	protected function thenReturnedTransactionContains(Transaction $transaction, EventStream $eventStream)
+	{
+		self::assertInstanceOf('LiteCQRS\EventStore\Transaction', $transaction);
+		self::assertSame($eventStream, $transaction->getEventStream());
+	}
 
-    abstract protected function givenAnEventStore();
+	abstract protected function thenStorageContains(EventStream $stream);
 
-    abstract protected function givenEventStoreContains(EventStore $eventStore, EventStream $eventStream);
+	abstract protected function givenAnEventStore();
 
-    protected function whenCommittingEventStream(EventStore $eventStore, EventStream $fixtureStream)
-    {
-        return $eventStore->commit($fixtureStream);
-    }
+	abstract protected function givenEventStoreContains(EventStore $eventStore, EventStream $eventStream);
 
-    protected function thenStoredEventStreamEqualsFixtureStream($eventStream, $fixtureStream)
-    {
-        $this->assertInstanceOf('LiteCQRS\EventStore\EventStream', $eventStream);
-        $this->assertEquals($fixtureStream, $eventStream);
-    }
+	protected function whenCommittingEventStream(EventStore $eventStore, EventStream $fixtureStream)
+	{
+		return $eventStore->commit($fixtureStream);
+	}
 
-    protected function expectEventStreamNotFoundException()
-    {
-        $this->setExpectedException('LiteCQRS\EventStore\EventStreamNotFoundException');
-    }
+	protected function thenStoredEventStreamEqualsFixtureStream($eventStream, $fixtureStream)
+	{
+		self::assertInstanceOf('LiteCQRS\EventStore\EventStream', $eventStream);
+		self::assertEquals($fixtureStream, $eventStream);
+	}
 
-    protected function whenFindingStreamWith(EventStore $eventStore, $uuid)
-    {
-        return $eventStore->find($uuid);
-    }
+	protected function expectEventStreamNotFoundException()
+	{
+		self::expectException('LiteCQRS\EventStore\EventStreamNotFoundException');
+	}
 
-    protected function givenFixtureStreamWith($uuid)
-    {
-        $testEvent = new EventStoreTestEvent();
-        $fixtureStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, array($testEvent), 1337);
+	protected function whenFindingStreamWith(EventStore $eventStore, $uuid)
+	{
+		return $eventStore->find($uuid);
+	}
 
-        return $fixtureStream;
-    }
-}
+	protected function givenFixtureStreamWith($uuid)
+	{
+		$testEvent     = new EventStoreTestEvent();
+		$fixtureStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, [ $testEvent ], 1337);
 
-class EventStoreTestEvent extends \LiteCQRS\DefaultDomainEvent
-{
+		return $fixtureStream;
+	}
 }

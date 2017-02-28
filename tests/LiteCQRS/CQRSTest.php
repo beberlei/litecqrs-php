@@ -1,155 +1,104 @@
 <?php
+
 namespace LiteCQRS;
 
-use LiteCQRS\Eventing\SynchronousInProcessEventBus;
-use LiteCQRS\Eventing\MemoryEventHandlerLocator;
-use LiteCQRS\Commanding\SequentialCommandBus;
 use LiteCQRS\Commanding\MemoryCommandHandlerLocator;
-
-use DateTime;
-
+use LiteCQRS\Commanding\SequentialCommandBus;
+use LiteCQRS\Eventing\MemoryEventHandlerLocator;
+use LiteCQRS\Eventing\SynchronousInProcessEventBus;
+use PHPUnit\Framework\TestCase;
 use Rhumsaa\Uuid\Uuid;
 
-class CQRSTest extends \PHPUnit_Framework_TestCase
+class CQRSTest extends TestCase
 {
-    public function testAggregateRootApplyEvents()
-    {
-        $user = new User(Uuid::uuid4());
-        $user->changeEmail("foo@example.com");
 
-        $events = $user->pullDomainEvents();
-        $this->assertEquals(1, count($events));
-        $this->assertEquals("foo@example.com", end($events)->email);
-    }
+	public function testAggregateRootApplyEvents()
+	{
+		$user = new User(Uuid::uuid4());
+		$user->changeEmail("foo@example.com");
 
-    public function testInvalidEventThrowsException()
-    {
-        $this->setExpectedException("BadMethodCallException", "There is no event named 'applyInvalid' that can be applied to 'LiteCQRS\User'");
+		$events = $user->pullDomainEvents();
+		$this->assertEquals(1, count($events));
+		$this->assertEquals("foo@example.com", end($events)->email);
+	}
 
-        $user = new User(Uuid::uuid4());
-        $user->changeInvalidEventName();
-    }
+	public function testInvalidEventThrowsException()
+	{
+		$this->expectException("BadMethodCallException");
+		$this->expectExceptionMessage("There is no event named 'applyInvalid' that can be applied to 'LiteCQRS\User'");
 
-    public function testDirectCommandBus()
-    {
-        $command     = new ChangeEmailCommand('kontakt@beberlei.de');
+		$user = new User(Uuid::uuid4());
+		$user->changeInvalidEventName();
+	}
 
-        $userService = $this->getMock('UserService', array('changeEmail'));
-        $userService->expects($this->once())->method('changeEmail')->with($this->equalTo($command));
+	public function testDirectCommandBus()
+	{
+		$command = new ChangeEmailCommand('kontakt@beberlei.de');
 
-        $bus = $this->newSequentialCommandBusWith('LiteCQRS\ChangeEmailCommand', $userService);
+		$userService = self::getMockBuilder('UserService')->setMethods([ 'changeEmail' ])->getMock();
+		$userService->expects($this->once())->method('changeEmail')->with($this->equalTo($command));
 
-        $bus->handle($command);
-    }
+		$bus = $this->newSequentialCommandBusWith('LiteCQRS\ChangeEmailCommand', $userService);
 
-    private function newSequentialCommandBusWith($commandType, $service)
-    {
-        $locator = new MemoryCommandHandlerLocator();
-        $locator->register($commandType, $service);
+		$bus->handle($command);
+	}
 
-        return new SequentialCommandBus($locator);
-    }
+	private function newSequentialCommandBusWith($commandType, $service)
+	{
+		$locator = new MemoryCommandHandlerLocator();
+		$locator->register($commandType, $service);
 
-    public function testWhenSuccessfulCommandThenTriggersEventStoreCommit()
-    {
-        $userService = $this->getMock('UserService', array('changeEmail'));
-        $bus = $this->newSequentialCommandBusWith('LiteCQRS\ChangeEmailCommand', $userService);
+		return new SequentialCommandBus($locator);
+	}
 
-        $bus->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
-    }
+	public function testWhenSuccessfulCommandThenTriggersEventStoreCommit()
+	{
+		$userService = self::getMockBuilder('UserService')->setMethods([ 'changeEmail' ])->getMock();
+		$bus         = $this->newSequentialCommandBusWith('LiteCQRS\ChangeEmailCommand', $userService);
 
-    public function testHandleEventOnInMemoryEventMessageBus()
-    {
-        $event = new FooEvent(array());
-        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
-        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event));
+		$bus->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
+		self::assertTrue(true);
+	}
 
-        $bus = $this->createInMemoryEventBusWith($eventHandler);
-        $bus->publish($event);
-    }
+	public function testHandleEventOnInMemoryEventMessageBus()
+	{
+		$event        = new FooEvent([]);
+		$eventHandler = self::getMockBuilder('EventHandler')->setMethods([ 'onFoo' ])->getMock();
+		$eventHandler->expects(self::once())->method('onFoo')->with(self::equalTo($event));
 
-    public function testDispatchEventsInOrder()
-    {
-        $event1 = new FooEvent(array());
-        $event2 = new FooEvent(array());
+		$bus = $this->createInMemoryEventBusWith($eventHandler);
+		$bus->publish($event);
+	}
 
-        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
-        $eventHandler->expects($this->at(0))->method('onFoo')->with($this->equalTo($event1));
-        $eventHandler->expects($this->at(1))->method('onFoo')->with($this->equalTo($event2));
+	public function testDispatchEventsInOrder()
+	{
+		$event1 = new FooEvent([]);
+		$event2 = new FooEvent([]);
 
-        $bus = $this->createInMemoryEventBusWith($eventHandler);
-        $bus->publish($event1);
-        $bus->publish($event2);
-    }
+		$eventHandler = self::getMockBuilder('EventHandler')->setMethods([ 'onFoo' ])->getMock();
+		$eventHandler->expects(self::at(0))->method('onFoo')->with(self::equalTo($event1));
+		$eventHandler->expects(self::at(1))->method('onFoo')->with(self::equalTo($event2));
 
-    public function testHandleEventOnInMemoryEventMessageBusThrowsExceptionIsSwallowed()
-    {
-        $event = new FooEvent(array());
-        $eventHandler = $this->getMock('EventHandler', array('onFoo'));
-        $eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event))->will($this->throwException(new \Exception));
+		$bus = $this->createInMemoryEventBusWith($eventHandler);
+		$bus->publish($event1);
+		$bus->publish($event2);
+	}
 
-        $bus = $this->createInMemoryEventBusWith($eventHandler);
-        $bus->publish($event);
-    }
+	public function testHandleEventOnInMemoryEventMessageBusThrowsExceptionIsSwallowed()
+	{
+		$event        = new FooEvent([]);
+		$eventHandler = self::getMockBuilder('EventHandler')->setMethods([ 'onFoo' ])->getMock();
+		$eventHandler->expects($this->once())->method('onFoo')->with($this->equalTo($event))->will($this->throwException(new \Exception));
 
-    private function createInMemoryEventBusWith($eventHandler)
-    {
-        $locator = new MemoryEventHandlerLocator();
-        $locator->register($eventHandler);
+		$bus = $this->createInMemoryEventBusWith($eventHandler);
+		$bus->publish($event);
+	}
 
-        return new SynchronousInProcessEventBus($locator);
-    }
-}
+	private function createInMemoryEventBusWith($eventHandler)
+	{
+		$locator = new MemoryEventHandlerLocator();
+		$locator->register($eventHandler);
 
-class User extends AggregateRoot
-{
-    private $email;
-
-    public function __construct(Uuid $uuid)
-    {
-        $this->setId($uuid);
-    }
-
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    public function changeEmail($email)
-    {
-        $this->apply(new ChangeEmailEvent(array("email" => $email)));
-    }
-
-    protected function applyChangeEmail($event)
-    {
-        $this->email = $event->email;
-    }
-
-    public function changeInvalidEventName()
-    {
-        $this->apply(new InvalidEvent(array()));
-    }
-}
-
-class ChangeEmailCommand implements Command
-{
-    public $email;
-
-    public function __construct($email)
-    {
-        $this->email = $email;
-    }
-}
-
-class InvalidEvent extends DefaultDomainEvent
-{
-}
-
-class ChangeEmailEvent extends DefaultDomainEvent
-{
-    public $email;
-}
-
-class FooEvent extends DefaultDomainEvent
-{
+		return new SynchronousInProcessEventBus($locator);
+	}
 }

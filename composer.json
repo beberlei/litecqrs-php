@@ -1,20 +1,25 @@
 {
-    "name": "beberlei/lite-cqrs",
-    "description": "Simple Command-Query-Responsibility-Segregation library.",
+    "name": "LidskaSila/php-cqrs-event-sourcing",
+    "description": "Simple [C]ommand [Q]uery [R]esponsibility [S]egregation and [E]vent [S]ourcing library.",
     "license": "MIT",
     "autoload": {
-        "psr-0": {"LiteCQRS": "src/"}
+        "psr-4": {"LiteCQRS\\": "src/"}
     },
-    "require": {
-        "rhumsaa/uuid": "@stable",
-        "psr/log": "@stable",
-        "php": ">=5.4"
-    },
-    "require-dev": {
-        "phake/phake":"@stable",
+        "require": {
         "doctrine/common": ">=2.0,<2.5",
+        "phake/phake":"@stable",
+        "php": ">=5.4",
+        "psr/log": "@stable",
+        "rhumsaa/uuid": "@stable",
         "symfony/framework-bundle": ">=2.0,<2.2",
         "symfony/console": ">=2.0,<2.2",
-        "swiftmailer/swiftmailer": "4.*"
+        "swiftmailer/swiftmailer": "4.*",
+        "phpunit/phpunit": "^6.0"
+    },
+    "autoload-dev" : {
+        "classmap" : [
+            "tests/",
+            "src/"
+        ]
     }
 }
