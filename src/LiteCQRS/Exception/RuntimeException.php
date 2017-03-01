@@ -6,4 +6,5 @@ use LiteCQRS\LiteCQRSException;
 
 class RuntimeException extends \RuntimeException implements LiteCQRSException
 {
+
 }

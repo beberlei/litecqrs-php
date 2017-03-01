@@ -2,53 +2,55 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
-use LiteCQRS\Eventing\EventHandlerLocator;
-use LiteCQRS\Commanding\CommandHandlerLocator;
-use LiteCQRS\Eventing\EventName;
 use LiteCQRS\Command;
-
+use LiteCQRS\Commanding\CommandHandlerLocator;
+use LiteCQRS\Eventing\EventHandlerLocator;
+use LiteCQRS\Eventing\EventName;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ContainerHandlerLocator implements EventHandlerLocator, CommandHandlerLocator
 {
-    private $container;
-    private $eventHandlers = array();
-    private $commandHandlers = array();
 
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
+	private $container;
 
-    public function getHandlersFor(EventName $eventName)
-    {
-        $eventName = strtolower($eventName);
+	private $eventHandlers   = [];
 
-        if (!isset($this->eventHandlers[$eventName])) {
-            return array();
-        }
+	private $commandHandlers = [];
 
-        $eventHandlers = array();
-        foreach ($this->eventHandlers[$eventName] as $id) {
-            $eventHandlers[] = $this->container->get($id);
-        }
+	public function __construct(ContainerInterface $container)
+	{
+		$this->container = $container;
+	}
 
-        return $eventHandlers;
-    }
+	public function getHandlersFor(EventName $eventName)
+	{
+		$eventName = strtolower($eventName);
 
-    public function getCommandHandler(Command $command)
-    {
-        return $this->container->get($this->commandHandlers[get_class($command)]);
-    }
+		if (!isset($this->eventHandlers[$eventName])) {
+			return [];
+		}
 
-    public function registerEventHandlers($eventHandlers)
-    {
-        $this->eventHandlers = $eventHandlers;
-    }
+		$eventHandlers = [];
+		foreach ($this->eventHandlers[$eventName] as $id) {
+			$eventHandlers[] = $this->container->get($id);
+		}
 
-    public function registerCommandHandlers($commandHandlers)
-    {
-        $this->commandHandlers = $commandHandlers;
-    }
+		return $eventHandlers;
+	}
+
+	public function getCommandHandler(Command $command)
+	{
+		return $this->container->get($this->commandHandlers[get_class($command)]);
+	}
+
+	public function registerEventHandlers($eventHandlers)
+	{
+		$this->eventHandlers = $eventHandlers;
+	}
+
+	public function registerCommandHandlers($commandHandlers)
+	{
+		$this->commandHandlers = $commandHandlers;
+	}
 }
 

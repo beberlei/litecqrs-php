@@ -4,4 +4,5 @@ namespace LiteCQRS;
 
 interface LiteCQRSException
 {
+
 }

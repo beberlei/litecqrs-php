@@ -2,8 +2,6 @@
 
 namespace LiteCQRS\Eventing;
 
-use LiteCQRS\Eventing\EventName;
-
 /**
  * In Memory Event Handler Locator
  *
@@ -15,33 +13,34 @@ use LiteCQRS\Eventing\EventName;
  */
 class MemoryEventHandlerLocator implements EventHandlerLocator
 {
-    private $handlers = array();
 
-    public function getHandlersFor(EventName $eventName)
-    {
-        $eventName = strtolower($eventName);
+	private $handlers = [];
 
-        if (!isset($this->handlers[$eventName])) {
-            return array();
-        }
+	public function getHandlersFor(EventName $eventName)
+	{
+		$eventName = strtolower($eventName);
 
-        return $this->handlers[$eventName];
-    }
+		if (!isset($this->handlers[$eventName])) {
+			return [];
+		}
 
-    public function register($handler)
-    {
-        foreach (get_class_methods($handler) as $methodName) {
-            if (strpos($methodName, "on") !== 0) {
-                continue;
-            }
+		return $this->handlers[$eventName];
+	}
 
-            $eventName = strtolower(substr($methodName, 2));
+	public function register($handler)
+	{
+		foreach (get_class_methods($handler) as $methodName) {
+			if (strpos($methodName, "on") !== 0) {
+				continue;
+			}
 
-            if (!isset($this->handlers[$eventName])) {
-                $this->handlers[$eventName] = array();
-            }
+			$eventName = strtolower(substr($methodName, 2));
 
-            $this->handlers[$eventName][] = $handler;
-        }
-    }
+			if (!isset($this->handlers[$eventName])) {
+				$this->handlers[$eventName] = [];
+			}
+
+			$this->handlers[$eventName][] = $handler;
+		}
+	}
 }

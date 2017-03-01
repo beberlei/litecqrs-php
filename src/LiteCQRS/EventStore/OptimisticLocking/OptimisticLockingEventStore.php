@@ -2,80 +2,83 @@
 
 namespace LiteCQRS\EventStore\OptimisticLocking;
 
-use Ramsey\Uuid\Uuid;
-use LiteCQRS\EventStore\EventStream;
-use LiteCQRS\EventStore\Transaction;
-use LiteCQRS\EventStore\EventStreamNotFoundException;
 use LiteCQRS\EventStore\EventStore;
+use LiteCQRS\EventStore\EventStream;
+use LiteCQRS\EventStore\EventStreamNotFoundException;
+use LiteCQRS\EventStore\Transaction;
 use LiteCQRS\Serializer\Serializer;
+use Ramsey\Uuid\Uuid;
 
 class OptimisticLockingEventStore implements EventStore
 {
-    private $storage;
-    private $serializer;
-    private $eventsData = array();
 
-    public function __construct(Storage $storage, Serializer $serializer)
-    {
-        $this->storage = $storage;
-        $this->serializer = $serializer;
-    }
+	private $storage;
 
-    /**
-     * @throws EventStreamNotFoundException
-     * @return EventStream
-     */
-    public function find(Uuid $uuid)
-    {
-        $streamData = $this->storage->load((string)$uuid);
+	private $serializer;
 
-        if ($streamData === null) {
-            throw new EventStreamNotFoundException();
-        }
+	private $eventsData = [];
 
-        $events = array();
+	public function __construct(Storage $storage, Serializer $serializer)
+	{
+		$this->storage    = $storage;
+		$this->serializer = $serializer;
+	}
 
-        foreach ($streamData->getEventData() as $eventData) {
-            $events[] = $this->serializer->fromArray($eventData);
-        }
+	/**
+	 * @throws EventStreamNotFoundException
+	 * @return EventStream
+	 */
+	public function find(Uuid $uuid)
+	{
+		$streamData = $this->storage->load((string) $uuid);
 
-        return new EventStream(
-            $streamData->getClassName(),
-            Uuid::fromString($streamData->getId()),
-            $events,
-            $streamData->getVersion()
-        );
-    }
+		if ($streamData === null) {
+			throw new EventStreamNotFoundException();
+		}
 
-    /**
-     * Commit the event stream to persistence.
-     *
-     * @return Transaction
-     */
-    public function commit(EventStream $stream)
-    {
-        $newEvents = $stream->newEvents();
+		$events = [];
 
-        if (count($newEvents) === 0) {
-            return new Transaction($stream, $newEvents);
-        }
+		foreach ($streamData->getEventData() as $eventData) {
+			$events[] = $this->serializer->fromArray($eventData);
+		}
 
-        $id = (string)$stream->getUuid();
-        $currentVersion = $stream->getVersion();
-        $nextVersion = $currentVersion + count($newEvents);
+		return new EventStream(
+			$streamData->getClassName(),
+			Uuid::fromString($streamData->getId()),
+			$events,
+			$streamData->getVersion()
+		);
+	}
 
-        $eventData = isset($this->eventsData[$id])
-            ? $this->eventsData[$id]
-            : array();
+	/**
+	 * Commit the event stream to persistence.
+	 *
+	 * @return Transaction
+	 */
+	public function commit(EventStream $stream)
+	{
+		$newEvents = $stream->newEvents();
 
-        foreach ($newEvents as $newEvent) {
-            $eventData[] = $this->serializer->toArray($newEvent);
-        }
+		if (count($newEvents) === 0) {
+			return new Transaction($stream, $newEvents);
+		}
 
-        $this->storage->store($id, $stream->getClassName(), $eventData, $nextVersion, $currentVersion);
+		$id             = (string) $stream->getUuid();
+		$currentVersion = $stream->getVersion();
+		$nextVersion    = $currentVersion + count($newEvents);
 
-        $stream->markNewEventsProcessed($nextVersion);
+		$eventData = isset($this->eventsData[$id])
+			? $this->eventsData[$id]
+			: [];
 
-        return new Transaction($stream, $newEvents);
-    }
+		foreach ($newEvents as $newEvent) {
+			$eventData[] = $this->serializer->toArray($newEvent);
+		}
+
+		$this->storage->store($id, $stream->getClassName(), $eventData, $nextVersion, $currentVersion);
+
+		$stream->markNewEventsProcessed($nextVersion);
+
+		return new Transaction($stream, $newEvents);
+	}
 }

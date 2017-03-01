@@ -6,25 +6,26 @@ use LiteCQRS\Command;
 
 class MemoryCommandHandlerLocator implements CommandHandlerLocator
 {
-    private $handlers = array();
 
-    public function getCommandHandler(Command $command)
-    {
-        $commandType = get_class($command);
+	private $handlers = [];
 
-        if (!isset($this->handlers[strtolower($commandType)])) {
-            throw new \RuntimeException("No service registered for command type '" . $commandType . "'");
-        }
+	public function getCommandHandler(Command $command)
+	{
+		$commandType = get_class($command);
 
-        return $this->handlers[strtolower($commandType)];
-    }
+		if (!isset($this->handlers[strtolower($commandType)])) {
+			throw new \RuntimeException("No service registered for command type '" . $commandType . "'");
+		}
 
-    public function register($commandType, $service)
-    {
-        if (!is_object($service)) {
-            throw new \RuntimeException("No valid service given for command type '" . $commandType . "'");
-        }
+		return $this->handlers[strtolower($commandType)];
+	}
 
-        $this->handlers[strtolower($commandType)] = $service;
-    }
+	public function register($commandType, $service)
+	{
+		if (!is_object($service)) {
+			throw new \RuntimeException("No valid service given for command type '" . $commandType . "'");
+		}
+
+		$this->handlers[strtolower($commandType)] = $service;
+	}
 }

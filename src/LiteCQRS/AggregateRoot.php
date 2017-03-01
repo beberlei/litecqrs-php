@@ -4,75 +4,76 @@ namespace LiteCQRS;
 
 use LiteCQRS\Eventing\EventName;
 use LiteCQRS\EventStore\EventStream;
-use LiteCQRS\Exception\RuntimeException;
 use LiteCQRS\Exception\BadMethodCallException;
+use LiteCQRS\Exception\RuntimeException;
 use Ramsey\Uuid\Uuid;
 
 abstract class AggregateRoot
 {
-    /**
+
+	/**
 	 * @var Uuid
-     */
-    private $id;
+	 */
+	private $id;
 
-    /**
-     * @var array<DomainEvent>
-     */
-    private $events = array();
+	/**
+	 * @var array<DomainEvent>
+	 */
+	private $events = [];
 
-    protected function setId(Uuid $uuid)
-    {
-        $this->id = $uuid;
-    }
+	protected function setId(Uuid $uuid)
+	{
+		$this->id = $uuid;
+	}
 
-    /**
-     * @return Uuid
-     */
-    final public function getId()
-    {
-        return $this->id;
-    }
+	/**
+	 * @return Uuid
+	 */
+	final public function getId()
+	{
+		return $this->id;
+	}
 
-    protected function apply(DomainEvent $event)
-    {
-        $this->executeEvent($event);
-        $this->events[] = $event;
-    }
+	protected function apply(DomainEvent $event)
+	{
+		$this->executeEvent($event);
+		$this->events[] = $event;
+	}
 
-    private function executeEvent(DomainEvent $event)
-    {
-        $eventName = new EventName($event);
-        $method = sprintf('apply%s', (string)$eventName);
+	private function executeEvent(DomainEvent $event)
+	{
+		$eventName = new EventName($event);
+		$method    = sprintf('apply%s', (string) $eventName);
 
-        if (!method_exists($this, $method)) {
-            throw new BadMethodCallException(
-                "There is no event named '$method' that can be applied to '" . get_class($this) . "'. " .
-                "If you just want to emit an event without applying changes use the raise() method."
-            );
-        }
+		if (!method_exists($this, $method)) {
+			throw new BadMethodCallException(
+				"There is no event named '$method' that can be applied to '" . get_class($this) . "'. " .
+				"If you just want to emit an event without applying changes use the raise() method."
+			);
+		}
 
-        $this->$method($event);
-    }
+		$this->$method($event);
+	}
 
-    public function loadFromEventStream(EventStream $eventStream)
-    {
-        if ($this->events) {
-            throw new RuntimeException("AggregateRoot was already created from event stream and cannot be hydrated again.");
-        }
+	public function loadFromEventStream(EventStream $eventStream)
+	{
+		if ($this->events) {
+			throw new RuntimeException("AggregateRoot was already created from event stream and cannot be hydrated again.");
+		}
 
-        $this->setId($eventStream->getUuid());
+		$this->setId($eventStream->getUuid());
 
-        foreach ($eventStream as $event) {
-            $this->executeEvent($event);
-        }
-    }
+		foreach ($eventStream as $event) {
+			$this->executeEvent($event);
+		}
+	}
 
-    public function pullDomainEvents()
-    {
-        $events = $this->events;
-        $this->events = array();
+	public function pullDomainEvents()
+	{
+		$events       = $this->events;
+		$this->events = [];
 
-        return $events;
-    }
+		return $events;
+	}
 }
 

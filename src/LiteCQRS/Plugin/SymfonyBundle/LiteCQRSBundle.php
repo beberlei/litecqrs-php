@@ -2,21 +2,21 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+use LiteCQRS\Plugin\JMSSerializer\AggregateRootHandlerFactory;
 use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\Compiler\HandlerPass;
 use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\Compiler\JMSSerializerPass;
-use LiteCQRS\Plugin\JMSSerializer\AggregateRootHandlerFactory;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class LiteCQRSBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
-    {
-        parent::build($container);
 
-        $container->addCompilerPass(new HandlerPass(), PassConfig::TYPE_AFTER_REMOVING);
-    }
+	public function build(ContainerBuilder $container)
+	{
+		parent::build($container);
+
+		$container->addCompilerPass(new HandlerPass(), PassConfig::TYPE_AFTER_REMOVING);
+	}
 }
 

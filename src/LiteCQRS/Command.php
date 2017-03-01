@@ -4,5 +4,6 @@ namespace LiteCQRS;
 
 interface Command
 {
+
 }
 

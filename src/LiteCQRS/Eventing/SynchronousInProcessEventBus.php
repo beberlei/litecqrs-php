@@ -2,48 +2,49 @@
 
 namespace LiteCQRS\Eventing;
 
-use LiteCQRS\DomainEvent;
 use Exception;
+use LiteCQRS\DomainEvent;
 
 class SynchronousInProcessEventBus implements EventMessageBus
 {
-    /**
-     * @var EventHandlerLocator
-     */
-    private $locator;
 
-    public function __construct(EventHandlerLocator $locator)
-    {
-        $this->locator = $locator;
-    }
+	/**
+	 * @var EventHandlerLocator
+	 */
+	private $locator;
 
-    public function publish(DomainEvent $event)
-    {
-        $eventName  = new EventName($event);
-        $services   = $this->locator->getHandlersFor($eventName);
+	public function __construct(EventHandlerLocator $locator)
+	{
+		$this->locator = $locator;
+	}
 
-        foreach ($services as $service) {
-            $this->invokeEventHandler($service, $eventName, $event);
-        }
-    }
+	public function publish(DomainEvent $event)
+	{
+		$eventName = new EventName($event);
+		$services  = $this->locator->getHandlersFor($eventName);
 
-    protected function invokeEventHandler($service, $eventName, $event)
-    {
-        try {
-            $methodName = "on" . $eventName;
+		foreach ($services as $service) {
+			$this->invokeEventHandler($service, $eventName, $event);
+		}
+	}
 
-            $service->$methodName($event);
-        } catch (Exception $e) {
-            if ($event instanceof EventExecutionFailed) {
-                return;
-            }
+	protected function invokeEventHandler($service, $eventName, $event)
+	{
+		try {
+			$methodName = "on" . $eventName;
 
-            $this->publish(new EventExecutionFailed(array(
-                "service"   => get_class($service),
-                "exception" => $e,
-                "event"     => $event,
-            )));
-        }
-    }
+			$service->$methodName($event);
+		} catch (Exception $e) {
+			if ($event instanceof EventExecutionFailed) {
+				return;
+			}
+
+			$this->publish(new EventExecutionFailed([
+				"service"   => get_class($service),
+				"exception" => $e,
+				"event"     => $event,
+			]));
+		}
+	}
 }
 

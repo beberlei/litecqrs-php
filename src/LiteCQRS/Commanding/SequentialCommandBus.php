@@ -18,73 +18,77 @@ namespace LiteCQRS\Commanding;
  */
 class SequentialCommandBus implements CommandBus
 {
-    private $locator;
-    private $commandStack = array();
-    private $executing = false;
 
-    public function __construct(CommandHandlerLocator $locator)
-    {
-        $this->locator = $locator;
-    }
+	private $locator;
 
-    /**
-     * Sequentially execute commands
-     *
-     * If an exception occurs in any command it will be put on a stack
-     * of exceptions that is thrown only when all the commands are processed.
-     *
-     * @param object $command
-     * @throws CommandFailedStackException
-     */
-    public function handle($command)
-    {
-        $this->commandStack[] = $command;
+	private $commandStack = [];
 
-        if ($this->executing) {
-            return;
-        }
+	private $executing    = false;
 
-        $first = true;
+	public function __construct(CommandHandlerLocator $locator)
+	{
+		$this->locator = $locator;
+	}
 
-        while ($command = array_shift($this->commandStack)) {
-            $this->invokeHandler($command, $first);
-            $first = false;
-        }
-    }
+	/**
+	 * Sequentially execute commands
+	 *
+	 * If an exception occurs in any command it will be put on a stack
+	 * of exceptions that is thrown only when all the commands are processed.
+	 *
+	 * @param object $command
+	 *
+	 * @throws CommandFailedStackException
+	 */
+	public function handle($command)
+	{
+		$this->commandStack[] = $command;
 
-    protected function invokeHandler($command, $first)
-    {
-        try {
-            $this->executing = true;
+		if ($this->executing) {
+			return;
+		}
 
-            $service = $this->locator->getCommandHandler($command);
-            $method  = $this->getHandlerMethodName($command);
+		$first = true;
 
-            if (!method_exists($service, $method)) {
-                throw new \RuntimeException("Service " . get_class($service) . " has no method " . $method . " to handle command.");
-            }
+		while ($command = array_shift($this->commandStack)) {
+			$this->invokeHandler($command, $first);
+			$first = false;
+		}
+	}
 
-            $service->$method($command);
-        } catch (\Exception $e) {
-            $this->executing = false;
-            $this->handleException($e, $first);
-        }
+	protected function invokeHandler($command, $first)
+	{
+		try {
+			$this->executing = true;
 
-        $this->executing = false;
-    }
+			$service = $this->locator->getCommandHandler($command);
+			$method  = $this->getHandlerMethodName($command);
 
-    protected function getHandlerMethodName($command)
-    {
-        $parts = explode("\\", get_class($command));
+			if (!method_exists($service, $method)) {
+				throw new \RuntimeException("Service " . get_class($service) . " has no method " . $method . " to handle command.");
+			}
 
-        return str_replace("Command", "", lcfirst(end($parts)));
-    }
+			$service->$method($command);
+		} catch (\Exception $e) {
+			$this->executing = false;
+			$this->handleException($e, $first);
+		}
 
-    protected function handleException($e, $first)
-    {
-        if ($first) {
-            throw $e;
-        }
-    }
+		$this->executing = false;
+	}
+
+	protected function getHandlerMethodName($command)
+	{
+		$parts = explode("\\", get_class($command));
+
+		return str_replace("Command", "", lcfirst(end($parts)));
+	}
+
+	protected function handleException($e, $first)
+	{
+		if ($first) {
+			throw $e;
+		}
+	}
 }
 

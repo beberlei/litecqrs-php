@@ -1,4 +1,5 @@
 <?php
+
 namespace LiteCQRS;
 
 /**
@@ -20,16 +21,19 @@ namespace LiteCQRS;
  */
 interface DomainEvent
 {
-    /**
-     * @throws RuntimeException When setting an aggregate id where one already exists.
-     * @param mixed $aggregateId
-     * @return void
-     */
-    public function setAggregateId($aggregateId);
 
-    /**
-     * @return mixed
-     */
-    public function getAggregateId();
+	/**
+	 * @throws RuntimeException When setting an aggregate id where one already exists.
+	 *
+	 * @param mixed $aggregateId
+	 *
+	 * @return void
+	 */
+	public function setAggregateId($aggregateId);
+
+	/**
+	 * @return mixed
+	 */
+	public function getAggregateId();
 }
 

@@ -3,7 +3,6 @@
 namespace LiteCQRS\EventStore;
 
 use Ramsey\Uuid\Uuid;
-use LiteCQRS\EventStore\EventStream;
 
 /**
  * Stores events grouped together in streams identified by UUID.
@@ -13,16 +12,17 @@ use LiteCQRS\EventStore\EventStream;
  */
 interface EventStore
 {
-    /**
-     * @throws EventStreamNotFoundException
-     * @return EventStream
-     */
-    public function find(Uuid $uuid);
 
-    /**
-     * Commit the event stream to persistence.
-     *
-     * @return Transaction
-     */
-    public function commit(EventStream $stream);
+	/**
+	 * @throws EventStreamNotFoundException
+	 * @return EventStream
+	 */
+	public function find(Uuid $uuid);
+
+	/**
+	 * Commit the event stream to persistence.
+	 *
+	 * @return Transaction
+	 */
+	public function commit(EventStream $stream);
 }

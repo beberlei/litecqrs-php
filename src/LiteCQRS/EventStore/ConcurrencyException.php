@@ -6,4 +6,5 @@ use LiteCQRS\Exception\RuntimeException;
 
 class ConcurrencyException extends RuntimeException
 {
+
 }

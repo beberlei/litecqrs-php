@@ -2,89 +2,89 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class HandlerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
-    {
-        $this->registerCommandHandlers($container);
-        $this->registerEventHandlers($container);
-    }
 
-    private function registerCommandHandlers($container)
-    {
-        $services = array();
-        foreach ($container->findTaggedServiceIds('lite_cqrs.command_handler') as $id => $attributes) {
-            $definition = $container->findDefinition($id);
-            $class = $definition->getClass();
+	public function process(ContainerBuilder $container)
+	{
+		$this->registerCommandHandlers($container);
+		$this->registerEventHandlers($container);
+	}
 
-            $reflClass = new \ReflectionClass($class);
+	private function registerCommandHandlers($container)
+	{
+		$services = [];
+		foreach ($container->findTaggedServiceIds('lite_cqrs.command_handler') as $id => $attributes) {
+			$definition = $container->findDefinition($id);
+			$class      = $definition->getClass();
 
-            foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-                // skip events
-                if (strpos($method->getName(), "on") === 0) {
-                    continue;
-                }
+			$reflClass = new \ReflectionClass($class);
 
-                if ($method->getNumberOfParameters() != 1) {
-                    continue;
-                }
+			foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+				// skip events
+				if (strpos($method->getName(), "on") === 0) {
+					continue;
+				}
 
-                $commandParam = current($method->getParameters());
+				if ($method->getNumberOfParameters() != 1) {
+					continue;
+				}
 
-                if (!$commandParam->getClass()) {
-                    continue;
-                }
+				$commandParam = current($method->getParameters());
 
-                $commandClass = $commandParam->getClass();
-                $commandName = strtolower(str_replace("Command", "", $commandClass->getShortName()));
+				if (!$commandParam->getClass()) {
+					continue;
+				}
 
-                // skip methods where the command class name does not match the method name
-                if ($commandName !== strtolower($method->getName())) {
-                    continue;
-                }
+				$commandClass = $commandParam->getClass();
+				$commandName  = strtolower(str_replace("Command", "", $commandClass->getShortName()));
 
-                $services[$commandClass->getName()] = $id;
-            }
-        }
+				// skip methods where the command class name does not match the method name
+				if ($commandName !== strtolower($method->getName())) {
+					continue;
+				}
 
-        $locatorDefinition = $container->findDefinition('litecqrs.container_handler_locator');
-        $locatorDefinition->addMethodCall('registerCommandHandlers', array($services));
-    }
+				$services[$commandClass->getName()] = $id;
+			}
+		}
 
-    private function registerEventHandlers($container)
-    {
-        $services = array();
-        foreach ($container->findTaggedServiceIds('lite_cqrs.event_handler') as $id => $attributes) {
-            $definition = $container->findDefinition($id);
-            $class = $definition->getClass();
+		$locatorDefinition = $container->findDefinition('litecqrs.container_handler_locator');
+		$locatorDefinition->addMethodCall('registerCommandHandlers', [ $services ]);
+	}
 
-            $reflClass = new \ReflectionClass($class);
-            foreach ($reflClass->getMethods() as $method) {
-                if ($method->getNumberOfParameters() != 1) {
-                    continue;
-                }
+	private function registerEventHandlers($container)
+	{
+		$services = [];
+		foreach ($container->findTaggedServiceIds('lite_cqrs.event_handler') as $id => $attributes) {
+			$definition = $container->findDefinition($id);
+			$class      = $definition->getClass();
 
-                $methodName = $method->getName();
-                if (strpos($methodName, "on") !== 0) {
-                    continue;
-                }
+			$reflClass = new \ReflectionClass($class);
+			foreach ($reflClass->getMethods() as $method) {
+				if ($method->getNumberOfParameters() != 1) {
+					continue;
+				}
 
-                $eventName = strtolower(substr($methodName, 2));
+				$methodName = $method->getName();
+				if (strpos($methodName, "on") !== 0) {
+					continue;
+				}
 
-                if (!isset($services[$eventName])) {
-                    $services[$eventName] = array();
-                }
+				$eventName = strtolower(substr($methodName, 2));
 
-                $services[$eventName][] = $id;
-            }
-        }
+				if (!isset($services[$eventName])) {
+					$services[$eventName] = [];
+				}
 
-        $locatorDefinition = $container->findDefinition('litecqrs.container_handler_locator');
-        $locatorDefinition->addMethodCall('registerEventHandlers', array($services));
-    }
+				$services[$eventName][] = $id;
+			}
+		}
+
+		$locatorDefinition = $container->findDefinition('litecqrs.container_handler_locator');
+		$locatorDefinition->addMethodCall('registerEventHandlers', [ $services ]);
+	}
 }
 

@@ -2,161 +2,156 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
-use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
 class DebugCommand extends ContainerAwareCommand
 {
-    protected function configure()
-    {
-        $this
-            ->setName('lite-cqrs:debug')
-            ->setDescription('Display currently registered commands and events.')
-        ;
-    }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $container = $this->getContainerBuilder();
+	protected function configure()
+	{
+		$this
+			->setName('lite-cqrs:debug')
+			->setDescription('Display currently registered commands and events.');
+	}
 
-        $maxName        = strlen('Command-Handler Service');
-        $maxId          = strlen('Command');
-        $maxCommandType = strlen('Class');
-        $commands       = array();
+	protected function execute(InputInterface $input, OutputInterface $output)
+	{
+		$container = $this->getContainerBuilder();
 
-        foreach ($container->findTaggedServiceIds('lite_cqrs.command_handler') as $id => $attributes) {
-            $definition = $container->findDefinition($id);
-            $class = $definition->getClass();
+		$maxName        = strlen('Command-Handler Service');
+		$maxId          = strlen('Command');
+		$maxCommandType = strlen('Class');
+		$commands       = [];
 
-            $reflClass = new \ReflectionClass($class);
-            foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-                if ($method->getNumberOfParameters() != 1) {
-                    continue;
-                }
+		foreach ($container->findTaggedServiceIds('lite_cqrs.command_handler') as $id => $attributes) {
+			$definition = $container->findDefinition($id);
+			$class      = $definition->getClass();
 
-                $commandParam = current($method->getParameters());
+			$reflClass = new \ReflectionClass($class);
+			foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+				if ($method->getNumberOfParameters() != 1) {
+					continue;
+				}
 
-                if (!$commandParam->getClass()) {
-                    continue;
-                }
+				$commandParam = current($method->getParameters());
 
-                $commandClass = $commandParam->getClass();
-                $commandType = $commandClass->getName();
+				if (!$commandParam->getClass()) {
+					continue;
+				}
 
-                $parts = explode("\\", $commandType);
-                $name = preg_replace('/Command/i', '', end($parts));
+				$commandClass = $commandParam->getClass();
+				$commandType  = $commandClass->getName();
 
-                if (strtolower($method->getName()) !== strtolower($name)) {
-                    continue;
-                }
+				$parts = explode("\\", $commandType);
+				$name  = preg_replace('/Command/i', '', end($parts));
 
-                $commands[$id][$commandType] = array('name' => $commandClass->getShortName(), 'id'  => $id, 'class' => $class);
+				if (strtolower($method->getName()) !== strtolower($name)) {
+					continue;
+				}
 
-                $maxName        = max(strlen($commandClass->getShortName()), $maxName);
-                $maxId          = max(strlen($id), $maxId);
-                $maxCommandType = max(strlen($commandType), $maxCommandType);
-            }
-        }
+				$commands[$id][$commandType] = [ 'name' => $commandClass->getShortName(), 'id' => $id, 'class' => $class ];
 
-        $output->writeln('<info>COMMANDS</info>');
-        $output->writeln('<info>========</info>');
-        $output->writeln('');
+				$maxName        = max(strlen($commandClass->getShortName()), $maxName);
+				$maxId          = max(strlen($id), $maxId);
+				$maxCommandType = max(strlen($commandType), $maxCommandType);
+			}
+		}
 
-        $format  = '%-'.$maxId.'s %-'.$maxName.'s %s';
+		$output->writeln('<info>COMMANDS</info>');
+		$output->writeln('<info>========</info>');
+		$output->writeln('');
 
-        // the title field needs extra space to make up for comment tags
-        $format1  = '%-'.($maxId + 19).'s %-'.($maxName + 19).'s %s';
-        $output->writeln(sprintf($format1, '<comment>Command-Handler Service</comment>', '<comment>Command</comment>', '<comment>Class</comment>'));
+		$format = '%-' . $maxId . 's %-' . $maxName . 's %s';
 
-        foreach ($commands as $service => $serviceCommands) {
-            foreach ($serviceCommands as $type => $command) {
-                $output->writeln(sprintf($format, $service, $command['name'], $type));
-            }
-            $output->writeln('');
-        }
+		// the title field needs extra space to make up for comment tags
+		$format1 = '%-' . ($maxId + 19) . 's %-' . ($maxName + 19) . 's %s';
+		$output->writeln(sprintf($format1, '<comment>Command-Handler Service</comment>', '<comment>Command</comment>', '<comment>Class</comment>'));
 
-        $events         = array();
-        $maxName        = strlen("Event");
-        $maxId          = strlen('Event-Handler Service');
-        $maxEventName   = strlen('Class');
+		foreach ($commands as $service => $serviceCommands) {
+			foreach ($serviceCommands as $type => $command) {
+				$output->writeln(sprintf($format, $service, $command['name'], $type));
+			}
+			$output->writeln('');
+		}
 
-        foreach ($container->findTaggedServiceIds('lite_cqrs.event_handler') as $id => $attributes) {
-            $definition = $container->findDefinition($id);
-            $class = $definition->getClass();
+		$events       = [];
+		$maxName      = strlen("Event");
+		$maxId        = strlen('Event-Handler Service');
+		$maxEventName = strlen('Class');
 
-            $reflClass = new \ReflectionClass($class);
-            foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-                if ($method->getNumberOfParameters() != 1) {
-                    continue;
-                }
+		foreach ($container->findTaggedServiceIds('lite_cqrs.event_handler') as $id => $attributes) {
+			$definition = $container->findDefinition($id);
+			$class      = $definition->getClass();
 
-                $methodName = $method->getName();
-                if (strpos($methodName, "on") !== 0) {
-                    continue;
-                }
+			$reflClass = new \ReflectionClass($class);
+			foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+				if ($method->getNumberOfParameters() != 1) {
+					continue;
+				}
 
-                $eventName = (substr($methodName, 2));
+				$methodName = $method->getName();
+				if (strpos($methodName, "on") !== 0) {
+					continue;
+				}
 
-                if (!isset($services[$eventName])) {
-                    $services[$eventName] = array();
-                }
+				$eventName = (substr($methodName, 2));
 
-                $events[$id][] = array('eventName' => $eventName, 'id' => $id, 'class' => $class);
-                $maxName       = max(strlen($eventName), $maxName);
-                $maxId         = max(strlen($id), $maxId);
-                $maxEventName  = max(strlen($eventName), $maxEventName);
-            }
-        }
+				if (!isset($services[$eventName])) {
+					$services[$eventName] = [];
+				}
 
-        $output->writeln('');
-        $output->writeln('<info>EVENTS</info>');
-        $output->writeln('<info>========</info>');
-        $output->writeln('');
+				$events[$id][] = [ 'eventName' => $eventName, 'id' => $id, 'class' => $class ];
+				$maxName       = max(strlen($eventName), $maxName);
+				$maxId         = max(strlen($id), $maxId);
+				$maxEventName  = max(strlen($eventName), $maxEventName);
+			}
+		}
 
-        $format  = '%-'.$maxId.'s %-'.$maxEventName.'s %s';
+		$output->writeln('');
+		$output->writeln('<info>EVENTS</info>');
+		$output->writeln('<info>========</info>');
+		$output->writeln('');
 
-        // the title field needs extra space to make up for comment tags
-        $format1  = '%-'.($maxId + 19).'s %-'.($maxEventName + 19).'s %s';
-        $output->writeln(sprintf($format1, '<comment>Event-Handler Service</comment>', '<comment>Event</comment>', '<comment>Class</comment>'));
+		$format = '%-' . $maxId . 's %-' . $maxEventName . 's %s';
 
-        foreach ($events as $serviceId => $serviceEvents) {
-            foreach ($serviceEvents as $event) {
-                $output->writeln(sprintf($format, $event['id'], $event['eventName'], $event['class']));
-            }
-            $output->writeln('');
-        }
-    }
+		// the title field needs extra space to make up for comment tags
+		$format1 = '%-' . ($maxId + 19) . 's %-' . ($maxEventName + 19) . 's %s';
+		$output->writeln(sprintf($format1, '<comment>Event-Handler Service</comment>', '<comment>Event</comment>', '<comment>Class</comment>'));
 
-    /**
-     * Loads the ContainerBuilder from the cache.
-     *
-     * @return ContainerBuilder
-     */
-    private function getContainerBuilder()
-    {
-        if (!$this->getApplication()->getKernel()->isDebug()) {
-            throw new \LogicException(sprintf('Debug information about the container is only available in debug mode.'));
-        }
+		foreach ($events as $serviceId => $serviceEvents) {
+			foreach ($serviceEvents as $event) {
+				$output->writeln(sprintf($format, $event['id'], $event['eventName'], $event['class']));
+			}
+			$output->writeln('');
+		}
+	}
 
-        if (!file_exists($cachedFile = $this->getContainer()->getParameter('debug.container.dump'))) {
-            throw new \LogicException(sprintf('Debug information about the container could not be found. Please clear the cache and try again.'));
-        }
+	/**
+	 * Loads the ContainerBuilder from the cache.
+	 *
+	 * @return ContainerBuilder
+	 */
+	private function getContainerBuilder()
+	{
+		if (!$this->getApplication()->getKernel()->isDebug()) {
+			throw new \LogicException(sprintf('Debug information about the container is only available in debug mode.'));
+		}
 
-        $container = new ContainerBuilder();
+		if (!file_exists($cachedFile = $this->getContainer()->getParameter('debug.container.dump'))) {
+			throw new \LogicException(sprintf('Debug information about the container could not be found. Please clear the cache and try again.'));
+		}
 
-        $loader = new XmlFileLoader($container, new FileLocator());
-        $loader->load($cachedFile);
+		$container = new ContainerBuilder();
 
-        return $container;
-    }
+		$loader = new XmlFileLoader($container, new FileLocator());
+		$loader->load($cachedFile);
+
+		return $container;
+	}
 }
 

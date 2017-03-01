@@ -1,4 +1,5 @@
 <?php
+
 namespace LiteCQRS\Eventing;
 
 use LiteCQRS\DomainEvent;
@@ -13,12 +14,14 @@ use LiteCQRS\DomainEvent;
  */
 interface EventMessageBus
 {
-    /**
-     * Publish an event to the bus.
-     *
-     * @param DomainEvent $event
-     * @return void
-     */
-    public function publish(DomainEvent $event);
+
+	/**
+	 * Publish an event to the bus.
+	 *
+	 * @param DomainEvent $event
+	 *
+	 * @return void
+	 */
+	public function publish(DomainEvent $event);
 }
 

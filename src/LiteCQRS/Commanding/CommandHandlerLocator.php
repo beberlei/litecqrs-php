@@ -14,5 +14,6 @@ use LiteCQRS\Command;
  */
 interface CommandHandlerLocator
 {
-    public function getCommandHandler(Command $command);
+
+	public function getCommandHandler(Command $command);
 }

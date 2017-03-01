@@ -2,108 +2,108 @@
 
 namespace LiteCQRS\EventStore;
 
-use LiteCQRS\DomainEvent;
-
-use Ramsey\Uuid\Uuid;
-use IteratorAggregate;
 use ArrayIterator;
+use IteratorAggregate;
+use LiteCQRS\DomainEvent;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Representation for a stream of events sorted by occurance.
  */
 class EventStream implements IteratorAggregate
 {
-    /**
-     * @var Uuid
-     */
-    private $uuid;
 
-    /**
-     * @var array<object>
-     */
-    private $events = array();
+	/**
+	 * @var Uuid
+	 */
+	private $uuid;
 
-    /**
-     * @var array<object>
-     */
-    private $newEvents = array();
+	/**
+	 * @var array<object>
+	 */
+	private $events = [];
 
-    /**
-     * @var string
-     */
-    private $className;
+	/**
+	 * @var array<object>
+	 */
+	private $newEvents = [];
 
-    /**
-     * @var string
-     */
-    private $version;
+	/**
+	 * @var string
+	 */
+	private $className;
 
-    public function __construct($className, Uuid $uuid, array $events = array(), $version = null)
-    {
-        $this->uuid = $uuid;
-        $this->events = $events;
-        $this->version = $version;
-        $this->className = $className;
-    }
+	/**
+	 * @var string
+	 */
+	private $version;
 
-    /**
-     * Return class name
-     *
-     * @return string
-     */
-    public function getClassName()
-    {
-        return $this->className;
-    }
+	public function __construct($className, Uuid $uuid, array $events = [], $version = null)
+	{
+		$this->uuid      = $uuid;
+		$this->events    = $events;
+		$this->version   = $version;
+		$this->className = $className;
+	}
 
-    /**
-     * @return Uuid
-     */
-    public function getUuid()
-    {
-        return $this->uuid;
-    }
+	/**
+	 * Return class name
+	 *
+	 * @return string
+	 */
+	public function getClassName()
+	{
+		return $this->className;
+	}
 
-    /**
-     * @return string
-     */
-    public function getVersion()
-    {
-        return $this->version;
-    }
+	/**
+	 * @return Uuid
+	 */
+	public function getUuid()
+	{
+		return $this->uuid;
+	}
 
-    public function addEvents(array $events)
-    {
-        foreach ($events as $event) {
-            $this->addEvent($event);
-        }
-    }
+	/**
+	 * @return string
+	 */
+	public function getVersion()
+	{
+		return $this->version;
+	}
 
-    public function addEvent(DomainEvent $event)
-    {
-        $this->events[] = $event;
-        $this->newEvents[] = $event;
-    }
+	public function addEvents(array $events)
+	{
+		foreach ($events as $event) {
+			$this->addEvent($event);
+		}
+	}
 
-    /**
-     * @return array<DomainEvent>
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->events);
-    }
+	public function addEvent(DomainEvent $event)
+	{
+		$this->events[]    = $event;
+		$this->newEvents[] = $event;
+	}
 
-    /**
-     * @return array<DomainEvent>
-     */
-    public function newEvents()
-    {
-        return $this->newEvents;
-    }
+	/**
+	 * @return array<DomainEvent>
+	 */
+	public function getIterator()
+	{
+		return new ArrayIterator($this->events);
+	}
 
-    public function markNewEventsProcessed($newVersion = null)
-    {
-        $this->version = $newVersion;
-        $this->newEvents = array();
-    }
+	/**
+	 * @return array<DomainEvent>
+	 */
+	public function newEvents()
+	{
+		return $this->newEvents;
+	}
+
+	public function markNewEventsProcessed($newVersion = null)
+	{
+		$this->version   = $newVersion;
+		$this->newEvents = [];
+	}
 }

@@ -2,78 +2,80 @@
 
 namespace LiteCQRS\EventStore;
 
-use LiteCQRS\Eventing\EventMessageBus;
 use LiteCQRS\AggregateRoot;
-use LiteCQRS\Repository;
 use LiteCQRS\AggregateRootNotFoundException;
-
+use LiteCQRS\Eventing\EventMessageBus;
+use LiteCQRS\Repository;
 use Ramsey\Uuid\Uuid;
 
 class EventSourceRepository implements Repository
 {
-    private $eventStore;
-    private $eventBus;
-    private $streams = array();
 
-    public function __construct(EventStore $eventStore, EventMessageBus $eventBus)
-    {
-        $this->eventStore = $eventStore;
-        $this->eventBus = $eventBus;
-    }
+	private $eventStore;
 
-    /**
-     * @return AggregateRoot
-     */
-    public function find($className, Uuid $uuid, $expectedVersion = null)
-    {
-        try {
-            $eventStream = $this->eventStore->find($uuid);
-        } catch (EventStreamNotFoundException $e) {
-            throw new AggregateRootNotFoundException();
-        }
+	private $eventBus;
 
-        $this->streams[(string)$uuid] = $eventStream;
+	private $streams = [];
 
-        $aggregateRootClass = $eventStream->getClassName();
+	public function __construct(EventStore $eventStore, EventMessageBus $eventBus)
+	{
+		$this->eventStore = $eventStore;
+		$this->eventBus   = $eventBus;
+	}
 
-        if ($aggregateRootClass !== ltrim($className, '\\')) {
-            throw new AggregateRootNotFoundException();
-        }
+	/**
+	 * @return AggregateRoot
+	 */
+	public function find($className, Uuid $uuid, $expectedVersion = null)
+	{
+		try {
+			$eventStream = $this->eventStore->find($uuid);
+		} catch (EventStreamNotFoundException $e) {
+			throw new AggregateRootNotFoundException();
+		}
 
-        if ($expectedVersion && $eventStream->getVersion() !== $expectedVersion) {
-            throw new ConcurrencyException();
-        }
+		$this->streams[(string) $uuid] = $eventStream;
 
-        $reflClass = new \ReflectionClass($aggregateRootClass);
+		$aggregateRootClass = $eventStream->getClassName();
 
-        $aggregateRoot = $reflClass->newInstanceWithoutConstructor();
-        $aggregateRoot->loadFromEventStream($eventStream);
+		if ($aggregateRootClass !== ltrim($className, '\\')) {
+			throw new AggregateRootNotFoundException();
+		}
 
-        return $aggregateRoot;
-    }
+		if ($expectedVersion && $eventStream->getVersion() !== $expectedVersion) {
+			throw new ConcurrencyException();
+		}
 
-    /**
-     * @return void
-     */
-    public function save(AggregateRoot $object)
-    {
-        $id = (string)$object->getId();
+		$reflClass = new \ReflectionClass($aggregateRootClass);
 
-        if (!isset($this->streams[$id])) {
-            $this->streams[$id] = new EventStream(
-                get_class($object),
-                $object->getId()
-            );
-        }
+		$aggregateRoot = $reflClass->newInstanceWithoutConstructor();
+		$aggregateRoot->loadFromEventStream($eventStream);
 
-        $eventStream = $this->streams[$id];
-        $eventStream->addEvents($object->pullDomainEvents());
+		return $aggregateRoot;
+	}
 
-        $transaction = $this->eventStore->commit($eventStream);
+	/**
+	 * @return void
+	 */
+	public function save(AggregateRoot $object)
+	{
+		$id = (string) $object->getId();
 
-        foreach ($transaction->getCommittedEvents() as $event) {
-            $event->setAggregateId($object->getId());
-            $this->eventBus->publish($event);
-        }
-    }
+		if (!isset($this->streams[$id])) {
+			$this->streams[$id] = new EventStream(
+				get_class($object),
+				$object->getId()
+			);
+		}
+
+		$eventStream = $this->streams[$id];
+		$eventStream->addEvents($object->pullDomainEvents());
+
+		$transaction = $this->eventStore->commit($eventStream);
+
+		foreach ($transaction->getCommittedEvents() as $event) {
+			$event->setAggregateId($object->getId());
+			$this->eventBus->publish($event);
+		}
+	}
 }

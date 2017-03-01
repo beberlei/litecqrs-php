@@ -6,36 +6,39 @@ use LiteCQRS\DomainEvent;
 
 class EventName
 {
-    private $event;
-    private $name;
 
-    public function __construct(DomainEvent $event)
-    {
-        $this->event = $event;
-    }
+	private $event;
 
-    public function __toString()
-    {
-        if ($this->name === null) {
-            $this->name = $this->parseName();
-        }
+	private $name;
 
-        return $this->name;
-    }
+	public function __construct(DomainEvent $event)
+	{
+		$this->event = $event;
+	}
 
-    private function parseName()
-    {
-        $class = get_class($this->event);
+	public function __toString()
+	{
+		if ($this->name === null) {
+			$this->name = $this->parseName();
+		}
 
-        if (substr($class, -5) === "Event") {
-            $class = substr($class, 0, -5);
-        }
+		return $this->name;
+	}
 
-        if (strpos($class, "\\") === false) {
-            return $class;
-        }
+	private function parseName()
+	{
+		$class = get_class($this->event);
 
-        $parts = explode("\\", $class);
-        return end($parts);
-    }
+		if (substr($class, -5) === "Event") {
+			$class = substr($class, 0, -5);
+		}
+
+		if (strpos($class, "\\") === false) {
+			return $class;
+		}
+
+		$parts = explode("\\", $class);
+
+		return end($parts);
+	}
 }
