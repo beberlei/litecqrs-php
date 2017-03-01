@@ -116,12 +116,12 @@ abstract class EventStoreContractTestCase extends TestCase
 
 	protected function expectConcurrencyException()
 	{
-		self::expectException('LiteCQRS\EventStore\ConcurrencyException');
+		self::expectException(ConcurrencyException::class);
 	}
 
 	protected function thenReturnedTransactionContains(Transaction $transaction, EventStream $eventStream)
 	{
-		self::assertInstanceOf('LiteCQRS\EventStore\Transaction', $transaction);
+		self::assertInstanceOf(Transaction::class, $transaction);
 		self::assertSame($eventStream, $transaction->getEventStream());
 	}
 
@@ -138,13 +138,13 @@ abstract class EventStoreContractTestCase extends TestCase
 
 	protected function thenStoredEventStreamEqualsFixtureStream($eventStream, $fixtureStream)
 	{
-		self::assertInstanceOf('LiteCQRS\EventStore\EventStream', $eventStream);
+		self::assertInstanceOf(EventStream::class, $eventStream);
 		self::assertEquals($fixtureStream, $eventStream);
 	}
 
 	protected function expectEventStreamNotFoundException()
 	{
-		self::expectException('LiteCQRS\EventStore\EventStreamNotFoundException');
+		self::expectException(EventStreamNotFoundException::class);
 	}
 
 	protected function whenFindingStreamWith(EventStore $eventStore, $uuid)
@@ -155,7 +155,7 @@ abstract class EventStoreContractTestCase extends TestCase
 	protected function givenFixtureStreamWith($uuid)
 	{
 		$testEvent     = new EventStoreTestEvent();
-		$fixtureStream = new EventStream('LiteCQRS\EventStore\EventSourcedAggregate', $uuid, [ $testEvent ], 1337);
+		$fixtureStream = new EventStream(EventSourcedAggregate::class, $uuid, [ $testEvent ], 1337);
 
 		return $fixtureStream;
 	}

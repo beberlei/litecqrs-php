@@ -14,7 +14,7 @@ class ReflectionSerializerTest extends TestCase
 	public function it_serializes_objects_to_array($object, $expectedArray)
 	{
 		$serializer = new ReflectionSerializer();
-		$this->assertEquals($expectedArray, $serializer->toArray($object));
+		self::assertEquals($expectedArray, $serializer->toArray($object));
 	}
 
 	/**
@@ -24,7 +24,7 @@ class ReflectionSerializerTest extends TestCase
 	public function it_unserializes_array_to_object_graph($expectedObjectGraph, $dataArray)
 	{
 		$serializer = new ReflectionSerializer();
-		$this->assertEquals($expectedObjectGraph, $serializer->fromArray($dataArray));
+		self::assertEquals($expectedObjectGraph, $serializer->fromArray($dataArray));
 	}
 
 	static public function dataObjectsAndTheirArrays()
@@ -56,9 +56,9 @@ class ReflectionSerializerTest extends TestCase
 					'address'   => [
 						'city'      => 'Bonn',
 						'country'   => 'Germany',
-						'php_class' => __NAMESPACE__ . '\\Address',
+						'php_class' => Address::class,
 					],
-					'php_class' => __NAMESPACE__ . '\\Person',
+					'php_class' => Person::class,
 				],
 			],
 		];

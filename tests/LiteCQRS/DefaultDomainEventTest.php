@@ -2,6 +2,7 @@
 
 namespace LiteCQRS;
 
+use RuntimeException;
 use PHPUnit\Framework\TestCase;
 
 class DefaultDomainEventTest extends TestCase
@@ -16,7 +17,7 @@ class DefaultDomainEventTest extends TestCase
 
 	public function testWrongPropertyThrowsException()
 	{
-		self::expectException('RuntimeException');
+		self::expectException(RuntimeException::class);
 		self::expectExceptionMessage('Property unknown is not a valid property on event Test');
 		$event = new TestEvent([ 'unknown' => 'value' ]);
 	}

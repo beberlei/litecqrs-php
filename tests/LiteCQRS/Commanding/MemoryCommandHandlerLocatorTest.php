@@ -3,6 +3,7 @@
 namespace LiteCQRS\Commanding;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class MemoryCommandHandlerLocatorTest extends TestCase
 {
@@ -12,7 +13,7 @@ class MemoryCommandHandlerLocatorTest extends TestCase
 	 */
 	public function it_throws_exception_when_registered_service_is_no_object()
 	{
-		self::expectException("RuntimeException");
+		self::expectException(RuntimeException::class);
 		self::expectExceptionMessage("No valid service given for command type 'foo'");
 
 		$locator = new MemoryCommandHandlerLocator();
@@ -24,7 +25,7 @@ class MemoryCommandHandlerLocatorTest extends TestCase
 	 */
 	public function it_throws_exception_when_no_handler_is_registered_for_command()
 	{
-		self::expectException("RuntimeException");
+		self::expectException(RuntimeException::class);
 		self::expectExceptionMessage("No service registered for command type 'LiteCQRS\\Commanding\\NoHandlerCommand'");
 
 		$locator = new MemoryCommandHandlerLocator();

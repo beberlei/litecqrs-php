@@ -3,6 +3,7 @@
 namespace LiteCQRS;
 
 use LiteCQRS\EventStore\EventStream;
+use LiteCQRS\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
 use Rhumsaa\Uuid\Uuid;
 
@@ -39,12 +40,12 @@ class AggregateRootTest extends TestCase
 	{
 		$uuid = Uuid::uuid4();
 
-		$reflClass = new \ReflectionClass('LiteCQRS\SampleAggregateRoot');
+		$reflClass = new \ReflectionClass(SampleAggregateRoot::class);
 		$sample    = $reflClass->newInstanceWithoutConstructor();
 
 		$events = [ new SampleCreated([ 'foo' => 'bar' ]) ];
 
-		$eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, $events);
+		$eventStream = new EventStream(SampleAggregateRoot::class, $uuid, $events);
 
 		$sample->loadFromEventStream($eventStream);
 
@@ -62,9 +63,9 @@ class AggregateRootTest extends TestCase
 		$uuid   = Uuid::uuid4();
 		$sample = new SampleAggregateRoot($uuid);
 
-		$eventStream = new EventStream('LiteCQRS\SampleAggregateRoot', $uuid, [ new SampleCreated([ 'foo' => 'bar' ]) ]);
+		$eventStream = new EventStream(SampleAggregateRoot::class, $uuid, [ new SampleCreated([ 'foo' => 'bar' ]) ]);
 
-		self::expectException('LiteCQRS\Exception\RuntimeException');
+		self::expectException(RuntimeException::class);
 		self::expectExceptionMessage('AggregateRoot was already created from event stream and cannot be hydrated again.');
 
 		$sample->loadFromEventStream($eventStream);

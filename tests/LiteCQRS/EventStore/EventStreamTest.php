@@ -2,6 +2,7 @@
 
 namespace LiteCQRS\EventStore;
 
+use LiteCQRS\DomainEvent;
 use PHPUnit\Framework\TestCase;
 use Rhumsaa\Uuid\Uuid;
 
@@ -16,7 +17,7 @@ class EventStreamTest extends TestCase
 		$uuid   = Uuid::uuid4();
 		$stream = new EventStream('stdClass', $uuid);
 
-		$this->assertSame($uuid, $stream->getUuid());
+		self::assertSame($uuid, $stream->getUuid());
 	}
 
 	/**
@@ -24,7 +25,7 @@ class EventStreamTest extends TestCase
 	 */
 	public function it_allows_adding_events()
 	{
-		$event = \Phake::mock('LiteCQRS\DomainEvent');
+		$event = \Phake::mock(DomainEvent::class);
 
 		$uuid   = Uuid::uuid4();
 		$stream = new EventStream('stdClass', $uuid);
@@ -32,7 +33,7 @@ class EventStreamTest extends TestCase
 
 		$actualEvents = iterator_to_array($stream);
 
-		$this->assertSame($event, $actualEvents[0]);
+		self::assertSame($event, $actualEvents[0]);
 	}
 
 	/**
@@ -40,8 +41,8 @@ class EventStreamTest extends TestCase
 	 */
 	public function it_keeps_new_events_seperate_from_known_events()
 	{
-		$oldEvent = \Phake::mock('LiteCQRS\DomainEvent');
-		$newEvent = \Phake::mock('LiteCQRS\DomainEvent');
+		$oldEvent = \Phake::mock(DomainEvent::class);
+		$newEvent = \Phake::mock(DomainEvent::class);
 
 		$uuid   = Uuid::uuid4();
 		$stream = new EventStream('stdClass', $uuid, [ $oldEvent ]);
@@ -49,12 +50,12 @@ class EventStreamTest extends TestCase
 
 		$actualEvents = iterator_to_array($stream);
 
-		$this->assertSame($oldEvent, $actualEvents[0]);
-		$this->assertSame($newEvent, $actualEvents[1]);
+		self::assertSame($oldEvent, $actualEvents[0]);
+		self::assertSame($newEvent, $actualEvents[1]);
 
 		$actualNewEvents = $stream->newEvents();
 
-		$this->assertEquals(1, count($actualNewEvents));
+		self::assertEquals(1, count($actualNewEvents));
 	}
 
 	/**
@@ -62,7 +63,7 @@ class EventStreamTest extends TestCase
 	 */
 	public function it_can_mark_new_events_as_processed()
 	{
-		$newEvent = \Phake::mock('LiteCQRS\DomainEvent');
+		$newEvent = \Phake::mock(DomainEvent::class);
 
 		$uuid   = Uuid::uuid4();
 		$stream = new EventStream('stdClass', $uuid, []);
@@ -70,6 +71,6 @@ class EventStreamTest extends TestCase
 
 		$stream->markNewEventsProcessed();
 
-		$this->assertEquals(0, count($stream->newEvents()));
+		self::assertEquals(0, count($stream->newEvents()));
 	}
 }

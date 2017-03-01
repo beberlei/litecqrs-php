@@ -2,10 +2,12 @@
 
 namespace LiteCQRS;
 
+use BadMethodCallException;
 use LiteCQRS\Commanding\MemoryCommandHandlerLocator;
 use LiteCQRS\Commanding\SequentialCommandBus;
 use LiteCQRS\Eventing\MemoryEventHandlerLocator;
 use LiteCQRS\Eventing\SynchronousInProcessEventBus;
+use MyApp\UserService;
 use PHPUnit\Framework\TestCase;
 use Rhumsaa\Uuid\Uuid;
 
@@ -15,16 +17,16 @@ class CQRSTest extends TestCase
 	public function testAggregateRootApplyEvents()
 	{
 		$user = new User(Uuid::uuid4());
-		$user->changeEmail("foo@example.com");
+		$user->changeEmail('foo@example.com');
 
 		$events = $user->pullDomainEvents();
-		$this->assertEquals(1, count($events));
-		$this->assertEquals("foo@example.com", end($events)->email);
+		self::assertEquals(1, count($events));
+		self::assertEquals('foo@example.com', end($events)->email);
 	}
 
 	public function testInvalidEventThrowsException()
 	{
-		$this->expectException("BadMethodCallException");
+		$this->expectException(BadMethodCallException::class);
 		$this->expectExceptionMessage("There is no event named 'applyInvalid' that can be applied to 'LiteCQRS\User'");
 
 		$user = new User(Uuid::uuid4());
@@ -36,9 +38,9 @@ class CQRSTest extends TestCase
 		$command = new ChangeEmailCommand('kontakt@beberlei.de');
 
 		$userService = self::getMockBuilder('UserService')->setMethods([ 'changeEmail' ])->getMock();
-		$userService->expects($this->once())->method('changeEmail')->with($this->equalTo($command));
+		$userService->expects(self::once())->method('changeEmail')->with(self::equalTo($command));
 
-		$bus = $this->newSequentialCommandBusWith('LiteCQRS\ChangeEmailCommand', $userService);
+		$bus = $this->newSequentialCommandBusWith(ChangeEmailCommand::class, $userService);
 
 		$bus->handle($command);
 	}
@@ -53,8 +55,8 @@ class CQRSTest extends TestCase
 
 	public function testWhenSuccessfulCommandThenTriggersEventStoreCommit()
 	{
-		$userService = self::getMockBuilder('UserService')->setMethods([ 'changeEmail' ])->getMock();
-		$bus         = $this->newSequentialCommandBusWith('LiteCQRS\ChangeEmailCommand', $userService);
+		$userService = self::getMockBuilder(UserService::class)->setMethods([ 'changeEmail' ])->getMock();
+		$bus         = $this->newSequentialCommandBusWith(ChangeEmailCommand::class, $userService);
 
 		$bus->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
 		self::assertTrue(true);

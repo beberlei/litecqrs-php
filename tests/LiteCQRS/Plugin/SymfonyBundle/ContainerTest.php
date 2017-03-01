@@ -2,6 +2,8 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
+use LiteCQRS\Commanding\CommandBus;
+use LiteCQRS\Eventing\EventMessageBus;
 use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\Compiler\HandlerPass;
 use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\LiteCQRSExtension;
 use PHPUnit\Framework\TestCase;
@@ -16,8 +18,8 @@ class ContainerTest extends TestCase
 	{
 		$container = $this->createTestContainer();
 
-		self::assertInstanceOf('LiteCQRS\Commanding\CommandBus', $container->get('command_bus'));
-		self::assertInstanceOf('LiteCQRS\Eventing\EventMessageBus', $container->get('litecqrs.event_message_bus'));
+		self::assertInstanceOf(CommandBus::class, $container->get('command_bus'));
+		self::assertInstanceOf(EventMessageBus::class, $container->get('litecqrs.event_message_bus'));
 	}
 
 	public function createTestContainer()

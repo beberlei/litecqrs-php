@@ -22,7 +22,8 @@ class OptimimsticLockingEventStoreTest extends EventStoreContractTestCase
 		$this->serializer = new NoopSerializer();
 
 		return new OptimisticLockingEventStore(
-			$this->storage, $this->serializer
+			$this->storage,
+			$this->serializer
 		);
 	}
 
