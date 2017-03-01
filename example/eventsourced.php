@@ -2,7 +2,7 @@
 
 namespace EventSourced;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 use LiteCQRS\Repository;
 use LiteCQRS\DefaultCommand;

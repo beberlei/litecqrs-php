@@ -4,7 +4,7 @@ namespace LiteCQRS\EventStore;
 
 use LiteCQRS\DomainEvent;
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 class EventStreamTest extends TestCase
 {

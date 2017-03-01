@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\EventStore\OptimisticLocking;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use LiteCQRS\EventStore\EventStream;
 use LiteCQRS\EventStore\Transaction;
 use LiteCQRS\EventStore\EventStreamNotFoundException;

@@ -35,8 +35,8 @@ class ReflectionSerializerTest extends TestCase
 				[ 'time' => '2013-11-02 18:38:29.000000', 'timezone' => 'Europe/Berlin', 'php_class' => 'DateTime' ],
 			],
 			[
-				$uuid = \Rhumsaa\Uuid\Uuid::uuid4(),
-				[ 'php_class' => 'Rhumsaa\Uuid\Uuid', 'uuid' => (string) $uuid ],
+				$uuid = \Ramsey\Uuid\Uuid::uuid4(),
+				[ 'php_class' => 'Ramsey\Uuid\Uuid', 'uuid' => (string) $uuid ],
 			],
 			[
 				new DateRange(

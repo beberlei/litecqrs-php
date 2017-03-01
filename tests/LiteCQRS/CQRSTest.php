@@ -9,7 +9,7 @@ use LiteCQRS\Eventing\MemoryEventHandlerLocator;
 use LiteCQRS\Eventing\SynchronousInProcessEventBus;
 use MyApp\UserService;
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 class CQRSTest extends TestCase
 {

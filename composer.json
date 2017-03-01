@@ -10,11 +10,11 @@
         "phake/phake":"@stable",
         "php": ">=5.4",
         "psr/log": "@stable",
-        "rhumsaa/uuid": "@stable",
         "symfony/framework-bundle": ">=2.0,<2.2",
         "symfony/console": ">=2.0,<2.2",
         "swiftmailer/swiftmailer": "4.*",
-        "phpunit/phpunit": "^6.0"
+        "phpunit/phpunit": "^6.0",
+        "ramsey/uuid": "^3.5"
     },
     "autoload-dev" : {
         "classmap" : [

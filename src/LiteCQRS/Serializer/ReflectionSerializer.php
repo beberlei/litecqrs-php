@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Serializer;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use ReflectionClass;
 
 use DateTime;
@@ -32,7 +32,7 @@ class ReflectionSerializer implements Serializer
             return DateTimeImmutable::createFromFormat('Y-m-d H:i:s.u', $data['time'], new DateTimeZone($data['timezone']));
         }
 
-        if ($data['php_class'] === "Rhumsaa\Uuid\Uuid") {
+        if ($data['php_class'] === "Ramsey\Uuid\Uuid") {
             return Uuid::fromString($data['uuid']);
         }
 
@@ -69,7 +69,7 @@ class ReflectionSerializer implements Serializer
 
         if ($object instanceof Uuid) {
             return array(
-                'php_class' => 'Rhumsaa\Uuid\Uuid',
+                'php_class' => 'Ramsey\Uuid\Uuid',
                 'uuid' => (string)$object,
             );
         }

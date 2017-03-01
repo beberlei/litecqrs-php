@@ -6,7 +6,7 @@ use LiteCQRS\Eventing\EventName;
 use LiteCQRS\EventStore\EventStream;
 use LiteCQRS\Exception\RuntimeException;
 use LiteCQRS\Exception\BadMethodCallException;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 abstract class AggregateRoot
 {

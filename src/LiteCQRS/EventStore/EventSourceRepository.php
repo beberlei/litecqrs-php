@@ -7,7 +7,7 @@ use LiteCQRS\AggregateRoot;
 use LiteCQRS\Repository;
 use LiteCQRS\AggregateRootNotFoundException;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 class EventSourceRepository implements Repository
 {

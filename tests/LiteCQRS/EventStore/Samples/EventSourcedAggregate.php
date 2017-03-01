@@ -3,7 +3,7 @@
 namespace LiteCQRS\EventStore;
 
 use LiteCQRS\AggregateRoot;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 class EventSourcedAggregate extends AggregateRoot
 {

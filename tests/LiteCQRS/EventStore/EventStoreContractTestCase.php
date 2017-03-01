@@ -3,7 +3,7 @@
 namespace LiteCQRS\EventStore;
 
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 abstract class EventStoreContractTestCase extends TestCase
 {

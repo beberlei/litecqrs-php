@@ -2,7 +2,7 @@
 
 namespace LiteCQRS;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 class User extends AggregateRoot
 {

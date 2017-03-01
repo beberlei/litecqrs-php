@@ -5,7 +5,7 @@ namespace LiteCQRS\EventStore;
 use LiteCQRS\AggregateRootNotFoundException;
 use LiteCQRS\Eventing\EventMessageBus;
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 class EventSourceRepositoryTest extends TestCase
 {

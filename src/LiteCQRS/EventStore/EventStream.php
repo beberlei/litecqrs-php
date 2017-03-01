@@ -4,7 +4,7 @@ namespace LiteCQRS\EventStore;
 
 use LiteCQRS\DomainEvent;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use IteratorAggregate;
 use ArrayIterator;
 

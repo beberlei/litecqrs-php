@@ -5,7 +5,7 @@ namespace LiteCQRS;
 use LiteCQRS\EventStore\EventStream;
 use LiteCQRS\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 class AggregateRootTest extends TestCase
 {

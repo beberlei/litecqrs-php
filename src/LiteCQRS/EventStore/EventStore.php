@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\EventStore;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use LiteCQRS\EventStore\EventStream;
 
 /**
