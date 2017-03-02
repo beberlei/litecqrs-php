@@ -25,8 +25,10 @@ class OptimisticLockingEventStore implements EventStore
 	}
 
 	/**
-	 * @throws EventStreamNotFoundException
+	 * @param Uuid $uuid
+	 *
 	 * @return EventStream
+	 * @throws EventStreamNotFoundException
 	 */
 	public function find(Uuid $uuid)
 	{
@@ -53,6 +55,8 @@ class OptimisticLockingEventStore implements EventStore
 	/**
 	 * Commit the event stream to persistence.
 	 *
+	 * @param EventStream $stream
+	 *
 	 * @return Transaction
 	 */
 	public function commit(EventStream $stream)
@@ -64,7 +68,7 @@ class OptimisticLockingEventStore implements EventStore
 		}
 
 		$id             = (string) $stream->getUuid();
-		$currentVersion = $stream->getVersion();
+		$currentVersion = (int) $stream->getVersion();
 		$nextVersion    = $currentVersion + count($newEvents);
 
 		$eventData = isset($this->eventsData[$id])

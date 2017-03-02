@@ -7,6 +7,7 @@ use LiteCQRS\EventStore\EventStream;
 use LiteCQRS\Exception\BadMethodCallException;
 use LiteCQRS\Exception\RuntimeException;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 abstract class AggregateRoot
 {
@@ -17,11 +18,11 @@ abstract class AggregateRoot
 	private $id;
 
 	/**
-	 * @var array<DomainEvent>
+	 * @var DomainEvent[]
 	 */
 	private $events = [];
 
-	protected function setId(Uuid $uuid)
+	protected function setId(UuidInterface $uuid)
 	{
 		$this->id = $uuid;
 	}
@@ -47,8 +48,8 @@ abstract class AggregateRoot
 
 		if (!method_exists($this, $method)) {
 			throw new BadMethodCallException(
-				"There is no event named '$method' that can be applied to '" . get_class($this) . "'. " .
-				"If you just want to emit an event without applying changes use the raise() method."
+				'There is no event named "' . $method . '" that can be applied to "' . get_class($this) . '". ' .
+				'If you just want to emit an event without applying changes use the raise() method.'
 			);
 		}
 
@@ -58,7 +59,7 @@ abstract class AggregateRoot
 	public function loadFromEventStream(EventStream $eventStream)
 	{
 		if ($this->events) {
-			throw new RuntimeException("AggregateRoot was already created from event stream and cannot be hydrated again.");
+			throw new RuntimeException('AggregateRoot was already created from event stream and cannot be hydrated again.');
 		}
 
 		$this->setId($eventStream->getUuid());

@@ -30,7 +30,7 @@ class MemoryEventHandlerLocator implements EventHandlerLocator
 	public function register($handler)
 	{
 		foreach (get_class_methods($handler) as $methodName) {
-			if (strpos($methodName, "on") !== 0) {
+			if (strpos($methodName, 'on') !== 0) {
 				continue;
 			}
 

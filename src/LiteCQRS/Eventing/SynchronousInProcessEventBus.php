@@ -31,7 +31,7 @@ class SynchronousInProcessEventBus implements EventMessageBus
 	protected function invokeEventHandler($service, $eventName, $event)
 	{
 		try {
-			$methodName = "on" . $eventName;
+			$methodName = 'on' . $eventName;
 
 			$service->$methodName($event);
 		} catch (Exception $e) {
@@ -40,9 +40,9 @@ class SynchronousInProcessEventBus implements EventMessageBus
 			}
 
 			$this->publish(new EventExecutionFailed([
-				"service"   => get_class($service),
-				"exception" => $e,
-				"event"     => $event,
+				'service'   => get_class($service),
+				'exception' => $e,
+				'event'     => $event,
 			]));
 		}
 	}

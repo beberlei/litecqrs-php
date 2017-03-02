@@ -6,6 +6,7 @@ use ArrayIterator;
 use IteratorAggregate;
 use LiteCQRS\DomainEvent;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * Representation for a stream of events sorted by occurance.
@@ -38,7 +39,7 @@ class EventStream implements IteratorAggregate
 	 */
 	private $version;
 
-	public function __construct($className, Uuid $uuid, array $events = [], $version = null)
+	public function __construct($className, UuidInterface $uuid, array $events = [], $version = null)
 	{
 		$this->uuid      = $uuid;
 		$this->events    = $events;
@@ -86,7 +87,7 @@ class EventStream implements IteratorAggregate
 	}
 
 	/**
-	 * @return array<DomainEvent>
+	 * @return ArrayIterator|DomainEvent[]
 	 */
 	public function getIterator()
 	{

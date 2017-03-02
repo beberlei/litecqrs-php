@@ -24,15 +24,15 @@ class ReflectionSerializer implements Serializer
 
 	public function fromArray(array $data)
 	{
-		if ($data['php_class'] === "DateTime") {
+		if ($data['php_class'] === 'DateTime') {
 			return DateTime::createFromFormat('Y-m-d H:i:s.u', $data['time'], new DateTimeZone($data['timezone']));
 		}
 
-		if ($data['php_class'] === "DateTimeImmutable") {
+		if ($data['php_class'] === 'DateTimeImmutable') {
 			return DateTimeImmutable::createFromFormat('Y-m-d H:i:s.u', $data['time'], new DateTimeZone($data['timezone']));
 		}
 
-		if ($data['php_class'] === "Ramsey\Uuid\Uuid") {
+		if ($data['php_class'] === 'Ramsey\Uuid\Uuid') {
 			return Uuid::fromString($data['uuid']);
 		}
 
@@ -116,7 +116,10 @@ class ReflectionSerializer implements Serializer
 	}
 
 	/**
-	 * @return ReflectionProperty
+	 * @param ReflectionClass $reflectionClass
+	 * @param string          $propertyName
+	 *
+	 * @return \ReflectionProperty
 	 */
 	private function getReflectionField(ReflectionClass $reflectionClass, $propertyName)
 	{

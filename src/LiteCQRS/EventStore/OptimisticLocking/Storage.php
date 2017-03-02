@@ -20,11 +20,11 @@ interface Storage
 	 * Requires a check on the current version in the actual database
 	 * for optimistic locking purposes.
 	 *
-	 * @param string $id
-	 * @param string $className
-	 * @param array  $eventData
-	 * @param int    $nextVersion
-	 * @param int    $currentVersion
+	 * @param string  $id
+	 * @param string  $className
+	 * @param array   $eventData
+	 * @param integer $nextVersion
+	 * @param integer $currentVersion
 	 *
 	 * @return void
 	 */

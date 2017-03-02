@@ -38,6 +38,7 @@ class DebugCommand extends ContainerAwareCommand
 					continue;
 				}
 
+				/** @var \ReflectionParameter $commandParam */
 				$commandParam = current($method->getParameters());
 
 				if (!$commandParam->getClass()) {
@@ -47,7 +48,7 @@ class DebugCommand extends ContainerAwareCommand
 				$commandClass = $commandParam->getClass();
 				$commandType  = $commandClass->getName();
 
-				$parts = explode("\\", $commandType);
+				$parts = explode('\\', $commandType);
 				$name  = preg_replace('/Command/i', '', end($parts));
 
 				if (strtolower($method->getName()) !== strtolower($name)) {
@@ -80,7 +81,7 @@ class DebugCommand extends ContainerAwareCommand
 		}
 
 		$events       = [];
-		$maxName      = strlen("Event");
+		$maxName      = strlen('Event');
 		$maxId        = strlen('Event-Handler Service');
 		$maxEventName = strlen('Class');
 
@@ -95,7 +96,7 @@ class DebugCommand extends ContainerAwareCommand
 				}
 
 				$methodName = $method->getName();
-				if (strpos($methodName, "on") !== 0) {
+				if (strpos($methodName, 'on') !== 0) {
 					continue;
 				}
 
@@ -142,7 +143,8 @@ class DebugCommand extends ContainerAwareCommand
 			throw new \LogicException(sprintf('Debug information about the container is only available in debug mode.'));
 		}
 
-		if (!file_exists($cachedFile = $this->getContainer()->getParameter('debug.container.dump'))) {
+		$cachedFile = $this->getContainer()->getParameter('debug.container.dump');
+		if (!file_exists($cachedFile)) {
 			throw new \LogicException(sprintf('Debug information about the container could not be found. Please clear the cache and try again.'));
 		}
 

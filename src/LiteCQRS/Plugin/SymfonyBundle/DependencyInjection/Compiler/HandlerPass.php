@@ -14,7 +14,7 @@ class HandlerPass implements CompilerPassInterface
 		$this->registerEventHandlers($container);
 	}
 
-	private function registerCommandHandlers($container)
+	private function registerCommandHandlers(ContainerBuilder $container)
 	{
 		$services = [];
 		foreach ($container->findTaggedServiceIds('lite_cqrs.command_handler') as $id => $attributes) {
@@ -25,7 +25,7 @@ class HandlerPass implements CompilerPassInterface
 
 			foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
 				// skip events
-				if (strpos($method->getName(), "on") === 0) {
+				if (strpos($method->getName(), 'on') === 0) {
 					continue;
 				}
 
@@ -33,6 +33,7 @@ class HandlerPass implements CompilerPassInterface
 					continue;
 				}
 
+				/** @var \ReflectionParameter $commandParam */
 				$commandParam = current($method->getParameters());
 
 				if (!$commandParam->getClass()) {
@@ -40,7 +41,7 @@ class HandlerPass implements CompilerPassInterface
 				}
 
 				$commandClass = $commandParam->getClass();
-				$commandName  = strtolower(str_replace("Command", "", $commandClass->getShortName()));
+				$commandName  = strtolower(str_replace('Command', '', $commandClass->getShortName()));
 
 				// skip methods where the command class name does not match the method name
 				if ($commandName !== strtolower($method->getName())) {
@@ -55,7 +56,7 @@ class HandlerPass implements CompilerPassInterface
 		$locatorDefinition->addMethodCall('registerCommandHandlers', [ $services ]);
 	}
 
-	private function registerEventHandlers($container)
+	private function registerEventHandlers(ContainerBuilder $container)
 	{
 		$services = [];
 		foreach ($container->findTaggedServiceIds('lite_cqrs.event_handler') as $id => $attributes) {
@@ -69,7 +70,7 @@ class HandlerPass implements CompilerPassInterface
 				}
 
 				$methodName = $method->getName();
-				if (strpos($methodName, "on") !== 0) {
+				if (strpos($methodName, 'on') !== 0) {
 					continue;
 				}
 

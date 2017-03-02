@@ -5,6 +5,7 @@ namespace LiteCQRS\EventStore\OptimisticLocking;
 class StreamData
 {
 
+	/** @var string */
 	private $id;
 
 	private $eventData;

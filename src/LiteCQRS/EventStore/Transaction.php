@@ -2,6 +2,8 @@
 
 namespace LiteCQRS\EventStore;
 
+use LiteCQRS\DomainEvent;
+
 class Transaction
 {
 
@@ -16,7 +18,7 @@ class Transaction
 	}
 
 	/**
-	 * @return \LiteCQRS\EventStore\EventStream
+	 * @return EventStream
 	 */
 	public function getEventStream()
 	{
@@ -24,7 +26,7 @@ class Transaction
 	}
 
 	/**
-	 * @return array<LiteCQRS\DomainEvent>
+	 * @return DomainEvent[]
 	 */
 	public function getCommittedEvents()
 	{

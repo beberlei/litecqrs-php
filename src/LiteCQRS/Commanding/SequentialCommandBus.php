@@ -2,6 +2,9 @@
 
 namespace LiteCQRS\Commanding;
 
+use Exception;
+use RuntimeException;
+
 /**
  * Process Commands and pass them to their handlers in sequential order.
  *
@@ -38,7 +41,7 @@ class SequentialCommandBus implements CommandBus
 	 *
 	 * @param object $command
 	 *
-	 * @throws CommandFailedStackException
+	 * @throws Exception
 	 */
 	public function handle($command)
 	{
@@ -50,7 +53,8 @@ class SequentialCommandBus implements CommandBus
 
 		$first = true;
 
-		while ($command = array_shift($this->commandStack)) {
+		while (count($this->commandStack)) {
+			$command = array_shift($this->commandStack);
 			$this->invokeHandler($command, $first);
 			$first = false;
 		}
@@ -65,11 +69,11 @@ class SequentialCommandBus implements CommandBus
 			$method  = $this->getHandlerMethodName($command);
 
 			if (!method_exists($service, $method)) {
-				throw new \RuntimeException("Service " . get_class($service) . " has no method " . $method . " to handle command.");
+				throw new RuntimeException('Service ' . get_class($service) . ' has no method ' . $method . ' to handle command.');
 			}
 
 			$service->$method($command);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->executing = false;
 			$this->handleException($e, $first);
 		}
@@ -79,9 +83,9 @@ class SequentialCommandBus implements CommandBus
 
 	protected function getHandlerMethodName($command)
 	{
-		$parts = explode("\\", get_class($command));
+		$parts = explode('\\', get_class($command));
 
-		return str_replace("Command", "", lcfirst(end($parts)));
+		return str_replace('Command', '', lcfirst(end($parts)));
 	}
 
 	protected function handleException($e, $first)

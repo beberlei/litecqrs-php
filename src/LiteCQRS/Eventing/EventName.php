@@ -29,15 +29,15 @@ class EventName
 	{
 		$class = get_class($this->event);
 
-		if (substr($class, -5) === "Event") {
+		if (substr($class, -5) === 'Event') {
 			$class = substr($class, 0, -5);
 		}
 
-		if (strpos($class, "\\") === false) {
+		if (strpos($class, '\\') === false) {
 			return $class;
 		}
 
-		$parts = explode("\\", $class);
+		$parts = explode('\\', $class);
 
 		return end($parts);
 	}

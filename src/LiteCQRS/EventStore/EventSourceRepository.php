@@ -24,7 +24,12 @@ class EventSourceRepository implements Repository
 	}
 
 	/**
+	 * @param string $className
+	 * @param Uuid   $uuid
+	 * @param null   $expectedVersion
+	 *
 	 * @return AggregateRoot
+	 * @throws AggregateRootNotFoundException
 	 */
 	public function find($className, Uuid $uuid, $expectedVersion = null)
 	{
@@ -46,15 +51,16 @@ class EventSourceRepository implements Repository
 			throw new ConcurrencyException();
 		}
 
-		$reflClass = new \ReflectionClass($aggregateRootClass);
+		$aggregateRoot = $this->createInstanceOfAggreagteRoot($aggregateRootClass);
 
-		$aggregateRoot = $reflClass->newInstanceWithoutConstructor();
 		$aggregateRoot->loadFromEventStream($eventStream);
 
 		return $aggregateRoot;
 	}
 
 	/**
+	 * @param AggregateRoot $object
+	 *
 	 * @return void
 	 */
 	public function save(AggregateRoot $object)
@@ -77,5 +83,19 @@ class EventSourceRepository implements Repository
 			$event->setAggregateId($object->getId());
 			$this->eventBus->publish($event);
 		}
+	}
+
+	/**
+	 * @param $aggregateRootClass
+	 *
+	 * @return AggregateRoot
+	 */
+	private function createInstanceOfAggreagteRoot($aggregateRootClass)
+	{
+		$reflClass = new \ReflectionClass($aggregateRootClass);
+		/** @var AggregateRoot $aggregateRoot */
+		$aggregateRoot = $reflClass->newInstanceWithoutConstructor();
+
+		return $aggregateRoot;
 	}
 }

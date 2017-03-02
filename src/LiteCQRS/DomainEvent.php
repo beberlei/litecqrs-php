@@ -2,6 +2,8 @@
 
 namespace LiteCQRS;
 
+use RuntimeException;
+
 /**
  * Domain Events happen during command execution/handling.
  *

@@ -2,14 +2,14 @@
 
 namespace LiteCQRS;
 
-use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class User extends AggregateRoot
 {
 
 	private $email;
 
-	public function __construct(Uuid $uuid)
+	public function __construct(UuidInterface $uuid)
 	{
 		$this->setId($uuid);
 	}
@@ -21,7 +21,7 @@ class User extends AggregateRoot
 
 	public function changeEmail($email)
 	{
-		$this->apply(new ChangeEmailEvent([ "email" => $email ]));
+		$this->apply(new ChangeEmailEvent([ 'email' => $email ]));
 	}
 
 	protected function applyChangeEmail($event)

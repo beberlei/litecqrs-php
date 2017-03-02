@@ -27,7 +27,7 @@ class CQRSTest extends TestCase
 	public function testInvalidEventThrowsException()
 	{
 		$this->expectException(BadMethodCallException::class);
-		$this->expectExceptionMessage("There is no event named 'applyInvalid' that can be applied to 'LiteCQRS\User'");
+		$this->expectExceptionMessage('There is no event named "applyInvalid" that can be applied to "LiteCQRS\User"');
 
 		$user = new User(Uuid::uuid4());
 		$user->changeInvalidEventName();
