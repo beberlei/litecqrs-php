@@ -2,7 +2,6 @@
 
 namespace LiteCQRS\Commanding;
 
-use LiteCQRS\Command;
 
 /**
  * Locator for command handlers based on Command
@@ -15,5 +14,10 @@ use LiteCQRS\Command;
 interface CommandHandlerLocator
 {
 
+	/**
+	 * @param Command $command
+	 *
+	 * @return CommandHandler
+	 */
 	public function getCommandHandler(Command $command);
 }

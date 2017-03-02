@@ -8,6 +8,6 @@ namespace LiteCQRS\Commanding;
 interface CommandBus
 {
 
-	public function handle($command);
+	public function handle(Command $command);
 }
 

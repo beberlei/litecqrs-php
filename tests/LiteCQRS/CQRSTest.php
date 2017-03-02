@@ -3,11 +3,11 @@
 namespace LiteCQRS;
 
 use BadMethodCallException;
+use LiteCQRS\Commanding\CommandHandler;
 use LiteCQRS\Commanding\MemoryCommandHandlerLocator;
 use LiteCQRS\Commanding\SequentialCommandBus;
 use LiteCQRS\Eventing\MemoryEventHandlerLocator;
 use LiteCQRS\Eventing\SynchronousInProcessEventBus;
-use MyApp\UserService;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
@@ -36,27 +36,27 @@ class CQRSTest extends TestCase
 	public function testDirectCommandBus()
 	{
 		$command = new ChangeEmailCommand('kontakt@beberlei.de');
+		$commandHandler = new ChangeEmailCommandHandler();
 
-		$userService = self::getMockBuilder('UserService')->setMethods([ 'changeEmail' ])->getMock();
-		$userService->expects(self::once())->method('changeEmail')->with(self::equalTo($command));
-
-		$bus = $this->newSequentialCommandBusWith(ChangeEmailCommand::class, $userService);
+		$bus = $this->newSequentialCommandBusWith($commandHandler);
 
 		$bus->handle($command);
+
+		self::assertTrue(true);
 	}
 
-	private function newSequentialCommandBusWith($commandType, $service)
+	private function newSequentialCommandBusWith(CommandHandler $commandHandler)
 	{
 		$locator = new MemoryCommandHandlerLocator();
-		$locator->register($commandType, $service);
+		$locator->register($commandHandler);
 
 		return new SequentialCommandBus($locator);
 	}
 
 	public function testWhenSuccessfulCommandThenTriggersEventStoreCommit()
 	{
-		$userService = self::getMockBuilder(UserService::class)->setMethods([ 'changeEmail' ])->getMock();
-		$bus         = $this->newSequentialCommandBusWith(ChangeEmailCommand::class, $userService);
+		$userService = new ChangeEmailCommandHandler();
+		$bus         = $this->newSequentialCommandBusWith($userService);
 
 		$bus->handle(new ChangeEmailCommand('kontakt@beberlei.de'));
 		self::assertTrue(true);

@@ -18,7 +18,7 @@ class DefaultCommandTest extends TestCase
 	public function testCreateThrowsExceptionWhenUnknownPropertySet()
 	{
 		self::expectException(RuntimeException::class);
-		self::expectExceptionMessage('Property "unknown" is not a valid property on command "Test".');
+		self::expectExceptionMessage('Property "unknown" is not a valid property on command "TestCommand".');
 		$cmd = new TestCommand([ 'unknown' => 'value' ]);
 	}
 }

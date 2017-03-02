@@ -18,7 +18,7 @@ namespace LiteCQRS;
  *   $command = new GreetCommand(array("personId" => 1));
  *   $commandBus->handle($command);
  */
-abstract class DefaultCommand implements Command
+abstract class DefaultCommand implements \LiteCQRS\Commanding\Command
 {
 
 	public function __construct(array $data = [])
@@ -26,7 +26,7 @@ abstract class DefaultCommand implements Command
 		foreach ($data as $key => $value) {
 			if (!property_exists($this, $key)) {
 				$parts   = explode('\\', get_class($this));
-				$command = str_replace('Command', '', end($parts));
+				$command = end($parts);
 
 				throw new \RuntimeException(sprintf('Property "%s" is not a valid property on command "%s".', $key, $command));
 			}

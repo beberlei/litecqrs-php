@@ -1,9 +1,8 @@
 <?php
 
-namespace LiteCQRS;
+namespace LiteCQRS\Commanding;
 
 interface Command
 {
 
 }
-

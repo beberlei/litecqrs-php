@@ -2,7 +2,7 @@
 
 namespace LiteCQRS\Plugin\SymfonyBundle;
 
-use LiteCQRS\Command;
+use LiteCQRS\Commanding\Command;
 use LiteCQRS\Commanding\CommandHandlerLocator;
 use LiteCQRS\Eventing\EventHandlerLocator;
 use LiteCQRS\Eventing\EventName;

@@ -1,12 +1,25 @@
-# LiteCQRS for PHP
+# PHP CQRS EventSourcing library
+
+This Library is build on Benjamin Eberlei's [LiteCQRS for php](https://github.com/beberlei/litecqrs-php) 
+which was not maintained for quite long time. This fork is bringigng it back to live. 
+
+[![Build Status (Master)](https://travis-ci.org/LidskaSila/php-cqrs-event-sourcing.svg?branch=master)](https://travis-ci.org/LidskaSila/php-cqrs-event-sourcing)
+
+Main differencies are:
+
+- Is up to date with newer versions of PHP, soon it will be able only for PHP 7.1
+
+- Commanding - you can register to CommandBus implementation of CommandHandler only (has only handle method). 
+It is not to dogmatically enforce SRP (which actually does not mean one public method to one class), but to 
+pragmatically enforce expicitness in naming and structure conventions. When you see XxxCommand and need to see implementation,
+you just know there should be XxxCommandHandler somewhere with that actual implementation.
+
+
+## Original updated readme
 
 Small naming-convention based CQRS library for PHP (loosely based on [LiteCQRS for
 C#](https://github.com/danielwertheim/LiteCQRS)) that relies on the MessageBus,
 Command, EventSourcing and Domain Event patterns.
-
-[![Build Status (Master)](https://travis-ci.org/beberlei/litecqrs-php.png?branch=master)](https://travis-ci.org/beberlei/litecqrs-php)
-
-**NOTE** Use the 1.1 branch, as the dev-master is currently in heavy refactoring.
 
 ## Terminology
 
@@ -17,8 +30,14 @@ pattern](http://martinfowler.com/eaaDev/DomainEvent.html) to notify the read
 model about changes in the write model.
 
 LiteCQRS uses the command pattern and a central message bus service that
-finds the corresponding handler to execute a command. A command is just a class
-with some properties describing it, it can optionally implement ``LiteCQRS\Command``.
+finds the corresponding handler to execute a command. A command must implement 
+``LiteCQRS\Commanding\Command``. It should also definitely be DTO (data transfer object) 
+with just some properties describing it (imutability is encouraged).
+
+After this object is passed as parameter into CommandBus's handle(Command $command) method,
+CommandBus finds proper CommandHandler and invokes same method with same parameter on it.
+That means yes, it is enforced to keep convention that for each XxxCommand implementing Command
+there have to be XxxCommandHandler implementing CommandHandler.
 
 During the execution of a command, domain events can be triggered. These are
 again just simple classes with some properties and they can optionally implement
@@ -30,22 +49,10 @@ listen to them.
 
 ## Changes
 
-### From 1.0 to 1.1
-
-* Extending ``LiteCQRS\Command`` and ``LiteCQRS\DomainEvent`` is NOT required anymore.
-  In fact you can use any class as command or event. The naming conventions alone
-  make sure command handlers and event listeners are detected.
-
-* JMS Serializer Plugin cannot "detach" aggregate root properties that are part
-  of an event that is serialized anymore. Putting related aggregate roots into
-  an Event is therefore not supported anymore (and not a good idea even with
-  JMS Serializer 0.9 anyways).
-
 ## Conventions
 
-* All public methods of a command handler class are mapped to Commands "Command
-  Class Shortname" => "MethodName" when the method and command class shortname match.
-  Implementing an interface for the commands is NOT required (since 1.1)
+* Each XxxCommand DTO is mapped to XxxCommandHandler when XxxCommand implementing Command
+  and XxxCommandHandler implementing CommandHandler.
 * Domain Events are applied to Event Handlers "Event Class Shortname" =>
   "onEventClassShortname". Only if this matches is an event listener registered.
 * Domain Events are applied on Entities/Aggregate Roots "Event Class Shortname"
@@ -58,15 +65,12 @@ listen to them.
 
 Examples:
 
-* ``HelloWorld\GreetingCommand`` maps to the ``greeting(GreetingCommand $command)`` method on the registered handler.
-* ``HelloWorld\Commands\Greeting`` maps to the ``greeting(Greeting $command)`` method on the registered handler.
+* ``GreetingCommand implements Command`` maps to the ``handle(GreetingCommand $command)`` method on the registered GreetingCommandHandler implementing CommandHandler.
 * ``HelloWorld\GreetedEvent`` is passed to all event handlers that have a method ``onGreeted(GreetedEvent $event)``.
 * ``HelloWorld\Events\Greeted`` is passed to all event handlers that have a method ``onGreeted(Greeted $event)``.
 * ``HelloWorld\GreetedEvent`` is delegated to ``applyGreeted($event)`` when created on the aggregate root
 
 ## Installation & Requirements
-
-Use the 1.1 branch, as the dev-master is currently in heavy refactoring.
 
 The core library has no dependencies on other libraries. Plugins have dependencies on their specific libraries.
 
@@ -74,7 +78,7 @@ Install with [Composer](http://getcomposer.org):
 
     {
         "require": {
-            "beberlei/lite-cqrs": "1.1"
+            "LidskaSila/php-cqrs-event-sourcing": "v0.0.1-alpha"
         }
     }
 
@@ -83,7 +87,7 @@ Install with [Composer](http://getcomposer.org):
 These are the steps that a command regularly takes through the LiteCQRS stack during execution:
 
 1. You push commands into a ``CommandBus``. Commands are simple objects
-   extending ``Command`` created by you.
+   implementing ``Command`` created by you.
 2. The ``CommandBus`` checks for a handler that can execute your command. Every
    command has exactly one handler.
 3. The command handler changes state of the domain model. It does that by
@@ -104,6 +108,8 @@ In the case of InMemory CommandBus and EventMessageBus LiteCQRS makes sure that
 the execution of command and event handlers is never nested, but in sequential
 linearized order. This prevents independent transactions for each command
 from affecting each other.
+
+#TODO following is not updated
 
 ## Examples
 

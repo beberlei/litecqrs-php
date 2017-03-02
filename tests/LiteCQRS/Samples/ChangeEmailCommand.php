@@ -2,7 +2,7 @@
 
 namespace LiteCQRS;
 
-class ChangeEmailCommand implements Command
+class ChangeEmailCommand implements \LiteCQRS\Commanding\Command
 {
 
 	public $email;

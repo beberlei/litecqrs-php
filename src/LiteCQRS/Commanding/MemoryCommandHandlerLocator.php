@@ -2,30 +2,41 @@
 
 namespace LiteCQRS\Commanding;
 
-use LiteCQRS\Command;
-
 class MemoryCommandHandlerLocator implements CommandHandlerLocator
 {
 
+	/** @var CommandHandler[] */
 	private $handlers = [];
 
 	public function getCommandHandler(Command $command)
 	{
-		$commandType = get_class($command);
-
-		if (!isset($this->handlers[strtolower($commandType)])) {
-			throw new \RuntimeException("No service registered for command type '" . $commandType . "'");
+		$commandHandlerKey = $this->getKeyFromCommand($command);
+		if (!isset($this->handlers[$commandHandlerKey])) {
+			throw new \RuntimeException("No service registered for command type '" . $commandHandlerKey . "'. You need to register Command handler!");
 		}
 
-		return $this->handlers[strtolower($commandType)];
+		return $this->handlers[$commandHandlerKey];
 	}
 
-	public function register($commandType, $service)
+	public function register(CommandHandler $commandHandler)
 	{
-		if (!is_object($service)) {
-			throw new \RuntimeException("No valid service given for command type '" . $commandType . "'");
-		}
+		$this->handlers[self::getKeyFromCommandHandler($commandHandler)] = $commandHandler;
+	}
 
-		$this->handlers[strtolower($commandType)] = $service;
+	private function getKeyFromCommand(Command $command)
+	{
+		return self::getShortObjectName($command);
+	}
+
+	private static function getKeyFromCommandHandler(CommandHandler $commandHandler)
+	{
+		$className = self::getShortObjectName($commandHandler);
+
+		return substr($className, 0, -strlen('Handler'));
+	}
+
+	private static function getShortObjectName($object)
+	{
+		return (new \ReflectionClass($object))->getShortName();
 	}
 }
