@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS;
+namespace Lidskasila\Glow;
 
 use RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,7 @@ class DefaultDomainEventTest extends TestCase
 	{
 		self::expectException(RuntimeException::class);
 		self::expectExceptionMessage('Property unknown is not a valid property on event Test');
-		$event = new TestEvent([ 'unknown' => 'value' ]);
+		new TestEvent([ 'unknown' => 'value' ]);
 	}
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS;
+namespace Lidskasila\Glow;
 
 use RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +19,6 @@ class DefaultCommandTest extends TestCase
 	{
 		self::expectException(RuntimeException::class);
 		self::expectExceptionMessage('Property "unknown" is not a valid property on command "TestCommand".');
-		$cmd = new TestCommand([ 'unknown' => 'value' ]);
+		new TestCommand([ 'unknown' => 'value' ]);
 	}
 }

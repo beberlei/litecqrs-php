@@ -1,11 +1,11 @@
 <?php
 
-namespace LiteCQRS\EventStore\OptimisticLocking;
+namespace Lidskasila\Glow\EventStore\OptimisticLocking;
 
-use LiteCQRS\EventStore\EventStore;
-use LiteCQRS\EventStore\EventStoreContractTestCase;
-use LiteCQRS\EventStore\EventStream;
-use LiteCQRS\Serializer\NoopSerializer;
+use Lidskasila\Glow\EventStore\EventStore;
+use Lidskasila\Glow\EventStore\EventStoreContractTestCase;
+use Lidskasila\Glow\EventStore\EventStream;
+use Lidskasila\Glow\Serializer\NoopSerializer;
 
 class OptimimsticLockingEventStoreTest extends EventStoreContractTestCase
 {

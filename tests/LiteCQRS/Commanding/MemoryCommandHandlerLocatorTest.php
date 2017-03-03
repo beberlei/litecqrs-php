@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Commanding;
+namespace Lidskasila\Glow\Commanding;
 
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

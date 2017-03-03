@@ -1,8 +1,8 @@
 <?php
 
-namespace LiteCQRS;
+namespace Lidskasila\Glow;
 
-class ChangeEmailCommand implements \LiteCQRS\Commanding\Command
+class ChangeEmailCommand implements \Lidskasila\Glow\Commanding\Command
 {
 
 	public $email;

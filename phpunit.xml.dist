@@ -11,7 +11,7 @@
 >
 
     <testsuites>
-        <testsuite name="LiteCQRS TestSuite">
+        <testsuite name="Glow TestSuite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
@@ -24,9 +24,9 @@
                 <directory>src/*/*Bundle/Tests</directory>
                 <directory>src/*/Bundle/*Bundle/Resources</directory>
                 <directory>src/*/Bundle/*Bundle/Tests</directory>
-                <file>src/LiteCQRS/Plugin/CRUD/CrudCreatable.php</file>
-                <file>src/LiteCQRS/Plugin/CRUD/CrudDeletable.php</file>
-                <file>src/LiteCQRS/Plugin/CRUD/CrudUpdatable.php</file>
+                <file>src/Glow/Plugin/CRUD/CrudCreatable.php</file>
+                <file>src/Glow/Plugin/CRUD/CrudDeletable.php</file>
+                <file>src/Glow/Plugin/CRUD/CrudUpdatable.php</file>
             </exclude>
         </whitelist>
     </filter>

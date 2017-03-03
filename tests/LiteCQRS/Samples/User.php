@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS;
+namespace Lidskasila\Glow;
 
 use Ramsey\Uuid\UuidInterface;
 

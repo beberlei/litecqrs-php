@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS;
+namespace Lidskasila\Glow;
 
 class ChangeEmailEvent extends DefaultDomainEvent
 {

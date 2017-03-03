@@ -1,9 +1,9 @@
 <?php
 
-namespace LiteCQRS;
+namespace Lidskasila\Glow;
 
-use LiteCQRS\Commanding\Command;
-use LiteCQRS\Commanding\CommandHandler;
+use Lidskasila\Glow\Commanding\Command;
+use Lidskasila\Glow\Commanding\CommandHandler;
 
 class ChangeEmailCommandHandler implements CommandHandler
 {

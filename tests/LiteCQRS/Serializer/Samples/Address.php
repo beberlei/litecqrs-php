@@ -6,7 +6,7 @@
  * Time: 13:39
  */
 
-namespace LiteCQRS\Serializer;
+namespace Lidskasila\Glow\Serializer;
 
 class Address
 {

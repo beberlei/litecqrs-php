@@ -1,9 +1,9 @@
 <?php
 
-namespace LiteCQRS;
+namespace Lidskasila\Glow;
 
-use LiteCQRS\EventStore\EventStream;
-use LiteCQRS\Exception\RuntimeException;
+use Lidskasila\Glow\EventStore\EventStream;
+use Lidskasila\Glow\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 

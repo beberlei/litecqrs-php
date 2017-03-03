@@ -1,9 +1,9 @@
 {
-    "name": "LidskaSila/php-cqrs-event-sourcing",
+    "name": "lidska-sila/glow",
     "description": "Simple [C]ommand [Q]uery [R]esponsibility [S]egregation and [E]vent [S]ourcing library.",
     "license": "MIT",
     "autoload": {
-        "psr-4": {"LiteCQRS\\": "src/"}
+        "psr-4": {"Glow\\": "src/"}
     },
         "require": {
         "doctrine/common": ">=2.0,<2.5",

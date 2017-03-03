@@ -1,8 +1,8 @@
 <?php
 
-namespace LiteCQRS\Commanding;
+namespace Lidskasila\Glow\Commanding;
 
-use LiteCQRS\DefaultCommand;
+use Lidskasila\Glow\DefaultCommand;
 
 class NoHandlerCommand extends DefaultCommand
 {

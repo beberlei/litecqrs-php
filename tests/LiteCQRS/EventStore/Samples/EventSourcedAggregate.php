@@ -1,8 +1,8 @@
 <?php
 
-namespace LiteCQRS\EventStore;
+namespace Lidskasila\Glow\EventStore;
 
-use LiteCQRS\AggregateRoot;
+use Lidskasila\Glow\AggregateRoot;
 use Ramsey\Uuid\Uuid;
 
 class EventSourcedAggregate extends AggregateRoot

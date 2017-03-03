@@ -1,11 +1,11 @@
 <?php
 
-namespace LiteCQRS\Plugin\SymfonyBundle;
+namespace Lidskasila\Glow\Plugin\SymfonyBundle;
 
-use LiteCQRS\Commanding\CommandBus;
-use LiteCQRS\Eventing\EventMessageBus;
-use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\Compiler\HandlerPass;
-use LiteCQRS\Plugin\SymfonyBundle\DependencyInjection\LiteCQRSExtension;
+use Lidskasila\Glow\Commanding\CommandBus;
+use Lidskasila\Glow\Eventing\EventMessageBus;
+use Lidskasila\Glow\Plugin\SymfonyBundle\DependencyInjection\Compiler\HandlerPass;
+use Lidskasila\Glow\Plugin\SymfonyBundle\DependencyInjection\GlowExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,7 +19,7 @@ class ContainerTest extends TestCase
 		$container = $this->createTestContainer();
 
 		self::assertInstanceOf(CommandBus::class, $container->get('command_bus'));
-		self::assertInstanceOf(EventMessageBus::class, $container->get('litecqrs.event_message_bus'));
+		self::assertInstanceOf(EventMessageBus::class, $container->get('glow.event_message_bus'));
 	}
 
 	public function createTestContainer()
@@ -31,7 +31,7 @@ class ContainerTest extends TestCase
 			'kernel.environment' => 'test',
 			'kernel.root_dir'    => __DIR__ . '/../../../../', // src dir
 		]));
-		$loader    = new LiteCQRSExtension();
+		$loader    = new GlowExtension();
 		$container->registerExtension($loader);
 		$container->set('logger', self::getMockBuilder('Monolog\Logger'));
 		$loader->load([ [] ], $container);

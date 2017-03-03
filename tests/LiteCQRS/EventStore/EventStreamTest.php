@@ -1,8 +1,8 @@
 <?php
 
-namespace LiteCQRS\EventStore;
+namespace Lidskasila\Glow\EventStore;
 
-use LiteCQRS\DomainEvent;
+use Lidskasila\Glow\DomainEvent;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace LiteCQRS\EventStore;
+namespace Lidskasila\Glow\EventStore;
 
-use LiteCQRS\DefaultDomainEvent;
+use Lidskasila\Glow\DefaultDomainEvent;
 
 class TestEvent extends DefaultDomainEvent
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace LiteCQRS\EventStore;
+namespace Lidskasila\Glow\EventStore;
 
-class EventStoreTestEvent extends \LiteCQRS\DefaultDomainEvent
+class EventStoreTestEvent extends \Lidskasila\Glow\DefaultDomainEvent
 {
 
 }

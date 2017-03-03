@@ -1,9 +1,9 @@
 <?php
 
-namespace LiteCQRS\EventStore;
+namespace Lidskasila\Glow\EventStore;
 
-use LiteCQRS\AggregateRootNotFoundException;
-use LiteCQRS\Eventing\EventMessageBus;
+use Lidskasila\Glow\AggregateRootNotFoundException;
+use Lidskasila\Glow\Eventing\EventMessageBus;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteCQRS\Serializer;
+namespace Lidskasila\Glow\Serializer;
 
 class Person
 {

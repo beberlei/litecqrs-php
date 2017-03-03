@@ -1,7 +1,7 @@
 Symfony Example
 ===============
 
-This document shows an example of how to implement [example1.php](https://github.com/beberlei/litecqrs-php/blob/master/example/example1.php) as part of a Symfony project.
+This document shows an example of how to implement [example1.php](https://github.com/beberlei/glow-php/blob/master/example/example1.php) as part of a Symfony project.
 
 Service Definition
 ------------------
@@ -26,7 +26,7 @@ Service Definition
         </service>
 
         <service id="test.command.user_service_commands" class="%test.user_service.class%">
-            <argument type="service" id="litecqrs.identity_map" />
+            <argument type="service" id="glow.identity_map" />
             <tag name="lite_cqrs.command_handler" />
         </service>
     </services>
@@ -43,8 +43,8 @@ User.php
 
 namespace Acme\DemoBundle\Entity;
 
-use LiteCQRS\DomainEventProvider;
-use LiteCQRS\DomainObjectChanged;
+use Lidskasila\Glow\DomainEventProvider;
+use Lidskasila\Glow\DomainObjectChanged;
 
 class User extends DomainEventProvider
 {
@@ -69,7 +69,7 @@ ChangeEmailCommand.php
 
 namespace Acme\DemoBundle\Model\Command;
 
-use LiteCQRS\DefaultCommand;
+use Lidskasila\Glow\DefaultCommand;
 
 class ChangeEmailCommand extends DefaultCommand
 {
@@ -91,7 +91,7 @@ namespace Acme\DemoBundle\Services;
 
 use Acme\DemoBundle\Entity\User;
 use Acme\DemoBundle\Model\Command\ChangeEmailCommand;
-use LiteCQRS\Bus\IdentityMap\SimpleIdentityMap;
+use Lidskasila\Glow\Bus\IdentityMap\SimpleIdentityMap;
 
 class UserService
 {
@@ -132,7 +132,7 @@ MyEventHandler.php
 
 namespace Acme\DemoBundle\EventHandlers;
 
-use LiteCQRS\DomainObjectChanged;
+use Lidskasila\Glow\DomainObjectChanged;
 
 class MyEventHandler
 {
