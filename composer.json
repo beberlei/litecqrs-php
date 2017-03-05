@@ -8,7 +8,7 @@
         "require": {
         "phake/phake":"@stable",
         "php": ">=7.0",
-        "phpunit/phpunit": "^6.0",
+        "phpunit/phpunit": "^5.7",
         "ramsey/uuid": "^3.5"
     },
     "autoload-dev" : {
