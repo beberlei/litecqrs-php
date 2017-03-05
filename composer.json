@@ -6,13 +6,8 @@
         "psr-4": {"Glow\\": "src/"}
     },
         "require": {
-        "doctrine/common": ">=2.0,<2.5",
         "phake/phake":"@stable",
         "php": ">=7.0",
-        "psr/log": "@stable",
-        "symfony/framework-bundle": ">=2.0,<2.2",
-        "symfony/console": ">=2.0,<2.2",
-        "swiftmailer/swiftmailer": "4.*",
         "phpunit/phpunit": "^6.0",
         "ramsey/uuid": "^3.5"
     },
