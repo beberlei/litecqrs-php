@@ -1,9 +1,10 @@
 # PHP Glow library
 
 This PHP CQRS EventSourcing library is build on Benjamin Eberlei's [LiteCQRS for php](https://github.com/beberlei/litecqrs-php) 
-which was not maintained for quite long time. This fork is bringigng it back to live. 
+which was not maintained for quite long time. This fork is bringigng it back to live, but it is not recommended to use it in production,
+since there may be BC breaks in near future.
 
-[![Build Status (Master)](https://travis-ci.org/LidskaSila/php-cqrs-event-sourcing.svg?branch=master)](https://travis-ci.org/LidskaSila/php-cqrs-event-sourcing)
+[![Build Status (Master)](https://travis-ci.org/LidskaSila/Glow.svg?branch=master)](https://travis-ci.org/LidskaSila/Glow)
 
 Main differencies are:
 
