@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\EventStore\OptimisticLocking;
 
-use Lidskasila\Glow\EventStore\ConcurrencyException;
+use LidskaSila\Glow\EventStore\ConcurrencyException;
 
 class MemoryStorage implements Storage
 {

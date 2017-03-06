@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\Commanding;
 
-use Lidskasila\Glow\DefaultCommand;
+use LidskaSila\Glow\DefaultCommand;
 
 class NoHandlerCommand extends DefaultCommand
 {

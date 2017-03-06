@@ -3,11 +3,11 @@
 namespace LidskaSila\Glow;
 
 use BadMethodCallException;
-use Lidskasila\Glow\Commanding\CommandHandler;
-use Lidskasila\Glow\Commanding\MemoryCommandHandlerLocator;
-use Lidskasila\Glow\Commanding\SequentialCommandBus;
-use Lidskasila\Glow\Eventing\MemoryEventHandlerLocator;
-use Lidskasila\Glow\Eventing\SynchronousInProcessEventBus;
+use LidskaSila\Glow\Commanding\CommandHandler;
+use LidskaSila\Glow\Commanding\MemoryCommandHandlerLocator;
+use LidskaSila\Glow\Commanding\SequentialCommandBus;
+use LidskaSila\Glow\Eventing\MemoryEventHandlerLocator;
+use LidskaSila\Glow\Eventing\SynchronousInProcessEventBus;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
@@ -27,7 +27,7 @@ class CQRSTest extends TestCase
 	public function testInvalidEventThrowsException()
 	{
 		$this->expectException(BadMethodCallException::class);
-		$this->expectExceptionMessage('There is no event named "applyInvalid" that can be applied to "Lidskasila\Glow\User"');
+		$this->expectExceptionMessage('There is no event named "applyInvalid" that can be applied to "LidskaSila\Glow\User"');
 
 		$user = new User(Uuid::uuid4());
 		$user->changeInvalidEventName();

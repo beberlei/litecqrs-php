@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\Eventing;
 
-use Lidskasila\Glow\DefaultDomainEvent;
+use LidskaSila\Glow\DefaultDomainEvent;
 
 class EventExecutionFailed extends DefaultDomainEvent
 {

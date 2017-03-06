@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow;
 
-use Lidskasila\Glow\Eventing\EventName;
+use LidskaSila\Glow\Eventing\EventName;
 
 abstract class DefaultDomainEvent implements DomainEvent
 {

@@ -2,8 +2,8 @@
 
 namespace LidskaSila\Glow;
 
-use Lidskasila\Glow\EventStore\EventStream;
-use Lidskasila\Glow\Exception\RuntimeException;
+use LidskaSila\Glow\EventStore\EventStream;
+use LidskaSila\Glow\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 

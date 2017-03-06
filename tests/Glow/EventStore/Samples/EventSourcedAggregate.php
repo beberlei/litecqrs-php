@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\EventStore;
 
-use Lidskasila\Glow\AggregateRoot;
+use LidskaSila\Glow\AggregateRoot;
 use Ramsey\Uuid\Uuid;
 
 class EventSourcedAggregate extends AggregateRoot

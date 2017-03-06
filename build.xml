@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Glow" default="build">
+
+	<target name="build" depends="check"/>
+
+	<target name="check" depends="
+		tests
+	"/>
+
+	<target name="tests">
+		<exec
+				executable="vendor/bin/phpunit"
+				logoutput="true"
+				passthru="true"
+				checkreturn="true"
+		>
+			<arg value="-c"/>
+			<arg value="tests/phpunit.xml"/>
+			<arg path="tests"/>
+		</exec>
+	</target>
+
+</project>

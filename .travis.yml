@@ -7,3 +7,7 @@ php:
 before_script:
   - composer self-update
   - composer update
+
+script:
+  # run
+  - vendor/bin/phing build

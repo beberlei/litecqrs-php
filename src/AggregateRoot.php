@@ -2,10 +2,10 @@
 
 namespace LidskaSila\Glow;
 
-use Lidskasila\Glow\Eventing\EventName;
-use Lidskasila\Glow\EventStore\EventStream;
-use Lidskasila\Glow\Exception\BadMethodCallException;
-use Lidskasila\Glow\Exception\RuntimeException;
+use LidskaSila\Glow\Eventing\EventName;
+use LidskaSila\Glow\EventStore\EventStream;
+use LidskaSila\Glow\Exception\BadMethodCallException;
+use LidskaSila\Glow\Exception\RuntimeException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 

@@ -10,7 +10,7 @@ interface Storage
 	 *
 	 * @param string $id
 	 *
-	 * @return \Lidskasila\Glow\EventStore\OptimisticLocking\StreamData
+	 * @return \LidskaSila\Glow\EventStore\OptimisticLocking\StreamData
 	 */
 	public function load($id);
 

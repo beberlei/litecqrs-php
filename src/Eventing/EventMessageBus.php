@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\Eventing;
 
-use Lidskasila\Glow\DomainEvent;
+use LidskaSila\Glow\DomainEvent;
 
 /**
  * Event Message bus handles all events that were emitted by domain objects.

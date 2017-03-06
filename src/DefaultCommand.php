@@ -18,7 +18,7 @@ namespace LidskaSila\Glow;
  *   $command = new GreetCommand(array("personId" => 1));
  *   $commandBus->handle($command);
  */
-abstract class DefaultCommand implements \Lidskasila\Glow\Commanding\Command
+abstract class DefaultCommand implements \LidskaSila\Glow\Commanding\Command
 {
 
 	public function __construct(array $data = [])

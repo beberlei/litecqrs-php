@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\EventStore;
 
-use Lidskasila\Glow\Exception\RuntimeException;
+use LidskaSila\Glow\Exception\RuntimeException;
 
 class ConcurrencyException extends RuntimeException
 {

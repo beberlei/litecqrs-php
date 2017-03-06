@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\EventStore;
 
-use Lidskasila\Glow\DomainEvent;
+use LidskaSila\Glow\DomainEvent;
 
 /**
  * Abstraction for DomainEvent serializers

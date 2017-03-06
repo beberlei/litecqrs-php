@@ -2,8 +2,8 @@
 
 namespace LidskaSila\Glow\EventStore;
 
-use Lidskasila\Glow\AggregateRootNotFoundException;
-use Lidskasila\Glow\Eventing\EventMessageBus;
+use LidskaSila\Glow\AggregateRootNotFoundException;
+use LidskaSila\Glow\Eventing\EventMessageBus;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 

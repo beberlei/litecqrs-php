@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\EventStore;
 
-use Lidskasila\Glow\DomainEvent;
+use LidskaSila\Glow\DomainEvent;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 

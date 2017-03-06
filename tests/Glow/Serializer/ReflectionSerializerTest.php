@@ -46,7 +46,7 @@ class ReflectionSerializerTest extends TestCase
 				[
 					'start'     => [ 'time' => '2013-11-02 18:38:29.000000', 'timezone' => 'Europe/Berlin', 'php_class' => 'DateTime' ],
 					'end'       => [ 'time' => '2013-12-02 18:38:29.000000', 'timezone' => 'Europe/Berlin', 'php_class' => 'DateTime' ],
-					'php_class' => 'Lidskasila\Glow\Serializer\DateRange',
+					'php_class' => 'LidskaSila\Glow\Serializer\DateRange',
 				],
 			],
 			[

@@ -43,8 +43,8 @@ User.php
 
 namespace Acme\DemoBundle\Entity;
 
-use Lidskasila\Glow\DomainEventProvider;
-use Lidskasila\Glow\DomainObjectChanged;
+use LidskaSila\Glow\DomainEventProvider;
+use LidskaSila\Glow\DomainObjectChanged;
 
 class User extends DomainEventProvider
 {
@@ -69,7 +69,7 @@ ChangeEmailCommand.php
 
 namespace Acme\DemoBundle\Model\Command;
 
-use Lidskasila\Glow\DefaultCommand;
+use LidskaSila\Glow\DefaultCommand;
 
 class ChangeEmailCommand extends DefaultCommand
 {
@@ -91,7 +91,7 @@ namespace Acme\DemoBundle\Services;
 
 use Acme\DemoBundle\Entity\User;
 use Acme\DemoBundle\Model\Command\ChangeEmailCommand;
-use Lidskasila\Glow\Bus\IdentityMap\SimpleIdentityMap;
+use LidskaSila\Glow\Bus\IdentityMap\SimpleIdentityMap;
 
 class UserService
 {
@@ -132,7 +132,7 @@ MyEventHandler.php
 
 namespace Acme\DemoBundle\EventHandlers;
 
-use Lidskasila\Glow\DomainObjectChanged;
+use LidskaSila\Glow\DomainObjectChanged;
 
 class MyEventHandler
 {

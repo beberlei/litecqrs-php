@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\Exception;
 
-use Lidskasila\Glow\GlowException;
+use LidskaSila\Glow\GlowException;
 
 class BadMethodCallException extends \BadMethodCallException implements GlowException
 {

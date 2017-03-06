@@ -4,14 +4,14 @@ namespace EventSourced;
 
 use Ramsey\Uuid\Uuid;
 
-use Lidskasila\Glow\Repository;
-use Lidskasila\Glow\DefaultCommand;
-use Lidskasila\Glow\Commanding;
-use Lidskasila\Glow\DefaultDomainEvent;
-use Lidskasila\Glow\AggregateRoot;
-use Lidskasila\Glow\EventStore;
-use Lidskasila\Glow\Serializer\ReflectionSerializer;
-use Lidskasila\Glow\Eventing;
+use LidskaSila\Glow\Repository;
+use LidskaSila\Glow\DefaultCommand;
+use LidskaSila\Glow\Commanding;
+use LidskaSila\Glow\DefaultDomainEvent;
+use LidskaSila\Glow\AggregateRoot;
+use LidskaSila\Glow\EventStore;
+use LidskaSila\Glow\Serializer\ReflectionSerializer;
+use LidskaSila\Glow\Eventing;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 

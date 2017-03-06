@@ -2,10 +2,10 @@
 
 namespace LidskaSila\Glow\EventStore;
 
-use Lidskasila\Glow\AggregateRoot;
-use Lidskasila\Glow\AggregateRootNotFoundException;
-use Lidskasila\Glow\Eventing\EventMessageBus;
-use Lidskasila\Glow\Repository;
+use LidskaSila\Glow\AggregateRoot;
+use LidskaSila\Glow\AggregateRootNotFoundException;
+use LidskaSila\Glow\Eventing\EventMessageBus;
+use LidskaSila\Glow\Repository;
 use Ramsey\Uuid\Uuid;
 
 class EventSourceRepository implements Repository

@@ -3,7 +3,7 @@
 namespace LidskaSila\Glow\Eventing;
 
 use Exception;
-use Lidskasila\Glow\DomainEvent;
+use LidskaSila\Glow\DomainEvent;
 
 class SynchronousInProcessEventBus implements EventMessageBus
 {

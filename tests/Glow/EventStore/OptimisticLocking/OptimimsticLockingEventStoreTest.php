@@ -2,10 +2,10 @@
 
 namespace LidskaSila\Glow\EventStore\OptimisticLocking;
 
-use Lidskasila\Glow\EventStore\EventStore;
-use Lidskasila\Glow\EventStore\EventStoreContractTestCase;
-use Lidskasila\Glow\EventStore\EventStream;
-use Lidskasila\Glow\Serializer\NoopSerializer;
+use LidskaSila\Glow\EventStore\EventStore;
+use LidskaSila\Glow\EventStore\EventStoreContractTestCase;
+use LidskaSila\Glow\EventStore\EventStream;
+use LidskaSila\Glow\Serializer\NoopSerializer;
 
 class OptimimsticLockingEventStoreTest extends EventStoreContractTestCase
 {

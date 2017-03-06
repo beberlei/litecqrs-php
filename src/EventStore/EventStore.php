@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
 /**
  * Stores events grouped together in streams identified by UUID.
  *
- * The EventStore is used to implement EventSourcing in Lidskasila\Glow
+ * The EventStore is used to implement EventSourcing in LidskaSila\Glow
  * and is not neeeded otherwise.
  */
 interface EventStore

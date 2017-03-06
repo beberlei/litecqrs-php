@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow;
 
-class ChangeEmailCommand implements \Lidskasila\Glow\Commanding\Command
+class ChangeEmailCommand implements \LidskaSila\Glow\Commanding\Command
 {
 
 	public $email;

@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\EventStore;
 
-use Lidskasila\Glow\DefaultDomainEvent;
+use LidskaSila\Glow\DefaultDomainEvent;
 
 class TestEvent extends DefaultDomainEvent
 {

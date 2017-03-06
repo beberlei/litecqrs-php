@@ -2,11 +2,11 @@
 
 namespace LidskaSila\Glow\EventStore\OptimisticLocking;
 
-use Lidskasila\Glow\EventStore\EventStore;
-use Lidskasila\Glow\EventStore\EventStream;
-use Lidskasila\Glow\EventStore\EventStreamNotFoundException;
-use Lidskasila\Glow\EventStore\Transaction;
-use Lidskasila\Glow\Serializer\Serializer;
+use LidskaSila\Glow\EventStore\EventStore;
+use LidskaSila\Glow\EventStore\EventStream;
+use LidskaSila\Glow\EventStore\EventStreamNotFoundException;
+use LidskaSila\Glow\EventStore\Transaction;
+use LidskaSila\Glow\Serializer\Serializer;
 use Ramsey\Uuid\Uuid;
 
 class OptimisticLockingEventStore implements EventStore

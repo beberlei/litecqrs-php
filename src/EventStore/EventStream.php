@@ -4,7 +4,7 @@ namespace LidskaSila\Glow\EventStore;
 
 use ArrayIterator;
 use IteratorAggregate;
-use Lidskasila\Glow\DomainEvent;
+use LidskaSila\Glow\DomainEvent;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 

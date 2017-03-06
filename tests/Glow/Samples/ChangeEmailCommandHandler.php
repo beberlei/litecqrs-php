@@ -2,8 +2,8 @@
 
 namespace LidskaSila\Glow;
 
-use Lidskasila\Glow\Commanding\Command;
-use Lidskasila\Glow\Commanding\CommandHandler;
+use LidskaSila\Glow\Commanding\Command;
+use LidskaSila\Glow\Commanding\CommandHandler;
 
 class ChangeEmailCommandHandler implements CommandHandler
 {

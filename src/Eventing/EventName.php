@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\Eventing;
 
-use Lidskasila\Glow\DomainEvent;
+use LidskaSila\Glow\DomainEvent;
 
 class EventName
 {
