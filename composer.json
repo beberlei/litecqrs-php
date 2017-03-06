@@ -3,7 +3,7 @@
     "description": "Simple [C]ommand [Q]uery [R]esponsibility [S]egregation and [E]vent [S]ourcing library.",
     "license": "MIT",
     "autoload": {
-        "psr-4": {"Glow\\": "src/"}
+        "psr-4": {"LidskaSila\\Glow\\": "src/"}
     },
         "require": {
         "phake/phake":"@stable",
