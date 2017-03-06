@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow\EventStore;
+namespace LidskaSila\Glow\EventStore;
 
 use Lidskasila\Glow\DomainEvent;
 use PHPUnit\Framework\TestCase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow\EventStore\OptimisticLocking;
+namespace LidskaSila\Glow\EventStore\OptimisticLocking;
 
 interface Storage
 {

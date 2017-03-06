@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow;
+namespace LidskaSila\Glow;
 
 use Lidskasila\Glow\Commanding\Command;
 use Lidskasila\Glow\Commanding\CommandHandler;

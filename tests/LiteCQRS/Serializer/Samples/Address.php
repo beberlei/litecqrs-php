@@ -6,7 +6,7 @@
  * Time: 13:39
  */
 
-namespace Lidskasila\Glow\Serializer;
+namespace LidskaSila\Glow\Serializer;
 
 class Address
 {

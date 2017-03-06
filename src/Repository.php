@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow;
+namespace LidskaSila\Glow;
 
 use Ramsey\Uuid\Uuid;
 

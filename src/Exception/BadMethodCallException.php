@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow\Exception;
+namespace LidskaSila\Glow\Exception;
 
 use Lidskasila\Glow\GlowException;
 

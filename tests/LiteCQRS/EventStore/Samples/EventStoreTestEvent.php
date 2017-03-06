@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow\EventStore;
+namespace LidskaSila\Glow\EventStore;
 
 class EventStoreTestEvent extends \Lidskasila\Glow\DefaultDomainEvent
 {

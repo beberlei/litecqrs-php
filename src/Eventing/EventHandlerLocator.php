@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow\Eventing;
+namespace LidskaSila\Glow\Eventing;
 
 interface EventHandlerLocator
 {

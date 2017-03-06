@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow\Eventing;
+namespace LidskaSila\Glow\Eventing;
 
 use Exception;
 use Lidskasila\Glow\DomainEvent;

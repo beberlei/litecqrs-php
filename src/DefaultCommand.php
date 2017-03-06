@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow;
+namespace LidskaSila\Glow;
 
 /**
  * Default Implementation for the Command interface.

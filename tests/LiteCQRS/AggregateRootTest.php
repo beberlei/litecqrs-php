@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow;
+namespace LidskaSila\Glow;
 
 use Lidskasila\Glow\EventStore\EventStream;
 use Lidskasila\Glow\Exception\RuntimeException;

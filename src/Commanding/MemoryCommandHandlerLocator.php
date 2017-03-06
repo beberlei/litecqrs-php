@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow\Commanding;
+namespace LidskaSila\Glow\Commanding;
 
 class MemoryCommandHandlerLocator implements CommandHandlerLocator
 {

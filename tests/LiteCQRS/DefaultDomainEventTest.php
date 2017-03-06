@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow;
+namespace LidskaSila\Glow;
 
 use RuntimeException;
 use PHPUnit\Framework\TestCase;

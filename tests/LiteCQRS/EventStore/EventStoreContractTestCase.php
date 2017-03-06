@@ -1,6 +1,6 @@
 <?php
 
-namespace Lidskasila\Glow\EventStore;
+namespace LidskaSila\Glow\EventStore;
 
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
