@@ -1,20 +1,22 @@
 {
-    "name": "lidska-sila/glow",
-    "description": "Simple [C]ommand [Q]uery [R]esponsibility [S]egregation and [E]vent [S]ourcing library.",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {"LidskaSila\\Glow\\": "src/"}
-    },
-        "require": {
-        "phake/phake":"@stable",
-        "php": ">=7.0",
-        "phpunit/phpunit": "^5.7",
-        "ramsey/uuid": "^3.5"
-    },
-    "autoload-dev" : {
-        "classmap" : [
-            "tests/",
-            "src/"
-        ]
-    }
+  "name" : "lidskasila/glow",
+  "description" : "Simple [C]ommand [Q]uery [R]esponsibility [S]egregation and [E]vent [S]ourcing library.",
+  "license" : "MIT",
+  "autoload" : {
+	"psr-4" : {
+	  "LidskaSila\\Glow\\" : "src/"
+	}
+  },
+  "require" : {
+	"phake/phake" : "@stable",
+	"php" : ">=7.0",
+	"phpunit/phpunit" : "^5.7",
+	"ramsey/uuid" : "^3.5"
+  },
+  "autoload-dev" : {
+	"classmap" : [
+	  "tests/",
+	  "src/"
+	]
+  }
 }
