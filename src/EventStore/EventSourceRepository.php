@@ -6,7 +6,7 @@ use LidskaSila\Glow\AggregateRoot;
 use LidskaSila\Glow\AggregateRootNotFoundException;
 use LidskaSila\Glow\Eventing\EventMessageBus;
 use LidskaSila\Glow\Repository;
-use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class EventSourceRepository implements Repository
 {
@@ -24,14 +24,14 @@ class EventSourceRepository implements Repository
 	}
 
 	/**
-	 * @param string $className
-	 * @param Uuid   $uuid
-	 * @param null   $expectedVersion
+	 * @param string        $className
+	 * @param UuidInterface $uuid
+	 * @param null          $expectedVersion
 	 *
 	 * @return AggregateRoot
 	 * @throws AggregateRootNotFoundException
 	 */
-	public function find($className, Uuid $uuid, $expectedVersion = null)
+	public function find($className, UuidInterface $uuid, $expectedVersion = null)
 	{
 		try {
 			$eventStream = $this->eventStore->find($uuid);

@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow\EventStore;
 
-use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * Stores events grouped together in streams identified by UUID.
@@ -17,7 +17,7 @@ interface EventStore
 	 * @throws EventStreamNotFoundException
 	 * @return EventStream
 	 */
-	public function find(Uuid $uuid);
+	public function find(UuidInterface $uuid);
 
 	/**
 	 * Commit the event stream to persistence.

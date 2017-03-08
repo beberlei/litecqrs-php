@@ -2,19 +2,19 @@
 
 namespace LidskaSila\Glow;
 
-use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 interface Repository
 {
 
 	/**
 	 * @param string  $className
-	 * @param Uuid    $uuid
+	 * @param UuidInterface    $uuid
 	 * @param integer $expectedVersion
 	 *
 	 * @return AggregateRoot
 	 */
-	public function find($className, Uuid $uuid, $expectedVersion = null);
+	public function find($className, UuidInterface $uuid, $expectedVersion = null);
 
 	/**
 	 * @param AggregateRoot $object

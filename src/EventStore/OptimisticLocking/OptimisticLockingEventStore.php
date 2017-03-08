@@ -8,6 +8,7 @@ use LidskaSila\Glow\EventStore\EventStreamNotFoundException;
 use LidskaSila\Glow\EventStore\Transaction;
 use LidskaSila\Glow\Serializer\Serializer;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class OptimisticLockingEventStore implements EventStore
 {
@@ -25,12 +26,12 @@ class OptimisticLockingEventStore implements EventStore
 	}
 
 	/**
-	 * @param Uuid $uuid
+	 * @param UuidInterface $uuid
 	 *
 	 * @return EventStream
 	 * @throws EventStreamNotFoundException
 	 */
-	public function find(Uuid $uuid)
+	public function find(UuidInterface $uuid)
 	{
 		$streamData = $this->storage->load((string) $uuid);
 
