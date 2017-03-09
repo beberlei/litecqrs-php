@@ -79,7 +79,7 @@ Install with [Composer](http://getcomposer.org):
 
     {
         "require": {
-            "LidskaSila/php-cqrs-event-sourcing": "v0.0.1-alpha"
+            "lidskasila/glow": "v0.4.1"
         }
     }
 
