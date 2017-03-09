@@ -2,6 +2,7 @@
 
 namespace LidskaSila\Glow\EventStore;
 
+use LidskaSila\Glow\AggregateRoot;
 use LidskaSila\Glow\AggregateRootNotFoundException;
 use LidskaSila\Glow\Eventing\EventMessageBus;
 use PHPUnit\Framework\TestCase;
@@ -29,6 +30,23 @@ class EventSourceRepositoryTest extends TestCase
 		$repository = new EventSourceRepository($eventStore, $this->eventBus);
 
 		$entity = $repository->find(EventSourcedAggregate::class, $uuid);
+
+		self::assertTrue($entity->eventApplied);
+		self::assertSame($uuid, $entity->getId());
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_returns_specific_aggregate_root_too_when_asking_for_parent()
+	{
+		$uuid        = Uuid::uuid4();
+		$eventStream = new EventStream(EventSourcedAggregate::class, $uuid, [ new TestEvent() ]);
+
+		$eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
+		$repository = new EventSourceRepository($eventStore, $this->eventBus);
+
+		$entity = $repository->find(AggregateRoot::class, $uuid);
 
 		self::assertTrue($entity->eventApplied);
 		self::assertSame($uuid, $entity->getId());

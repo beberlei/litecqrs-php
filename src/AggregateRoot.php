@@ -15,7 +15,7 @@ abstract class AggregateRoot
 	/**
 	 * @var Uuid
 	 */
-	private $id;
+	protected $id;
 
 	/**
 	 * @var DomainEvent[]

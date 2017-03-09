@@ -43,7 +43,11 @@ class EventSourceRepository implements Repository
 
 		$aggregateRootClass = $eventStream->getClassName();
 
-		if ($aggregateRootClass !== ltrim($className, '\\')) {
+		if (
+			$aggregateRootClass !== ltrim($className, '\\')
+			&&
+			!is_subclass_of($aggregateRootClass, $className)
+		) {
 			throw new AggregateRootNotFoundException();
 		}
 
