@@ -43,7 +43,7 @@ class ReflectionSerializer implements Serializer
 
 		foreach ($constructor->getParameters() as $parameter) {
 			$parameterClass = $parameter->getClass();
-			$parameterName  = strtolower($parameter->getName());
+			$parameterName  = $parameter->getName();
 
 			if ($parameterClass !== null && isset($data[$parameterName])) {
 				$data[$parameterName] = $this->fromArray($data[$parameterName]);
@@ -95,7 +95,7 @@ class ReflectionSerializer implements Serializer
 				$value = $this->toArray($value);
 			}
 
-			$data[strtolower($parameter->getName())] = $value;
+			$data[$parameter->getName()] = $value;
 		}
 
 		return $data;
