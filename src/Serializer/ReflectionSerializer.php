@@ -8,53 +8,43 @@ use DateTimeInterface;
 use DateTimeZone;
 use Ramsey\Uuid\Uuid;
 use ReflectionClass;
+use ReflectionProperty;
 
 class ReflectionSerializer implements Serializer
 {
 
-	/**
-	 * @var array
-	 */
-	private $classes = [];
-
-	/**
-	 * @var array
-	 */
-	private $fields = [];
-
 	public function fromArray(array $data)
 	{
-		if ($data['php_class'] === 'DateTime') {
+		$className = $data['php_class'];
+		if ($className === DateTime::class) {
 			return DateTime::createFromFormat('Y-m-d H:i:s.u', $data['time'], new DateTimeZone($data['timezone']));
 		}
 
-		if ($data['php_class'] === 'DateTimeImmutable') {
+		if ($className === DateTimeImmutable::class) {
 			return DateTimeImmutable::createFromFormat('Y-m-d H:i:s.u', $data['time'], new DateTimeZone($data['timezone']));
 		}
 
-		if ($data['php_class'] === 'Ramsey\Uuid\Uuid') {
+		if ($className === Uuid::class) {
 			return Uuid::fromString($data['uuid']);
 		}
 
-		$reflClass   = $this->getReflectionClass($data['php_class']);
-		$constructor = $reflClass->getConstructor();
+		$reflectionClass = $this->getReflectionClass($className);
+		$object          = $reflectionClass->newInstanceWithoutConstructor();
 
-		$arguments = [];
+		foreach ($this->getProperties($className) as $fieldName => $reflField) {
 
-		foreach ($constructor->getParameters() as $parameter) {
-			$parameterClass = $parameter->getClass();
-			$parameterName  = $parameter->getName();
-
-			if ($parameterClass !== null && isset($data[$parameterName])) {
-				$data[$parameterName] = $this->fromArray($data[$parameterName]);
+			if (empty($data[$fieldName])) {
+				continue;
 			}
-
-			$arguments[] = isset($data[$parameterName])
-				? $data[$parameterName]
-				: $parameter->getDefaultValue();
+			if (is_array($data[$fieldName])) {
+				$value = $this->fromArray($data[$fieldName]);
+			} else {
+				$value = $data[$fieldName];
+			}
+			$reflField->setValue($object, $value);
 		}
 
-		return $reflClass->newInstanceArgs($arguments);
+		return $object;
 	}
 
 	public function toArray($object)
@@ -79,15 +69,11 @@ class ReflectionSerializer implements Serializer
 
 	private function extractValuesFromObject($object)
 	{
-		$reflClass   = $this->getReflectionClass(get_class($object));
-		$constructor = $reflClass->getConstructor();
-
 		$data = [
 			'php_class' => get_class($object),
 		];
 
-		foreach ($constructor->getParameters() as $parameter) {
-			$reflField = $this->getReflectionField($reflClass, $parameter->getName());
+		foreach ($this->getProperties(get_class($object)) as $reflField) {
 
 			$value = $reflField->getValue($object);
 
@@ -95,7 +81,7 @@ class ReflectionSerializer implements Serializer
 				$value = $this->toArray($value);
 			}
 
-			$data[$parameter->getName()] = $value;
+			$data[$reflField->getName()] = $value;
 		}
 
 		return $data;
@@ -104,32 +90,49 @@ class ReflectionSerializer implements Serializer
 	/**
 	 * @param string $className
 	 *
-	 * @return ReflectionClass
+	 * @return ReflectionProperty[]
 	 */
-	private function getReflectionClass($className)
+	private function getProperties(string $className): array
 	{
-		if (!isset($this->classes[$className])) {
-			$this->classes[$className] = new ReflectionClass($className);
+		$properties = [];
+		try {
+			$rc = new \ReflectionClass($className);
+			do {
+				$rp = [];
+				/* @var $p ReflectionProperty */
+				foreach ($rc->getProperties() as $p) {
+					$p->setAccessible(true);
+					$rp[$p->getName()] = $p;
+				}
+				$properties = array_merge($rp, $properties);
+				$rc         = $rc->getParentClass();
+			} while ($rc);
+		} catch (\ReflectionException $e) {
+			/**/
 		}
 
-		return $this->classes[$className];
+		return $properties;
 	}
 
 	/**
-	 * @param ReflectionClass $reflectionClass
-	 * @param string          $propertyName
+	 * @param string $className
 	 *
-	 * @return \ReflectionProperty
+	 * @return ReflectionClass
+	 *
+	 * @throws InvalidArgumentException
 	 */
-	private function getReflectionField(ReflectionClass $reflectionClass, $propertyName)
+	private function getReflectionClass($className)
 	{
-		if (!isset($this->fields[$reflectionClass->getName()][$propertyName])) {
-			$reflField = $reflectionClass->getProperty($propertyName);
-			$reflField->setAccessible(true);
-
-			$this->fields[$reflectionClass->getName()][$propertyName] = $reflField;
+		if (!class_exists($className)) {
+			throw InvalidArgumentException::fromNonExistingClass($className);
 		}
 
-		return $this->fields[$reflectionClass->getName()][$propertyName];
+		$reflection = new ReflectionClass($className);
+
+		if ($reflection->isAbstract()) {
+			throw InvalidArgumentException::fromAbstractClass($reflection);
+		}
+
+		return $reflection;
 	}
 }
