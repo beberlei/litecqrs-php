@@ -2,16 +2,15 @@
 
 namespace LidskaSila\Glow;
 
-use Ramsey\Uuid\UuidInterface;
 
 class User extends AggregateRoot
 {
 
 	private $email;
 
-	public function __construct(UuidInterface $uuid)
+	public function __construct(UserId $id)
 	{
-		$this->setId($uuid);
+		$this->setId($id);
 	}
 
 	public function getEmail()
@@ -21,16 +20,16 @@ class User extends AggregateRoot
 
 	public function changeEmail($email)
 	{
-		$this->apply(new ChangeEmailEvent([ 'email' => $email ]));
-	}
-
-	protected function applyChangeEmail($event)
-	{
-		$this->email = $event->email;
+		$this->apply(new EmailChangedEvent([ 'email' => $email ]));
 	}
 
 	public function changeInvalidEventName()
 	{
-		$this->apply(new InvalidEvent([]));
+		$this->apply(new InvalidEvent());
+	}
+
+	protected function applyEmailChanged($event)
+	{
+		$this->email = $event->email;
 	}
 }

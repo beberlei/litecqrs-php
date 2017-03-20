@@ -6,33 +6,46 @@ use LidskaSila\Glow\Eventing\EventName;
 use LidskaSila\Glow\EventStore\EventStream;
 use LidskaSila\Glow\Exception\BadMethodCallException;
 use LidskaSila\Glow\Exception\RuntimeException;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 abstract class AggregateRoot
 {
 
 	/**
-	 * @var Uuid
+	 * @var Identity
 	 */
-	protected $id;
+	private $id;
+
+	/**
+	 * @var UuidInterface
+	 */
+	protected $eventStreamId;
 
 	/**
 	 * @var DomainEvent[]
 	 */
 	private $events = [];
 
-	protected function setId(UuidInterface $uuid)
+	protected function setId(Identity $identity)
 	{
-		$this->id = $uuid;
+		$this->eventStreamId = $identity->getUuid();
+		$this->id            = $identity;
 	}
 
 	/**
-	 * @return Uuid
+	 * @return Identity
 	 */
 	final public function getId()
 	{
 		return $this->id;
+	}
+
+	/**
+	 * @return UuidInterface
+	 */
+	final public function getEventStreamId()
+	{
+		return $this->id->getUuid();
 	}
 
 	protected function apply(DomainEvent $event)
@@ -61,8 +74,6 @@ abstract class AggregateRoot
 		if ($this->events) {
 			throw new RuntimeException('AggregateRoot was already created from event stream and cannot be hydrated again.');
 		}
-
-		$this->setId($eventStream->getUuid());
 
 		foreach ($eventStream as $event) {
 			$this->executeEvent($event);

@@ -20,6 +20,18 @@ abstract class EventStoreContractTestCase extends TestCase
 		$this->whenFindingStreamWith($eventStore, $uuid);
 	}
 
+	abstract protected function givenAnEventStore();
+
+	protected function expectEventStreamNotFoundException()
+	{
+		self::expectException(EventStreamNotFoundException::class);
+	}
+
+	protected function whenFindingStreamWith(EventStore $eventStore, $uuid)
+	{
+		return $eventStore->find($uuid);
+	}
+
 	/**
 	 * @test
 	 */
@@ -34,6 +46,22 @@ abstract class EventStoreContractTestCase extends TestCase
 		$eventStream = $this->whenFindingStreamWith($eventStore, $uuid);
 
 		$this->thenStoredEventStreamEqualsFixtureStream($eventStream, $fixtureStream);
+	}
+
+	protected function givenFixtureStreamWith($uuid)
+	{
+		$testEvent     = new EventStoreTestEvent();
+		$fixtureStream = new EventStream(EventSourcedAggregate::class, $uuid, [ $testEvent ], 1337);
+
+		return $fixtureStream;
+	}
+
+	abstract protected function givenEventStoreContains(EventStore $eventStore, EventStream $eventStream);
+
+	protected function thenStoredEventStreamEqualsFixtureStream($eventStream, $fixtureStream)
+	{
+		self::assertInstanceOf(EventStream::class, $eventStream);
+		self::assertEquals($fixtureStream, $eventStream);
 	}
 
 	/**
@@ -51,6 +79,19 @@ abstract class EventStoreContractTestCase extends TestCase
 		$this->thenReturnedTransactionContains($transaction, $fixtureStream);
 		$this->thenStorageContains($fixtureStream);
 	}
+
+	protected function whenCommittingEventStream(EventStore $eventStore, EventStream $fixtureStream)
+	{
+		return $eventStore->commit($fixtureStream);
+	}
+
+	protected function thenReturnedTransactionContains(Transaction $transaction, EventStream $eventStream)
+	{
+		self::assertInstanceOf(Transaction::class, $transaction);
+		self::assertSame($eventStream, $transaction->getEventStream());
+	}
+
+	abstract protected function thenStorageContains(EventStream $stream);
 
 	/**
 	 * @test
@@ -88,6 +129,11 @@ abstract class EventStoreContractTestCase extends TestCase
 		$this->whenCommittingEventStream($eventStore, $commitStream);
 	}
 
+	protected function expectConcurrencyException()
+	{
+		self::expectException(ConcurrencyException::class);
+	}
+
 	/**
 	 * @test
 	 */
@@ -112,51 +158,5 @@ abstract class EventStoreContractTestCase extends TestCase
 	protected function thenTransactionOnlyContainsNewEvents(Transaction $transaction, array $newEvents)
 	{
 		self::assertEquals($newEvents, $transaction->getCommittedEvents());
-	}
-
-	protected function expectConcurrencyException()
-	{
-		self::expectException(ConcurrencyException::class);
-	}
-
-	protected function thenReturnedTransactionContains(Transaction $transaction, EventStream $eventStream)
-	{
-		self::assertInstanceOf(Transaction::class, $transaction);
-		self::assertSame($eventStream, $transaction->getEventStream());
-	}
-
-	abstract protected function thenStorageContains(EventStream $stream);
-
-	abstract protected function givenAnEventStore();
-
-	abstract protected function givenEventStoreContains(EventStore $eventStore, EventStream $eventStream);
-
-	protected function whenCommittingEventStream(EventStore $eventStore, EventStream $fixtureStream)
-	{
-		return $eventStore->commit($fixtureStream);
-	}
-
-	protected function thenStoredEventStreamEqualsFixtureStream($eventStream, $fixtureStream)
-	{
-		self::assertInstanceOf(EventStream::class, $eventStream);
-		self::assertEquals($fixtureStream, $eventStream);
-	}
-
-	protected function expectEventStreamNotFoundException()
-	{
-		self::expectException(EventStreamNotFoundException::class);
-	}
-
-	protected function whenFindingStreamWith(EventStore $eventStore, $uuid)
-	{
-		return $eventStore->find($uuid);
-	}
-
-	protected function givenFixtureStreamWith($uuid)
-	{
-		$testEvent     = new EventStoreTestEvent();
-		$fixtureStream = new EventStream(EventSourcedAggregate::class, $uuid, [ $testEvent ], 1337);
-
-		return $fixtureStream;
 	}
 }

@@ -6,7 +6,6 @@ use LidskaSila\Glow\AggregateRoot;
 use LidskaSila\Glow\AggregateRootNotFoundException;
 use LidskaSila\Glow\Eventing\EventMessageBus;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 
 class EventSourceRepositoryTest extends TestCase
 {
@@ -23,66 +22,16 @@ class EventSourceRepositoryTest extends TestCase
 	 */
 	public function it_returns_aggregate_root_loaded_from_event_stream()
 	{
-		$uuid        = Uuid::uuid4();
-		$eventStream = new EventStream(EventSourcedAggregate::class, $uuid, [ new TestEvent() ]);
+		$id        = new EventSourcedAggregateId();
 
-		$eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
+		$eventStream = new EventStream(EventSourcedAggregate::class, $id->getUuid(), [ new TestEvent($id) ]);
+		$eventStore = $this->mockEventStoreReturning($id->getUuid(), $eventStream);
 		$repository = new EventSourceRepository($eventStore, $this->eventBus);
 
-		$entity = $repository->find(EventSourcedAggregate::class, $uuid);
+		$entity = $repository->find(EventSourcedAggregate::class, $id->getUuid());
 
 		self::assertTrue($entity->eventApplied);
-		self::assertSame($uuid, $entity->getId());
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_returns_specific_aggregate_root_too_when_asking_for_parent()
-	{
-		$uuid        = Uuid::uuid4();
-		$eventStream = new EventStream(EventSourcedAggregate::class, $uuid, [ new TestEvent() ]);
-
-		$eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
-		$repository = new EventSourceRepository($eventStore, $this->eventBus);
-
-		$entity = $repository->find(AggregateRoot::class, $uuid);
-
-		self::assertTrue($entity->eventApplied);
-		self::assertSame($uuid, $entity->getId());
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_throws_not_found_exception_when_classnames_missmatch()
-	{
-		$uuid        = Uuid::uuid4();
-		$eventStream = new EventStream(EventSourcedAggregate::class, $uuid, [ new TestEvent() ]);
-
-		$eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
-		$repository = new EventSourceRepository($eventStore, $this->eventBus);
-
-		self::expectException(AggregateRootNotFoundException::class);
-
-		$entity = $repository->find('stdClass', $uuid);
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_throws_not_found_exception_when_no_eventstream_found()
-	{
-		$uuid = Uuid::uuid4();
-
-		$eventStore = \Phake::mock(EventStore::class);
-		\Phake::when($eventStore)->find($uuid)->thenThrow(new AggregateRootNotFoundException());
-
-		$repository = new EventSourceRepository($eventStore, $this->eventBus);
-
-		self::expectException(AggregateRootNotFoundException::class);
-
-		$repository->find('stdClass', $uuid);
+		self::assertSame($id, $entity->getId());
 	}
 
 	protected function mockEventStoreReturning($uuid, $eventStream)
@@ -97,23 +46,71 @@ class EventSourceRepositoryTest extends TestCase
 	/**
 	 * @test
 	 */
+	public function it_returns_specific_aggregate_root_too_when_asking_for_parent()
+	{
+		$id        = new EventSourcedAggregateId();
+
+		$eventStream = new EventStream(EventSourcedAggregate::class, $id->getUuid(), [ new TestEvent($id) ]);
+		$eventStore = $this->mockEventStoreReturning($id->getUuid(), $eventStream);
+		$repository = new EventSourceRepository($eventStore, $this->eventBus);
+
+		$entity = $repository->find(AggregateRoot::class, $id->getUuid());
+
+		self::assertTrue($entity->eventApplied);
+		self::assertSame($id, $entity->getId());
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_throws_not_found_exception_when_classnames_missmatch()
+	{
+		$id        = new EventSourcedAggregateId();
+
+		$eventStream = new EventStream(EventSourcedAggregate::class, $id->getUuid(), [ new TestEvent($id) ]);
+		$eventStore = $this->mockEventStoreReturning($id->getUuid(), $eventStream);
+		$repository = new EventSourceRepository($eventStore, $this->eventBus);
+
+		self::expectException(AggregateRootNotFoundException::class);
+
+		$entity = $repository->find('stdClass', $id->getUuid());
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_throws_not_found_exception_when_no_eventstream_found()
+	{
+		$id        = new EventSourcedAggregateId();
+
+		$eventStore = \Phake::mock(EventStore::class);
+		\Phake::when($eventStore)->find($id->getUuid())->thenThrow(new AggregateRootNotFoundException());
+		$repository = new EventSourceRepository($eventStore, $this->eventBus);
+
+		self::expectException(AggregateRootNotFoundException::class);
+
+		$repository->find('stdClass', $id->getUuid());
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_commits_eventstream_when_adding_aggregate()
 	{
-		$id     = Uuid::uuid4();
+		$id        = new EventSourcedAggregateId();
 		$object = new EventSourcedAggregate($id);
-		$event  = new TestEvent();
-		$tx     = new Transaction(new EventStream('foo', $object->getId()), [ $event ]);
+		$event  = new TestEvent($id);
+		$tx     = new Transaction(new EventStream('foo', $object->getId()->getUuid()), [ $event ]);
 
 		$eventStore = self::getMockBuilder(EventStore::class)->setMethods([ 'commit', 'find' ])->getMock();
 		$repository = new EventSourceRepository($eventStore, $this->eventBus);
 
 		$eventStore->expects(self::once())->method('commit')->with(self::isInstanceOf(EventStream::class))->willReturn($tx);
-
 		$repository->save($object);
 
 		\Phake::verify($this->eventBus)->publish($event);
 
-		self::assertEquals($id, $event->getAggregateId());
+		self::assertEquals($id->getUuid(), $event->getAggregateId()->getUuid());
 	}
 
 	/**
@@ -121,14 +118,14 @@ class EventSourceRepositoryTest extends TestCase
 	 */
 	public function it_throws_concurrency_exception_when_versions_missmatch()
 	{
-		$uuid        = Uuid::uuid4();
-		$eventStream = new EventStream(EventSourcedAggregate::class, $uuid);
+		$id        = new EventSourcedAggregateId();
+		$eventStream = new EventStream(EventSourcedAggregate::class, $id->getUuid());
 
-		$eventStore = $this->mockEventStoreReturning($uuid, $eventStream);
+		$eventStore = $this->mockEventStoreReturning($id->getUuid(), $eventStream);
 
 		self::expectException(ConcurrencyException::class);
 
 		$repository = new EventSourceRepository($eventStore, $this->eventBus);
-		$repository->find(EventSourcedAggregate::class, $uuid, 1337);
+		$repository->find(EventSourcedAggregate::class, $id->getUuid(), 1337);
 	}
 }

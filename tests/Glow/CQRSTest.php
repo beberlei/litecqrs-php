@@ -9,14 +9,13 @@ use LidskaSila\Glow\Commanding\SequentialCommandBus;
 use LidskaSila\Glow\Eventing\MemoryEventHandlerLocator;
 use LidskaSila\Glow\Eventing\SynchronousInProcessEventBus;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 
 class CQRSTest extends TestCase
 {
 
 	public function testAggregateRootApplyEvents()
 	{
-		$user = new User(Uuid::uuid4());
+		$user = new User(new UserId());
 		$user->changeEmail('foo@example.com');
 
 		$events = $user->pullDomainEvents();
@@ -29,13 +28,13 @@ class CQRSTest extends TestCase
 		$this->expectException(BadMethodCallException::class);
 		$this->expectExceptionMessage('There is no event named "applyInvalid" that can be applied to "LidskaSila\Glow\User"');
 
-		$user = new User(Uuid::uuid4());
+		$user = new User(new UserId());
 		$user->changeInvalidEventName();
 	}
 
 	public function testDirectCommandBus()
 	{
-		$command = new ChangeEmailCommand('kontakt@beberlei.de');
+		$command        = new ChangeEmailCommand('kontakt@beberlei.de');
 		$commandHandler = new ChangeEmailCommandHandler();
 
 		$bus = $this->newSequentialCommandBusWith($commandHandler);
@@ -72,6 +71,14 @@ class CQRSTest extends TestCase
 		$bus->publish($event);
 	}
 
+	private function createInMemoryEventBusWith($eventHandler)
+	{
+		$locator = new MemoryEventHandlerLocator();
+		$locator->register($eventHandler);
+
+		return new SynchronousInProcessEventBus($locator);
+	}
+
 	public function testDispatchEventsInOrder()
 	{
 		$event1 = new FooEvent([]);
@@ -94,13 +101,5 @@ class CQRSTest extends TestCase
 
 		$bus = $this->createInMemoryEventBusWith($eventHandler);
 		$bus->publish($event);
-	}
-
-	private function createInMemoryEventBusWith($eventHandler)
-	{
-		$locator = new MemoryEventHandlerLocator();
-		$locator->register($eventHandler);
-
-		return new SynchronousInProcessEventBus($locator);
 	}
 }

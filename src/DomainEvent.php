@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow;
 
-use RuntimeException;
+use LidskaSila\Glow\Exception\IdWasAlreadySetException;
 
 /**
  * Domain Events happen during command execution/handling.
@@ -25,16 +25,14 @@ interface DomainEvent
 {
 
 	/**
-	 * @throws RuntimeException When setting an aggregate id where one already exists.
+	 * @param Identity $id
 	 *
-	 * @param mixed $aggregateId
-	 *
-	 * @return void
+	 * @throws IdWasAlreadySetException must throw exception if id already set
 	 */
-	public function setAggregateId($aggregateId);
+	public function setAggregateId(Identity $id);
 
 	/**
-	 * @return mixed
+	 * @return Identity
 	 */
 	public function getAggregateId();
 }

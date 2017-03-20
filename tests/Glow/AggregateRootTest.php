@@ -5,7 +5,6 @@ namespace LidskaSila\Glow;
 use LidskaSila\Glow\EventStore\EventStream;
 use LidskaSila\Glow\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 
 class AggregateRootTest extends TestCase
 {
@@ -15,10 +14,11 @@ class AggregateRootTest extends TestCase
 	 */
 	public function it_manages_id()
 	{
-		$uuid   = Uuid::uuid4();
-		$sample = new SampleAggregateRoot($uuid);
+		$id     = new SampleAggregateRootId();
+		$sample = new SampleAggregateRoot($id);
 
-		self::assertSame($uuid, $sample->getId());
+		self::assertSame($id, $sample->getId());
+		self::assertSame($id->getUuid(), $sample->getEventStreamId());
 	}
 
 	/**
@@ -26,8 +26,8 @@ class AggregateRootTest extends TestCase
 	 */
 	public function it_calls_apply_methods_for_events()
 	{
-		$uuid   = Uuid::uuid4();
-		$sample = new SampleAggregateRoot($uuid);
+		$id     = new SampleAggregateRootId();
+		$sample = new SampleAggregateRoot($id);
 
 		self::assertTrue($sample->loadedFromEvents);
 		self::assertEquals('bar', $sample->foo);
@@ -38,19 +38,20 @@ class AggregateRootTest extends TestCase
 	 */
 	public function it_hydrates_from_eventstream()
 	{
-		$uuid = Uuid::uuid4();
+		$id = new SampleAggregateRootId();
 
 		$reflClass = new \ReflectionClass(SampleAggregateRoot::class);
 		$sample    = $reflClass->newInstanceWithoutConstructor();
 
-		$events = [ new SampleCreated([ 'foo' => 'bar' ]) ];
+		$event = new SampleCreated($id, [ 'foo' => 'bar', ]);
+		$event->setAggregateId($id);
 
-		$eventStream = new EventStream(SampleAggregateRoot::class, $uuid, $events);
+		$eventStream = new EventStream(SampleAggregateRoot::class, $id->getUuid(), [ $event ]);
 
 		$sample->loadFromEventStream($eventStream);
 
 		self::assertSame([], $sample->pullDomainEvents());
-		self::assertSame($uuid, $sample->getId());
+		self::assertSame($id->getUuid(), $sample->getEventStreamId());
 		self::assertTrue($sample->loadedFromEvents);
 		self::assertEquals('bar', $sample->foo);
 	}
@@ -60,10 +61,10 @@ class AggregateRootTest extends TestCase
 	 */
 	public function it_cannot_rehydrate_with_eventstream()
 	{
-		$uuid   = Uuid::uuid4();
-		$sample = new SampleAggregateRoot($uuid);
+		$id     = new SampleAggregateRootId();
+		$sample = new SampleAggregateRoot($id);
 
-		$eventStream = new EventStream(SampleAggregateRoot::class, $uuid, [ new SampleCreated([ 'foo' => 'bar' ]) ]);
+		$eventStream = new EventStream(SampleAggregateRoot::class, $id->getUuid(), [ new SampleCreated($id, [ 'foo' => 'bar' ]) ]);
 
 		self::expectException(RuntimeException::class);
 		self::expectExceptionMessage('AggregateRoot was already created from event stream and cannot be hydrated again.');

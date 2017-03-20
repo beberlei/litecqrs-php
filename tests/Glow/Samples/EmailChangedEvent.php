@@ -2,7 +2,7 @@
 
 namespace LidskaSila\Glow;
 
-class ChangeEmailEvent extends DefaultDomainEvent
+class EmailChangedEvent extends DefaultDomainEvent
 {
 
 	public $email;

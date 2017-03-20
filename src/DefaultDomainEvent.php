@@ -3,18 +3,17 @@
 namespace LidskaSila\Glow;
 
 use LidskaSila\Glow\Eventing\EventName;
+use LidskaSila\Glow\Exception\IdWasAlreadySetException;
 
 abstract class DefaultDomainEvent implements DomainEvent
 {
 
-	/**
-	 * @var mixed
-	 */
-	private $aggregateId;
+	/** @var Identity */
+	private $id;
 
-	public function __construct(array $data = [])
+	public function __construct(array $data = null)
 	{
-		foreach ($data as $key => $value) {
+		foreach ((array) $data as $key => $value) {
 			$this->assertPropertyExists($key);
 
 			$this->$key = $value;
@@ -29,14 +28,17 @@ abstract class DefaultDomainEvent implements DomainEvent
 		}
 	}
 
-	public function setAggregateId($aggregateId)
+	public function setAggregateId(Identity $id)
 	{
-		$this->aggregateId = $aggregateId;
+		if ($this->id) {
+			throw new IdWasAlreadySetException();
+		}
+		$this->id = $id;
 	}
 
 	public function getAggregateId()
 	{
-		return $this->aggregateId;
+		return $this->id;
 	}
 
 	public function __get($name)

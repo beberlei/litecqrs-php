@@ -63,6 +63,20 @@ class EventSourceRepository implements Repository
 	}
 
 	/**
+	 * @param $aggregateRootClass
+	 *
+	 * @return AggregateRoot
+	 */
+	private function createInstanceOfAggreagteRoot($aggregateRootClass)
+	{
+		$reflClass = new \ReflectionClass($aggregateRootClass);
+		/** @var AggregateRoot $aggregateRoot */
+		$aggregateRoot = $reflClass->newInstanceWithoutConstructor();
+
+		return $aggregateRoot;
+	}
+
+	/**
 	 * @param AggregateRoot $object
 	 *
 	 * @return void
@@ -74,7 +88,7 @@ class EventSourceRepository implements Repository
 		if (!isset($this->streams[$id])) {
 			$this->streams[$id] = new EventStream(
 				get_class($object),
-				$object->getId()
+				$object->getId()->getUuid()
 			);
 		}
 
@@ -87,19 +101,5 @@ class EventSourceRepository implements Repository
 			$event->setAggregateId($object->getId());
 			$this->eventBus->publish($event);
 		}
-	}
-
-	/**
-	 * @param $aggregateRootClass
-	 *
-	 * @return AggregateRoot
-	 */
-	private function createInstanceOfAggreagteRoot($aggregateRootClass)
-	{
-		$reflClass = new \ReflectionClass($aggregateRootClass);
-		/** @var AggregateRoot $aggregateRoot */
-		$aggregateRoot = $reflClass->newInstanceWithoutConstructor();
-
-		return $aggregateRoot;
 	}
 }

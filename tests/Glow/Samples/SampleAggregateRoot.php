@@ -2,8 +2,6 @@
 
 namespace LidskaSila\Glow;
 
-use Ramsey\Uuid\Uuid;
-
 class SampleAggregateRoot extends AggregateRoot
 {
 
@@ -11,15 +9,16 @@ class SampleAggregateRoot extends AggregateRoot
 
 	public $foo;
 
-	public function __construct(Uuid $uuid)
+	public function __construct(SampleAggregateRootId $id)
 	{
-		$this->setId($uuid);
-
-		$this->apply(new SampleCreated([ 'foo' => 'bar' ]));
+		$this->apply(new SampleCreated($id, [
+			'foo' => 'bar',
+		]));
 	}
 
 	public function applySampleCreated(SampleCreated $event)
 	{
+		$this->setId($event->sampleId);
 		$this->foo              = $event->foo;
 		$this->loadedFromEvents = true;
 	}
