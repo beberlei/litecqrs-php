@@ -28,7 +28,7 @@ class EventSourceRepositoryTest extends TestCase
 		$eventStore = $this->mockEventStoreReturning($id->getUuid(), $eventStream);
 		$repository = new EventSourceRepository($eventStore, $this->eventBus);
 
-		$entity = $repository->find(EventSourcedAggregate::class, $id->getUuid());
+		$entity = $repository->find($id->getUuid(), EventSourcedAggregate::class);
 
 		self::assertTrue($entity->eventApplied);
 		self::assertSame($id, $entity->getId());
@@ -54,7 +54,7 @@ class EventSourceRepositoryTest extends TestCase
 		$eventStore = $this->mockEventStoreReturning($id->getUuid(), $eventStream);
 		$repository = new EventSourceRepository($eventStore, $this->eventBus);
 
-		$entity = $repository->find(AggregateRoot::class, $id->getUuid());
+		$entity = $repository->find($id->getUuid(), AggregateRoot::class);
 
 		self::assertTrue($entity->eventApplied);
 		self::assertSame($id, $entity->getId());
@@ -73,7 +73,7 @@ class EventSourceRepositoryTest extends TestCase
 
 		self::expectException(AggregateRootNotFoundException::class);
 
-		$entity = $repository->find('stdClass', $id->getUuid());
+		$entity = $repository->find($id->getUuid(), 'stdClass');
 	}
 
 	/**
@@ -89,7 +89,7 @@ class EventSourceRepositoryTest extends TestCase
 
 		self::expectException(AggregateRootNotFoundException::class);
 
-		$repository->find('stdClass', $id->getUuid());
+		$repository->find($id->getUuid(), 'stdClass');
 	}
 
 	/**
@@ -126,6 +126,6 @@ class EventSourceRepositoryTest extends TestCase
 		self::expectException(ConcurrencyException::class);
 
 		$repository = new EventSourceRepository($eventStore, $this->eventBus);
-		$repository->find(EventSourcedAggregate::class, $id->getUuid(), 1337);
+		$repository->find($id->getUuid(), EventSourcedAggregate::class, 1337);
 	}
 }

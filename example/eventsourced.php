@@ -125,7 +125,7 @@ class InventoryHandler
 
     public function changeInventoryName(ChangeInventoryName $command)
     {
-        $inventoryItem = $this->repository->find('EventSourced\\InventoryItem', $command->id);
+		$inventoryItem = $this->repository->find($command->id, 'EventSourced\\InventoryItem');
         $inventoryItem->changeName($command->newName);
 
         $this->repository->save($inventoryItem);
@@ -133,7 +133,7 @@ class InventoryHandler
 
     public function deactivateInventoryItem(DeactivateInventoryItem $command)
     {
-        $inventoryItem = $this->repository->find('EventSourced\\InventoryItem', $command->id);
+		$inventoryItem = $this->repository->find($command->id, 'EventSourced\\InventoryItem');
         $inventoryItem->deactivate();
 
         $this->repository->save($inventoryItem);

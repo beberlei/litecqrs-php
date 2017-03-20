@@ -8,13 +8,13 @@ interface Repository
 {
 
 	/**
-	 * @param string  $className
-	 * @param UuidInterface    $uuid
-	 * @param integer $expectedVersion
+	 * @param UuidInterface $uuid
+	 * @param string        $className
+	 * @param integer       $expectedVersion
 	 *
 	 * @return AggregateRoot
 	 */
-	public function find($className, UuidInterface $uuid, $expectedVersion = null);
+	public function find(UuidInterface $uuid, $className = null, $expectedVersion = null);
 
 	/**
 	 * @param AggregateRoot $object

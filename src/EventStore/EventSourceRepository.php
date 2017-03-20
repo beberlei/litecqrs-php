@@ -24,14 +24,14 @@ class EventSourceRepository implements Repository
 	}
 
 	/**
-	 * @param string        $className
 	 * @param UuidInterface $uuid
+	 * @param string        $className
 	 * @param null          $expectedVersion
 	 *
 	 * @return AggregateRoot
 	 * @throws AggregateRootNotFoundException
 	 */
-	public function find($className, UuidInterface $uuid, $expectedVersion = null)
+	public function find(UuidInterface $uuid, $className = null, $expectedVersion = null)
 	{
 		try {
 			$eventStream = $this->eventStore->find($uuid);
@@ -44,6 +44,8 @@ class EventSourceRepository implements Repository
 		$aggregateRootClass = $eventStream->getClassName();
 
 		if (
+			$className !== null
+			&&
 			$aggregateRootClass !== ltrim($className, '\\')
 			&&
 			!is_subclass_of($aggregateRootClass, $className)
