@@ -16,4 +16,14 @@
 			<directory suffix=".php">../src</directory>
 		</whitelist>
 	</filter>
+	<logging>
+		<log
+				showOnlySummary="true"
+				showUncoveredFiles="true"
+				target="php://stdout"
+				type="coverage-text"
+		/>
+		<log type="coverage-clover" target="temp/clover.xml"/>
+		<log type="coverage-html" target="temp/coverage-html"/>
+	</logging>
 </phpunit>

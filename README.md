@@ -4,11 +4,14 @@ This PHP CQRS EventSourcing library is build on Benjamin Eberlei's [LiteCQRS for
 which was not maintained for quite long time. This fork is bringigng it back to live, but it is not recommended to use it in production,
 since there may be BC breaks in near future.
 
-[![Build Status (Master)](https://travis-ci.org/LidskaSila/Glow.svg?branch=master)](https://travis-ci.org/LidskaSila/Glow)
+[![Build Status](https://img.shields.io/travis/LidskaSila/Glow.svg?style=flat-square)](https://travis-ci.org/LidskaSila/Glow)
+[![Quality Score](https://img.shields.io/scrutinizer/g/LidskaSila/Glow.svg?style=flat-square)](https://scrutinizer-ci.com/g/LidskaSila/Glow)
+[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/LidskaSila/Glow.svg?style=flat-square)](https://scrutinizer-ci.com/g/LidskaSila/Glow)
+[![Downloads this Month](https://img.shields.io/packagist/dm/lidskasila/graphql-php-schema-parser.svg)](https://packagist.org/packages/lidskasila/graphql-php-schema-parser)
 
 Main differencies are:
 
-- Is up to date with newer versions of PHP, soon it will be able only for PHP 7.1
+- Is up to date with newer versions of PHP, soon it will be available only for PHP 7.1
 
 - Commanding - you can register to CommandBus implementation of CommandHandler only (has only handle method). 
 It is not to dogmatically enforce SRP (which actually does not mean one public method to one class), but to 
