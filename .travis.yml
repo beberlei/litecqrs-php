@@ -11,3 +11,9 @@ before_script:
 script:
   # run
   - vendor/bin/phing build
+
+after_script:
+  # upload clover.xml file to Scrutinizer to analyze it
+  - |
+    wget https://scrutinizer-ci.com/ocular.phar
+    php ocular.phar code-coverage:upload --format=php-clover tests/temp/clover.xml
