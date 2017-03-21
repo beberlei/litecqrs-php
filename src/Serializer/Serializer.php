@@ -7,5 +7,5 @@ interface Serializer
 
 	public function fromArray(array $data);
 
-	public function toArray($object);
+	public function toArray($value);
 }

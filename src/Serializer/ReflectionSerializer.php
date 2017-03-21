@@ -16,22 +16,24 @@ class ReflectionSerializer implements Serializer
 	public function fromArray(array $data)
 	{
 		if (!isset($data['php_class'])) {
-			return $this->fromArrayToArray($data);
+			return $this->fromArrayToArrayObjects($data);
 		}
 
 		return $this->fromArrayToObject($data);
 	}
 
-	private function fromArrayToArray(array $data)
+	private function fromArrayToArrayObjects(array $data)
 	{
 		$newData = [];
 		foreach ($data as $key => $value) {
-			if (is_array($value)) {
+			if (is_array($value) || is_object($value)) {
 				$newData[$key] = $this->fromArray($value);
 			} else {
 				$newData[$key] = $value;
 			}
 		}
+
+		return $newData;
 	}
 
 	private function fromArrayToObject($data)
@@ -116,7 +118,23 @@ class ReflectionSerializer implements Serializer
 		return $properties;
 	}
 
-	public function toArray($object)
+	public function toArray($value)
+	{
+		if (is_object($value)) {
+			return $this->fromObjectToArray($value);
+		} elseif (is_array($value)) {
+			return $this->fromArrayToArray($value);
+		} else {
+			return $value;
+		}
+	}
+
+	/**
+	 * @param $object
+	 *
+	 * @return array
+	 */
+	private function fromObjectToArray($object): array
 	{
 		if ($object instanceof DateTime || $object instanceof DateTimeInterface) {
 			return [
@@ -146,13 +164,27 @@ class ReflectionSerializer implements Serializer
 			$reflField->setAccessible(true);
 			$value = $reflField->getValue($object);
 
-			if (is_object($value)) {
+			if (is_object($value) || is_array($value)) {
 				$value = $this->toArray($value);
 			}
-
 			$data[$reflField->getName()] = $value;
 		}
 
 		return $data;
+	}
+
+	/**
+	 * @param array $array
+	 *
+	 * @return array
+	 */
+	private function fromArrayToArray($array): array
+	{
+		$newData = [];
+		foreach ($array as $key => $value) {
+			$newData[$key] = $this->toArray($value);
+		}
+
+		return $newData;
 	}
 }

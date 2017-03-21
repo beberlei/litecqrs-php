@@ -7,26 +7,6 @@ use PHPUnit\Framework\TestCase;
 class ReflectionSerializerTest extends TestCase
 {
 
-	/**
-	 * @dataProvider dataObjectsAndTheirArrays
-	 * @test
-	 */
-	public function it_serializes_objects_to_array($object, $expectedArray)
-	{
-		$serializer = new ReflectionSerializer();
-		self::assertEquals($expectedArray, $serializer->toArray($object));
-	}
-
-	/**
-	 * @dataProvider dataObjectsAndTheirArrays
-	 * @test
-	 */
-	public function it_unserializes_array_to_object_graph($expectedObjectGraph, $dataArray)
-	{
-		$serializer = new ReflectionSerializer();
-		self::assertEquals($expectedObjectGraph, $serializer->fromArray($dataArray));
-	}
-
 	static public function dataObjectsAndTheirArrays()
 	{
 		return [
@@ -61,6 +41,45 @@ class ReflectionSerializerTest extends TestCase
 					'php_class' => Person::class,
 				],
 			],
+			[
+				new ClassWithArrayAsProperty('Czechia', [ new Address('Bonn', 'Germany'), new Address('Prague', 'Czechia') ]),
+				[
+					'country'         => 'Czechia',
+					'detailWithArray' => [
+						[
+							'city'      => 'Bonn',
+							'country'   => 'Germany',
+							'php_class' => Address::class,
+						],
+						[
+							'city'      => 'Prague',
+							'country'   => 'Czechia',
+							'php_class' => Address::class,
+						],
+					],
+					'php_class'       => ClassWithArrayAsProperty::class,
+				],
+			],
 		];
+	}
+
+	/**
+	 * @dataProvider dataObjectsAndTheirArrays
+	 * @test
+	 */
+	public function it_serializes_objects_to_array($object, $expectedArray)
+	{
+		$serializer = new ReflectionSerializer();
+		self::assertEquals($expectedArray, $serializer->toArray($object));
+	}
+
+	/**
+	 * @dataProvider dataObjectsAndTheirArrays
+	 * @test
+	 */
+	public function it_unserializes_array_to_object_graph($expectedObjectGraph, $dataArray)
+	{
+		$serializer = new ReflectionSerializer();
+		self::assertEquals($expectedObjectGraph, $serializer->fromArray($dataArray));
 	}
 }
