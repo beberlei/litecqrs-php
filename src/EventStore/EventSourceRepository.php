@@ -95,12 +95,15 @@ class EventSourceRepository implements Repository
 		}
 
 		$eventStream = $this->streams[$id];
-		$eventStream->addEvents($object->pullDomainEvents());
+		$events      = $object->pullDomainEvents();
+		foreach ($events as $event) {
+			$event->setAggregateId($object->getId());
+		}
+		$eventStream->addEvents($events);
 
 		$transaction = $this->eventStore->commit($eventStream);
 
 		foreach ($transaction->getCommittedEvents() as $event) {
-			$event->setAggregateId($object->getId());
 			$this->eventBus->publish($event);
 		}
 	}
