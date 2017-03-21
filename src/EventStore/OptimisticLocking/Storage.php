@@ -22,13 +22,13 @@ interface Storage
 	 *
 	 * @param string  $id
 	 * @param string  $className
-	 * @param array   $eventData
+	 * @param array   $newEventData
 	 * @param integer $nextVersion
 	 * @param integer $currentVersion
 	 *
 	 * @return void
 	 */
-	public function store($id, $className, $eventData, $nextVersion, $currentVersion);
+	public function store($id, $className, $newEventData, $nextVersion, $currentVersion);
 
 	/**
 	 * Check if the storage contains a stream data entry.

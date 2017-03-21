@@ -5,7 +5,6 @@ namespace LidskaSila\Glow\EventStore\OptimisticLocking;
 use LidskaSila\Glow\EventStore\EventStore;
 use LidskaSila\Glow\EventStore\EventStoreContractTestCase;
 use LidskaSila\Glow\EventStore\EventStream;
-use LidskaSila\Glow\Serializer\NoopSerializer;
 use LidskaSila\Glow\Serializer\ReflectionSerializer;
 
 class OptimimsticLockingEventStoreTest extends EventStoreContractTestCase
@@ -14,7 +13,7 @@ class OptimimsticLockingEventStoreTest extends EventStoreContractTestCase
 	/** @var MemoryStorage */
 	protected $storage;
 
-	/** @var NoopSerializer */
+	/** @var ReflectionSerializer */
 	protected $serializer;
 
 	protected function givenAnEventStore()
