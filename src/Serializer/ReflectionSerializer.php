@@ -15,6 +15,27 @@ class ReflectionSerializer implements Serializer
 
 	public function fromArray(array $data)
 	{
+		if (!isset($data['php_class'])) {
+			return $this->fromArrayToArray($data);
+		}
+
+		return $this->fromArrayToObject($data);
+	}
+
+	private function fromArrayToArray(array $data)
+	{
+		$newData = [];
+		foreach ($data as $key => $value) {
+			if (is_array($value)) {
+				$newData[$key] = $this->fromArray($value);
+			} else {
+				$newData[$key] = $value;
+			}
+		}
+	}
+
+	private function fromArrayToObject($data)
+	{
 		$className = $data['php_class'];
 		if ($className === DateTime::class) {
 			return DateTime::createFromFormat('Y-m-d H:i:s.u', $data['time'], new DateTimeZone($data['timezone']));
@@ -27,7 +48,6 @@ class ReflectionSerializer implements Serializer
 		if ($className === Uuid::class) {
 			return Uuid::fromString($data['uuid']);
 		}
-
 		$reflectionClass = $this->getReflectionClass($className);
 		$object          = $reflectionClass->newInstanceWithoutConstructor();
 
@@ -47,44 +67,26 @@ class ReflectionSerializer implements Serializer
 		return $object;
 	}
 
-	public function toArray($object)
+	/**
+	 * @param string $className
+	 *
+	 * @return ReflectionClass
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	private function getReflectionClass($className)
 	{
-		if ($object instanceof DateTime || $object instanceof DateTimeInterface) {
-			return [
-				'php_class' => get_class($object),
-				'time'      => $object->format('Y-m-d H:i:s.u'),
-				'timezone'  => $object->getTimezone()->getName(),
-			];
+		if (!class_exists($className)) {
+			throw InvalidArgumentException::fromNonExistingClass($className);
 		}
 
-		if ($object instanceof Uuid) {
-			return [
-				'php_class' => 'Ramsey\Uuid\Uuid',
-				'uuid'      => (string) $object,
-			];
+		$reflection = new ReflectionClass($className);
+
+		if ($reflection->isAbstract()) {
+			throw InvalidArgumentException::fromAbstractClass($reflection);
 		}
 
-		return $this->extractValuesFromObject($object);
-	}
-
-	private function extractValuesFromObject($object)
-	{
-		$data = [
-			'php_class' => get_class($object),
-		];
-
-		foreach ($this->getProperties(get_class($object)) as $reflField) {
-
-			$value = $reflField->getValue($object);
-
-			if (is_object($value)) {
-				$value = $this->toArray($value);
-			}
-
-			$data[$reflField->getName()] = $value;
-		}
-
-		return $data;
+		return $reflection;
 	}
 
 	/**
@@ -114,25 +116,43 @@ class ReflectionSerializer implements Serializer
 		return $properties;
 	}
 
-	/**
-	 * @param string $className
-	 *
-	 * @return ReflectionClass
-	 *
-	 * @throws InvalidArgumentException
-	 */
-	private function getReflectionClass($className)
+	public function toArray($object)
 	{
-		if (!class_exists($className)) {
-			throw InvalidArgumentException::fromNonExistingClass($className);
+		if ($object instanceof DateTime || $object instanceof DateTimeInterface) {
+			return [
+				'php_class' => get_class($object),
+				'time'      => $object->format('Y-m-d H:i:s.u'),
+				'timezone'  => $object->getTimezone()->getName(),
+			];
 		}
 
-		$reflection = new ReflectionClass($className);
-
-		if ($reflection->isAbstract()) {
-			throw InvalidArgumentException::fromAbstractClass($reflection);
+		if ($object instanceof Uuid) {
+			return [
+				'php_class' => 'Ramsey\Uuid\Uuid',
+				'uuid'      => (string) $object,
+			];
 		}
 
-		return $reflection;
+		return $this->extractValuesFromObject($object);
+	}
+
+	private function extractValuesFromObject($object)
+	{
+		$data = [
+			'php_class' => get_class($object),
+		];
+
+		foreach ($this->getProperties(get_class($object)) as $reflField) {
+			$reflField->setAccessible(true);
+			$value = $reflField->getValue($object);
+
+			if (is_object($value)) {
+				$value = $this->toArray($value);
+			}
+
+			$data[$reflField->getName()] = $value;
+		}
+
+		return $data;
 	}
 }
