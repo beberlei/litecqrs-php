@@ -43,4 +43,9 @@ class MemoryEventHandlerLocator implements EventHandlerLocator
 			$this->handlers[$eventName][] = $handler;
 		}
 	}
+
+	public function dropAll()
+	{
+		$this->handlers = [];
+	}
 }
