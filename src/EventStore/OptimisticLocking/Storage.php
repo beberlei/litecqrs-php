@@ -10,32 +10,20 @@ interface Storage
 	 *
 	 * @param string $id
 	 *
-	 * @return \LidskaSila\Glow\EventStore\OptimisticLocking\StreamData
+	 * @return StreamData|null
 	 */
-	public function load($id);
+	public function load(string $id);
 
 	/**
 	 * Store event stream data in persistence storage layer.
 	 *
 	 * Requires a check on the current version in the actual database
 	 * for optimistic locking purposes.
-	 *
-	 * @param string  $id
-	 * @param string  $className
-	 * @param array   $newEventData
-	 * @param integer $nextVersion
-	 * @param integer $currentVersion
-	 *
-	 * @return void
 	 */
-	public function store($id, $className, $newEventData, $nextVersion, $currentVersion);
+	public function store(string $id, string $className, array $newEventData, int $nextVersion, int $currentVersion = null): void;
 
 	/**
 	 * Check if the storage contains a stream data entry.
-	 *
-	 * @param string $id
-	 *
-	 * @return bool
 	 */
-	public function contains($id);
+	public function contains(string $id): bool;
 }

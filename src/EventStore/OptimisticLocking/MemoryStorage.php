@@ -9,7 +9,12 @@ class MemoryStorage implements Storage
 
 	private $streamData = [];
 
-	public function load($id)
+	/**
+	 * @param string $id
+	 *
+	 * @return StreamData|null
+	 */
+	public function load(string $id)
 	{
 		if (isset($this->streamData[$id])) {
 			return $this->streamData[$id];
@@ -18,7 +23,7 @@ class MemoryStorage implements Storage
 		return null;
 	}
 
-	public function store($id, $className, $newEventData, $nextVersion, $currentVersion)
+	public function store(string $id, string $className, array $newEventData, int $nextVersion, int $currentVersion = null): void
 	{
 		if (isset($this->streamData[$id]) && $this->streamData[$id]->getVersion() !== $currentVersion) {
 			throw new ConcurrencyException();
@@ -28,6 +33,11 @@ class MemoryStorage implements Storage
 		} else {
 			$this->streamData[$id] = $this->mergeNewStreamData($id, $className, $newEventData, $nextVersion);
 		}
+	}
+
+	public function contains(string $id): bool
+	{
+		return isset($this->streamData[$id]);
 	}
 
 	protected function createNewStreamData($id, $className, $newEventData, $nextVersion): StreamData
@@ -43,10 +53,5 @@ class MemoryStorage implements Storage
 		}
 
 		return $this->createNewStreamData($id, $className, $allEventData, $nextVersion);
-	}
-
-	public function contains($id)
-	{
-		return isset($this->streamData[$id]);
 	}
 }
