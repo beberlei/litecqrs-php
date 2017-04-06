@@ -1,22 +1,24 @@
 # PHP Glow library
 
-This PHP CQRS EventSourcing library is build on Benjamin Eberlei's [LiteCQRS for php](https://github.com/beberlei/litecqrs-php) 
-which was not maintained for quite long time. This fork is bringigng it back to live, but it is not recommended to use it in production,
-since there may be BC breaks in near future.
+This PHP CQRS EventSourcing library is based on Benjamin Eberlei's [LiteCQRS 
+for php](https://github.com/beberlei/litecqrs-php) which was not maintained for 
+quite a long time. This fork is bringing it back to life, but it is not to be 
+considered as a stable library, since there may be BC breaks in the near 
+future.
 
 [![Build Status](https://img.shields.io/travis/LidskaSila/Glow.svg?style=flat-square)](https://travis-ci.org/LidskaSila/Glow)
 [![Quality Score](https://img.shields.io/scrutinizer/g/LidskaSila/Glow.svg?style=flat-square)](https://scrutinizer-ci.com/g/LidskaSila/Glow)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/LidskaSila/Glow.svg?style=flat-square)](https://scrutinizer-ci.com/g/LidskaSila/Glow)
 [![Downloads this Month](https://img.shields.io/packagist/dm/lidskasila/graphql-php-schema-parser.svg)](https://packagist.org/packages/lidskasila/graphql-php-schema-parser)
 
-Main differencies are:
+Main differences are:
 
-- Is up to date with newer versions of PHP, soon it will be available only for PHP 7.1
-
-- Commanding - you can register to CommandBus implementation of CommandHandler only (has only handle method). 
-It is not to dogmatically enforce SRP (which actually does not mean one public method to one class), but to 
-pragmatically enforce expicitness in naming and structure conventions. When you see XxxCommand and need to see implementation,
-you just know there should be XxxCommandHandler somewhere with that actual implementation.
+- Minimal required version of PHP is 7.0, it will be 7.1 soon.
+- Commanding - to the CommandBus you can register only implementations of 
+ComandHandler (has only handle method). The reason behind this is to enforce 
+explicitness in naming and structuring conventions. When you see XxxCommand and 
+you need to see the implementation, you know there should be XxxCommandHandler 
+implemented somewhere.
 
 
 ## Original updated readme
@@ -35,13 +37,13 @@ model about changes in the write model.
 
 Glow uses the command pattern and a central message bus service that
 finds the corresponding handler to execute a command. A command must implement 
-``Glow\Commanding\Command``. It should also definitely be DTO (data transfer object) 
+``Glow\Commanding\Command``. It should be a plain DTO (data transfer object) 
 with just some properties describing it (imutability is encouraged).
 
-After this object is passed as parameter into CommandBus's handle(Command $command) method,
-CommandBus finds proper CommandHandler and invokes same method with same parameter on it.
-That means yes, it is enforced to keep convention that for each XxxCommand implementing Command
-there have to be XxxCommandHandler implementing CommandHandler.
+After this object is passed as a parameter into the CommandBus' `handle(Command 
+$command)` method, CommandBus finds a proper CommandHandler and invokes the 
+same method with the same parameter on it. Enforced convention is that there 
+has to be XxxCommandHandler (implementing CommandHandler) for every XxxCommand.
 
 During the execution of a command, domain events can be triggered. These are
 again just simple classes with some properties and they can optionally implement
@@ -55,10 +57,10 @@ listen to them.
 
 ## Conventions
 
-* Each XxxCommand DTO is mapped to XxxCommandHandler when XxxCommand implementing Command
-  and XxxCommandHandler implementing CommandHandler.
+* Each XxxCommand DTO is mapped to XxxCommandHandler when XxxCommand implements 
+  Command and XxxCommandHandler implements CommandHandler.
 * Domain Events are applied to Event Handlers "Event Class Shortname" =>
-  "onEventClassShortname". Only if this matches is an event listener registered.
+  "onEventClassShortname". An event listener is registered only if this matches.
 * Domain Events are applied on Entities/Aggregate Roots "Event Class Shortname"
   => "applyEventClassShortname"
 * You can optionally extend the ``DefaultDomainEvent`` which has a constructor
@@ -76,15 +78,9 @@ Examples:
 
 ## Installation & Requirements
 
-The core library has no dependencies on other libraries. Plugins have dependencies on their specific libraries.
-
 Install with [Composer](http://getcomposer.org):
 
-    {
-        "require": {
-            "lidskasila/glow": "v0.4.1"
-        }
-    }
+	composer require lidskasila/glow
 
 ## Workflow
 
@@ -94,8 +90,8 @@ These are the steps that a command regularly takes through the Glow stack during
    implementing ``Command`` created by you.
 2. The ``CommandBus`` checks for a handler that can execute your command. Every
    command has exactly one handler.
-3. The command handler changes state of the domain model. It does that by
-   creating events (that represent state change) and passing them to the
+3. The command handler changes state of the domain model. It does so by
+   creating events (that represent a state change) and passing them to the
    ``AggregateRoot::apply()`` or ``DomainEventProvider::raise()`` method of your domain objects.
 4. When the command is completed, the command bus will check all objects in the
    identity map for events.
@@ -109,7 +105,7 @@ transaction. If the command fails with any exception all events created by the
 command are forgotten/ignored. No event handlers will be triggered in this case.
 
 In the case of InMemory CommandBus and EventMessageBus Glow makes sure that
-the execution of command and event handlers is never nested, but in sequential
+the execution of commands and event handlers is never nested, but in sequential
 linearized order. This prevents independent transactions for each command
 from affecting each other.
 
