@@ -2,16 +2,16 @@
 
 namespace EventSourced;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
-use LiteCQRS\Repository;
-use LiteCQRS\DefaultCommand;
-use LiteCQRS\Commanding;
-use LiteCQRS\DefaultDomainEvent;
-use LiteCQRS\AggregateRoot;
-use LiteCQRS\EventStore;
-use LiteCQRS\Serializer\ReflectionSerializer;
-use LiteCQRS\Eventing;
+use LidskaSila\Glow\Repository;
+use LidskaSila\Glow\DefaultCommand;
+use LidskaSila\Glow\Commanding;
+use LidskaSila\Glow\DefaultDomainEvent;
+use LidskaSila\Glow\AggregateRoot;
+use LidskaSila\Glow\EventStore;
+use LidskaSila\Glow\Serializer\ReflectionSerializer;
+use LidskaSila\Glow\Eventing;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
@@ -125,7 +125,7 @@ class InventoryHandler
 
     public function changeInventoryName(ChangeInventoryName $command)
     {
-        $inventoryItem = $this->repository->find('EventSourced\\InventoryItem', $command->id);
+		$inventoryItem = $this->repository->find($command->id, 'EventSourced\\InventoryItem');
         $inventoryItem->changeName($command->newName);
 
         $this->repository->save($inventoryItem);
@@ -133,7 +133,7 @@ class InventoryHandler
 
     public function deactivateInventoryItem(DeactivateInventoryItem $command)
     {
-        $inventoryItem = $this->repository->find('EventSourced\\InventoryItem', $command->id);
+		$inventoryItem = $this->repository->find($command->id, 'EventSourced\\InventoryItem');
         $inventoryItem->deactivate();
 
         $this->repository->save($inventoryItem);

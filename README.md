@@ -1,12 +1,31 @@
-# LiteCQRS for PHP
+# PHP Glow library
+
+This PHP CQRS EventSourcing library is based on Benjamin Eberlei's [LiteCQRS 
+for php](https://github.com/beberlei/litecqrs-php) which was not maintained for 
+quite a long time. This fork is bringing it back to life, but it is not to be 
+considered as a stable library, since there may be BC breaks in the near 
+future.
+
+[![Build Status](https://img.shields.io/travis/LidskaSila/Glow.svg?style=flat-square)](https://travis-ci.org/LidskaSila/Glow)
+[![Quality Score](https://img.shields.io/scrutinizer/g/LidskaSila/Glow.svg?style=flat-square)](https://scrutinizer-ci.com/g/LidskaSila/Glow)
+[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/LidskaSila/Glow.svg?style=flat-square)](https://scrutinizer-ci.com/g/LidskaSila/Glow)
+[![Downloads this Month](https://img.shields.io/packagist/dm/lidskasila/graphql-php-schema-parser.svg)](https://packagist.org/packages/lidskasila/graphql-php-schema-parser)
+
+Main differences are:
+
+- Minimal required version of PHP is 7.0, it will be 7.1 soon.
+- Commanding - to the CommandBus you can register only implementations of 
+ComandHandler (has only handle method). The reason behind this is to enforce 
+explicitness in naming and structuring conventions. When you see XxxCommand and 
+you need to see the implementation, you know there should be XxxCommandHandler 
+implemented somewhere.
+
+
+## Original updated readme
 
 Small naming-convention based CQRS library for PHP (loosely based on [LiteCQRS for
 C#](https://github.com/danielwertheim/LiteCQRS)) that relies on the MessageBus,
 Command, EventSourcing and Domain Event patterns.
-
-[![Build Status (Master)](https://travis-ci.org/beberlei/litecqrs-php.png?branch=master)](https://travis-ci.org/beberlei/litecqrs-php)
-
-**NOTE** Use the 1.1 branch, as the dev-master is currently in heavy refactoring.
 
 ## Terminology
 
@@ -16,13 +35,19 @@ separation of read- from write-model and uses the [DomainEvent
 pattern](http://martinfowler.com/eaaDev/DomainEvent.html) to notify the read
 model about changes in the write model.
 
-LiteCQRS uses the command pattern and a central message bus service that
-finds the corresponding handler to execute a command. A command is just a class
-with some properties describing it, it can optionally implement ``LiteCQRS\Command``.
+Glow uses the command pattern and a central message bus service that
+finds the corresponding handler to execute a command. A command must implement 
+``Glow\Commanding\Command``. It should be a plain DTO (data transfer object) 
+with just some properties describing it (imutability is encouraged).
+
+After this object is passed as a parameter into the CommandBus' `handle(Command 
+$command)` method, CommandBus finds a proper CommandHandler and invokes the 
+same method with the same parameter on it. Enforced convention is that there 
+has to be XxxCommandHandler (implementing CommandHandler) for every XxxCommand.
 
 During the execution of a command, domain events can be triggered. These are
 again just simple classes with some properties and they can optionally implement
-``LiteCQRS\DomainEvent``.
+``Glow\DomainEvent``.
 
 An event queue knows what domain events have been triggered during a command
 and then publishes them to an event message bus, where many listeners can
@@ -30,24 +55,12 @@ listen to them.
 
 ## Changes
 
-### From 1.0 to 1.1
-
-* Extending ``LiteCQRS\Command`` and ``LiteCQRS\DomainEvent`` is NOT required anymore.
-  In fact you can use any class as command or event. The naming conventions alone
-  make sure command handlers and event listeners are detected.
-
-* JMS Serializer Plugin cannot "detach" aggregate root properties that are part
-  of an event that is serialized anymore. Putting related aggregate roots into
-  an Event is therefore not supported anymore (and not a good idea even with
-  JMS Serializer 0.9 anyways).
-
 ## Conventions
 
-* All public methods of a command handler class are mapped to Commands "Command
-  Class Shortname" => "MethodName" when the method and command class shortname match.
-  Implementing an interface for the commands is NOT required (since 1.1)
+* Each XxxCommand DTO is mapped to XxxCommandHandler when XxxCommand implements 
+  Command and XxxCommandHandler implements CommandHandler.
 * Domain Events are applied to Event Handlers "Event Class Shortname" =>
-  "onEventClassShortname". Only if this matches is an event listener registered.
+  "onEventClassShortname". An event listener is registered only if this matches.
 * Domain Events are applied on Entities/Aggregate Roots "Event Class Shortname"
   => "applyEventClassShortname"
 * You can optionally extend the ``DefaultDomainEvent`` which has a constructor
@@ -58,36 +71,27 @@ listen to them.
 
 Examples:
 
-* ``HelloWorld\GreetingCommand`` maps to the ``greeting(GreetingCommand $command)`` method on the registered handler.
-* ``HelloWorld\Commands\Greeting`` maps to the ``greeting(Greeting $command)`` method on the registered handler.
+* ``GreetingCommand implements Command`` maps to the ``handle(GreetingCommand $command)`` method on the registered GreetingCommandHandler implementing CommandHandler.
 * ``HelloWorld\GreetedEvent`` is passed to all event handlers that have a method ``onGreeted(GreetedEvent $event)``.
 * ``HelloWorld\Events\Greeted`` is passed to all event handlers that have a method ``onGreeted(Greeted $event)``.
 * ``HelloWorld\GreetedEvent`` is delegated to ``applyGreeted($event)`` when created on the aggregate root
 
 ## Installation & Requirements
 
-Use the 1.1 branch, as the dev-master is currently in heavy refactoring.
-
-The core library has no dependencies on other libraries. Plugins have dependencies on their specific libraries.
-
 Install with [Composer](http://getcomposer.org):
 
-    {
-        "require": {
-            "beberlei/lite-cqrs": "1.1"
-        }
-    }
+	composer require lidskasila/glow
 
 ## Workflow
 
-These are the steps that a command regularly takes through the LiteCQRS stack during execution:
+These are the steps that a command regularly takes through the Glow stack during execution:
 
 1. You push commands into a ``CommandBus``. Commands are simple objects
-   extending ``Command`` created by you.
+   implementing ``Command`` created by you.
 2. The ``CommandBus`` checks for a handler that can execute your command. Every
    command has exactly one handler.
-3. The command handler changes state of the domain model. It does that by
-   creating events (that represent state change) and passing them to the
+3. The command handler changes state of the domain model. It does so by
+   creating events (that represent a state change) and passing them to the
    ``AggregateRoot::apply()`` or ``DomainEventProvider::raise()`` method of your domain objects.
 4. When the command is completed, the command bus will check all objects in the
    identity map for events.
@@ -100,10 +104,12 @@ transactions. Event handling is always triggered outside of any command
 transaction. If the command fails with any exception all events created by the
 command are forgotten/ignored. No event handlers will be triggered in this case.
 
-In the case of InMemory CommandBus and EventMessageBus LiteCQRS makes sure that
-the execution of command and event handlers is never nested, but in sequential
+In the case of InMemory CommandBus and EventMessageBus Glow makes sure that
+the execution of commands and event handlers is never nested, but in sequential
 linearized order. This prevents independent transactions for each command
 from affecting each other.
+
+#TODO following is not updated
 
 ## Examples
 
@@ -130,7 +136,7 @@ $commandBus->register('MyApp\ChangeEmailCommand', $userService);
 
 2. In Memory Commands and Events Handlers
 
-This uses ``LiteCQRS\EventProviderInterface`` instances to trigger domain events.
+This uses ``Glow\EventProviderInterface`` instances to trigger domain events.
 
 ```php
 <?php
@@ -152,7 +158,7 @@ $messageBus->register($someEventHandler);
 
 3. In Memory Commands + Custom Event Queue
 
-LiteCQRS knows about triggered events by asking ``LiteCQRS\Bus\EventQueue``.
+Glow knows about triggered events by asking ``Glow\Bus\EventQueue``.
 Provide your own implementation to be independent of
 your domain objects having to implement ``EventProviderInterface``.
 
@@ -170,10 +176,10 @@ $commandBus = new DirectCommandBus(array(
 
 ### To implement a Use Case of your application
 
-1. Create a command object that receives all the necessary input values. Use public properties and extend ``LiteCQRS\DefaultCommand`` to simplify.
+1. Create a command object that receives all the necessary input values. Use public properties and extend ``Glow\DefaultCommand`` to simplify.
 2. Add a new method with the name of the command to any of your services (command handler)
 3. Register the command handler to handle the given command on the CommandBus.
-4. Have your entities implement ``LiteCQRS\AggregateRoot`` or ``LiteCQRS\DomainEventProvider``
+4. Have your entities implement ``Glow\AggregateRoot`` or ``Glow\DomainEventProvider``
 5. Use protected method ``raise(DomainEvent $event)`` or apply(DomainEvent $event)`` to attach
    events to your aggregate root objects.
 
@@ -202,7 +208,7 @@ If you don't use event sourcing then you are fine just using ``raise()`` and ign
 
 The EventMessageBus prevents exceptions from bubbling up. To allow some debugging of failed event handler
 execution there is a special event "EventExecutionFailed" that you can listen to. You will get passed
-an instance of ``LiteCQRS\Bus\EventExecutionFailed`` with properties ``$exception``, ``$service`` and
+an instance of ``Glow\Bus\EventExecutionFailed`` with properties ``$exception``, ``$service`` and
 ``$event`` to allow analysing failures in your application.
 
 ## Extension Points
@@ -214,7 +220,7 @@ exactly as you need it to work.
 
 ### Symfony
 
-Inside symfony you can use LiteCQRS by registering services with
+Inside symfony you can use Glow by registering services with
 ``lite_cqrs.command_handler`` or the ``lite_cqrs.event_handler`` tag. These
 services are then autodiscovered for commands and events.
 
@@ -224,7 +230,7 @@ Injection Container.
 To enable the bundle put the following in your Kernel:
 
 ```php
-new \LiteCQRS\Plugin\SymfonyBundle\LiteCQRSBundle(),
+new \Glow\Plugin\SymfonyBundle\GlowBundle(),
 ```
 
 You can enable/disable the bundle by adding the following to your config.yml:
@@ -232,7 +238,7 @@ You can enable/disable the bundle by adding the following to your config.yml:
     lite_cqrs: ~
 
 Please refer to the [SymfonyExample.md](https://github.com/beberlei/litecqrs-php/blob/master/example/SymfonyExample.md)
-document for a full demonstration of using LiteCQRS from within a Symfony2 project.
+document for a full demonstration of using Glow from within a Symfony2 project.
 
 ### Monolog
 

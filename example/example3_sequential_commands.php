@@ -1,6 +1,6 @@
 <?php
 /**
- * LiteCQRS processes commands sequentially and in isolation.  If you have a
+ * LidskaSila\Glow processes commands sequentially and in isolation.  If you have a
  * chain of commands, called from each other, then they are executed in
  * isolation and one after another.
  *
@@ -15,9 +15,9 @@ namespace MyApp;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-use LiteCQRS\Bus\DirectCommandBus;
-use LiteCQRS\Bus\CommandBus;
-use LiteCQRS\DefaultCommand;
+use LidskaSila\Glow\Bus\DirectCommandBus;
+use LidskaSila\Glow\Bus\CommandBus;
+use LidskaSila\Glow\DefaultCommand;
 
 class StringManipulation
 {

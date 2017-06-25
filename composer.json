@@ -1,20 +1,25 @@
 {
-    "name": "beberlei/lite-cqrs",
-    "description": "Simple Command-Query-Responsibility-Segregation library.",
-    "license": "MIT",
-    "autoload": {
-        "psr-0": {"LiteCQRS": "src/"}
-    },
-    "require": {
-        "rhumsaa/uuid": "@stable",
-        "psr/log": "@stable",
-        "php": ">=5.4"
-    },
-    "require-dev": {
-        "phake/phake":"@stable",
-        "doctrine/common": ">=2.0,<2.5",
-        "symfony/framework-bundle": ">=2.0,<2.2",
-        "symfony/console": ">=2.0,<2.2",
-        "swiftmailer/swiftmailer": "4.*"
+  "name": "lidskasila/glow",
+  "description": "Simple [C]ommand [Q]uery [R]esponsibility [S]egregation and [E]vent [S]ourcing library.",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "LidskaSila\\Glow\\": "src/"
     }
+  },
+  "require": {
+    "php": ">=7.1",
+    "ramsey/uuid": "^3.6",
+    "roave/security-advisories": "dev-master"
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
+    ]
+  },
+  "require-dev": {
+    "mockery/mockery": "^0.9.9",
+    "phpunit/phpunit": "^6.2",
+    "phing/phing": "^2.16"
+  }
 }

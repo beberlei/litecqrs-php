@@ -26,16 +26,16 @@ namespace TicTacToe;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-use LiteCQRS\DomainEventProvider;
-use LiteCQRS\Bus\DirectCommandBus;
-use LiteCQRS\Bus\InMemoryEventMessageBus;
-use LiteCQRS\Bus\IdentityMap\SimpleIdentityMap;
-use LiteCQRS\Bus\IdentityMap\EventProviderQueue;
-use LiteCQRS\Bus\EventMessageHandlerFactory;
-use LiteCQRS\DefaultCommand;
-use LiteCQRS\DefaultDomainEvent;
+use LidskaSila\Glow\DomainEventProvider;
+use LidskaSila\Glow\Bus\DirectCommandBus;
+use LidskaSila\Glow\Bus\InMemoryEventMessageBus;
+use LidskaSila\Glow\Bus\IdentityMap\SimpleIdentityMap;
+use LidskaSila\Glow\Bus\IdentityMap\EventProviderQueue;
+use LidskaSila\Glow\Bus\EventMessageHandlerFactory;
+use LidskaSila\Glow\DefaultCommand;
+use LidskaSila\Glow\DefaultDomainEvent;
 use InvalidArgumentException;
-use LiteCQRS\Bus\CommandFailedStackException;
+use LidskaSila\Glow\Bus\CommandFailedStackException;
 
 class Board extends DomainEventProvider
 {
