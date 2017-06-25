@@ -25,7 +25,7 @@ class EventStreamTest extends TestCase
 	 */
 	public function it_allows_adding_events()
 	{
-		$event = \Phake::mock(DomainEvent::class);
+		$event = \Mockery::mock(DomainEvent::class);
 
 		$uuid   = Uuid::uuid4();
 		$stream = new EventStream('stdClass', $uuid);
@@ -41,8 +41,8 @@ class EventStreamTest extends TestCase
 	 */
 	public function it_keeps_new_events_seperate_from_known_events()
 	{
-		$oldEvent = \Phake::mock(DomainEvent::class);
-		$newEvent = \Phake::mock(DomainEvent::class);
+		$oldEvent = \Mockery::mock(DomainEvent::class);
+		$newEvent = \Mockery::mock(DomainEvent::class);
 
 		$uuid   = Uuid::uuid4();
 		$stream = new EventStream('stdClass', $uuid, [ $oldEvent ]);
@@ -63,7 +63,7 @@ class EventStreamTest extends TestCase
 	 */
 	public function it_can_mark_new_events_as_processed()
 	{
-		$newEvent = \Phake::mock(DomainEvent::class);
+		$newEvent = \Mockery::mock(DomainEvent::class);
 
 		$uuid   = Uuid::uuid4();
 		$stream = new EventStream('stdClass', $uuid, []);

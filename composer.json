@@ -1,24 +1,25 @@
 {
-  "name" : "lidskasila/glow",
-  "description" : "Simple [C]ommand [Q]uery [R]esponsibility [S]egregation and [E]vent [S]ourcing library.",
-  "license" : "MIT",
-  "autoload" : {
-	"psr-4" : {
-	  "LidskaSila\\Glow\\" : "src/"
-	}
+  "name": "lidskasila/glow",
+  "description": "Simple [C]ommand [Q]uery [R]esponsibility [S]egregation and [E]vent [S]ourcing library.",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "LidskaSila\\Glow\\": "src/"
+    }
   },
-  "require" : {
-	"php" : ">=7.0",
-	"ramsey/uuid" : "^3.5"
+  "require": {
+    "php": ">=7.1",
+    "ramsey/uuid": "^3.6",
+    "roave/security-advisories": "dev-master"
   },
-  "autoload-dev" : {
-	"classmap" : [
-	  "tests/"
-	]
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
+    ]
   },
   "require-dev": {
-	"phake/phake" : "@stable",
-	"phing/phing": "^2.16",
-	"phpunit/phpunit" : "^5.7"
+    "mockery/mockery": "^0.9.9",
+    "phpunit/phpunit": "^6.2",
+    "phing/phing": "^2.16"
   }
 }
