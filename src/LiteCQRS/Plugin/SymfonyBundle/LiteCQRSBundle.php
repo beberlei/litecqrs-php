@@ -16,7 +16,7 @@ class LiteCQRSBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new HandlerPass(), PassConfig::TYPE_AFTER_REMOVING);
+        $container->addCompilerPass(new HandlerPass(), PassConfig::TYPE_BEFORE_REMOVING);
     }
 }
 
